@@ -3,3 +3,4 @@ langchain_text_splitters
 langchain_openai
 langchain_chroma
 python_dotenv
+langchain-huggingface sentence-transformers

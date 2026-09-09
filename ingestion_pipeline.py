@@ -1,5 +1,5 @@
 import os
-
+import shutil
 #Helping us read from directory and text files / doc files etc
 from langchain_community.document_loaders import TextLoader,DirectoryLoader
 
@@ -95,14 +95,42 @@ def split_documents(documents, chunk_size=1000, chunk_overlap=0):
     return chunks
 
 def main():
-    print("Main function")
+    """Main ingestion pipeline"""
+    print("=== RAG Document Ingestion Pipeline ===\n")
+    
+    # Define paths
+    docs_path = "docs"
+    persistent_directory = "db/chroma_db"
+    
+    # Check if vector store already exists
+    if os.path.exists(persistent_directory):
+        print("✅ Vector store already exists. No need to re-process documents.")
+        
+        embedding_model = HuggingFaceEmbeddings(model="teall-MiniLM-L6-v2")
+        vectorstore = Chroma(
+            persist_directory=persistent_directory,
+            embedding_function=embedding_model, 
+            collection_metadata={"hnsw:space": "cosine"}
+        )
+        print(f"Loaded existing vector store with {vectorstore._collection.count()} documents")
+        return vectorstore
+    
+    print("Persistent directory does not exist. Initializing vector store...\n")
+    
+    #Load documents
+    documents = load_documents(docs_path)  
 
-
-    documents = load_documents(docs_path= "docs")
+    #Split into chunks
     chunks = split_documents(documents)
-    vectorstore = create_vector_store(chunks)
+    
+    #Create vector store
+    vectorstore = create_vector_store(chunks, persistent_directory)
+    
+    print("\n✅ Ingestion complete! Your documents are now ready for RAG queries.")
+    return vectorstore
 
-    pass
+
+
 
 
 if __name__ == "__main__":

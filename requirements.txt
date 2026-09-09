@@ -4,3 +4,5 @@ langchain_openai
 langchain_chroma
 python_dotenv
 langchain-huggingface sentence-transformers
+ollama 
+llamma3.2

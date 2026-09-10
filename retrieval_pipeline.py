@@ -19,7 +19,7 @@ db = Chroma(
     collection_metadata={"hnsw:space": "cosine"}  
 )
 
-query = "In what year did Tesla begin production of the Roadster"
+query = "Amongst Google and Tesla which companies have a greater value"
 
 #less precise retriever that returns good chunks + few weak chunks
 retriever = db.as_retriever(search_kwargs={"k": 5})

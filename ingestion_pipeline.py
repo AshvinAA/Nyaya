@@ -129,9 +129,5 @@ def main():
     print("\n✅ Ingestion complete! Your documents are now ready for RAG queries.")
     return vectorstore
 
-
-
-
-
 if __name__ == "__main__":
     main()

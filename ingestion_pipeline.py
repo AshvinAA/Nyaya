@@ -68,7 +68,7 @@ def create_vector_store(chunks, persist_directory="db/chroma_db"):
     print(f"Vector store created and saved to {persist_directory}")
     return vectorstore
 
-def split_documents(documents, chunk_size=1000, chunk_overlap=0):
+def split_documents(documents, chunk_size=900, chunk_overlap=100):
     """Split documents into smaller chunks with overlap"""
     print("Splitting documents into chunks...")
     

@@ -31,7 +31,18 @@ def ask_question(user_question):
         ]
         
         result = model.invoke(messages)
-        search_question = result.content.strip()
+        
+        # --- SAFE CONTENT EXTRACTION ---
+        raw_content = result.content
+        if isinstance(raw_content, list):
+            # If Ollama returns a list of content blocks, join them into a string
+            search_question = "".join([item.get("text", "") if isinstance(item, dict) else str(item) for item in raw_content]).strip()
+        elif raw_content is None:
+            search_question = user_question
+        else:
+            search_question = str(raw_content).strip()
+        # -------------------------------
+        
         print(f"Searching for: {search_question}")
     else:
         search_question = user_question

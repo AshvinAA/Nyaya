@@ -34,9 +34,9 @@ Every advanced technique in the pipeline exists because the corpus is genuinely 
 ### Ingestion Pipeline
 
 - **Corpus consolidation with overlay layers** — a manually consolidated base (Labour Act 2006 + ratified 2013/2018 amendments) is the source of truth; the unratified 2025 Ordinance enters as a separately-labeled overlay, never silently merged; authority (`legal_status`) and applicability (`in_force`) are tracked as separate, explicit fields.
-- **Structure-aware chunking** that follows the legal corpus's own hierarchy (Chapter → Section → Clause) rather than naive fixed-size splitting — with a **structural validation gate** so a mis-parsed document can never silently reach the index.
+- **Structure-aware chunking** that follows the legal corpus's own hierarchy (Chapter → Section → Clause) rather than naive fixed-size splitting — with a **structural validation gate** (non-empty node IDs, per-table shape checks) so a mis-parsed document can never silently reach the index, and gazette title pages routed out as document-level metadata (`retrievable: false`), never answer candidates.
 - **Parent-child indexing** so retrieval precision and generation context don't trade off against each other, with **embed-time context injection** (the hierarchical path is embedded, never shown to the LLM as law text).
-- **A separate structured path for data tables** (wage grades, survey statistics) so they aren't destroyed by being flattened into prose.
+- **A separate structured path for data tables** (wage grades, survey statistics) so they aren't destroyed by being flattened into prose — extracted as structured JSON with a validation gate (empty-header and flattened-cell checks; one retry, then quarantine to manual review, never indexed).
 - **Deduplication logic** that removes true redundancy while preserving meaningful version history across amended law.
 
 📄 See [INGESTION_PIPELINE.md](INGESTION_PIPELINE.md) for the full ingestion architecture.

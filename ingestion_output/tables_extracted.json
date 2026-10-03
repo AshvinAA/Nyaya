@@ -2,35 +2,52 @@
  {
   "kind": "table",
   "node": "p026_t00",
+  "retrievable": true,
   "text": "Structured data table with 3 columns: Case No., Last examination on, Last follow-up. It contains 3 data rows and 11 populated cells; sample values: Case No., Last examination on, Last follow-up, the merits, examination.",
   "table_json": {
-   "columns": [
+   "table_id": "p026_t00",
+   "caption": "informed of any developments relating to the following 53 cases.",
+   "col_labels": [
     "Case No.",
     "Last examination on",
     "Last follow-up"
    ],
-   "rows": [
-    [
-     "",
-     "the merits",
-     "examination"
-    ],
-    [
-     "2096 (Pakistan)",
-     "March 2004",
-     "October 2020"
-    ],
-    [
-     "2603 (Argentina)",
-     "November 2008",
-     "November 2012"
-    ]
-   ]
+   "row_labels": [
+    "row_1",
+    "2096 (Pakistan)",
+    "2603 (Argentina)"
+   ],
+   "data": {
+    "row_1": {
+     "Last examination on": "the merits",
+     "Last follow-up": "examination"
+    },
+    "2096 (Pakistan)": {
+     "Last examination on": "March 2004",
+     "Last follow-up": "October 2020"
+    },
+    "2603 (Argentina)": {
+     "Last examination on": "November 2008",
+     "Last follow-up": "November 2012"
+    }
+   },
+   "source_doc": "report_of_the_committee_on_freedom_of_association",
+   "page": 26,
+   "metadata": {
+    "source_type": "international_oversight",
+    "source_act": null,
+    "effective_date": null,
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "reputable_secondary",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 3 columns: Case No., Last examination on, Last follow-up. It contains 3 data rows and 11 populated cells; sample values: Case No., Last examination on, Last follow-up, the merits, examination.",
   "chapter": "report_of_the_committee_on_freedom_of_association",
   "section_marker": "page 26",
-  "section_title": "",
+  "section_title": "informed of any developments relating to the following 53 cases.",
   "extraction_evidence": {
    "n_words": 225,
    "n_chars": 1415,
@@ -46,25 +63,42 @@
  {
   "kind": "table",
   "node": "p027_t00",
+  "retrievable": true,
   "text": "Structured data table with 3 columns: Case No., Last examination on, Last follow-up. It contains 1 data rows and 5 populated cells; sample values: Case No., Last examination on, Last follow-up, the merits, examination.",
   "table_json": {
-   "columns": [
+   "table_id": "p027_t00",
+   "caption": " GB.354/INS/8 27",
+   "col_labels": [
     "Case No.",
     "Last examination on",
     "Last follow-up"
    ],
-   "rows": [
-    [
-     "",
-     "the merits",
-     "examination"
-    ]
-   ]
+   "row_labels": [
+    "row_1"
+   ],
+   "data": {
+    "row_1": {
+     "Last examination on": "the merits",
+     "Last follow-up": "examination"
+    }
+   },
+   "source_doc": "report_of_the_committee_on_freedom_of_association",
+   "page": 27,
+   "metadata": {
+    "source_type": "international_oversight",
+    "source_act": null,
+    "effective_date": null,
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "reputable_secondary",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 3 columns: Case No., Last examination on, Last follow-up. It contains 1 data rows and 5 populated cells; sample values: Case No., Last examination on, Last follow-up, the merits, examination.",
   "chapter": "report_of_the_committee_on_freedom_of_association",
   "section_marker": "page 27",
-  "section_title": "",
+  "section_title": " GB.354/INS/8 27",
   "extraction_evidence": {
    "n_words": 320,
    "n_chars": 2293,
@@ -80,65 +114,72 @@
  {
   "kind": "table",
   "node": "p028_t00",
-  "text": "Structured data table with 3 columns: , Allegations: The complainant organizations, . It contains 9 data rows and 10 populated cells; sample values: Allegations: The complainant organizations, allege that the authorities are interfering in the, work of COSYFOP and hindering its trade union, activities; anti-union measures and judicial, harassment towards members of the.",
+  "retrievable": true,
+  "text": "Structured data table with 2 columns: Allegations: The com, plainant or. It contains 9 data rows and 20 populated cells; sample values: Allegations: The com, plainant or, allege that the autho, rities are i, work of COSYFOP and.",
   "table_json": {
-   "columns": [
-    "",
-    "Allegations: The complainant organizations",
-    ""
+   "table_id": "p028_t00",
+   "caption": "Tobacco and Allied Workers’ Associations (IUF)",
+   "col_labels": [
+    "Allegations: The com",
+    "plainant or"
    ],
-   "rows": [
-    [
-     "",
-     "allege that the authorities are interfering in the",
-     ""
-    ],
-    [
-     "",
-     "work of COSYFOP and hindering its trade union",
-     ""
-    ],
-    [
-     "",
-     "activities; anti-union measures and judicial",
-     ""
-    ],
-    [
-     "",
-     "harassment towards members of the",
-     ""
-    ],
-    [
-     "",
-     "organization; and amendments to the law that",
-     ""
-    ],
-    [
-     "",
-     "would result in criminal punishment for trade",
-     ""
-    ],
-    [
-     "",
-     "union activity in the case of the dissolution of an",
-     ""
-    ],
-    [
-     "",
-     "organization or even classifying certain trade",
-     ""
-    ],
-    [
-     "",
-     "union activities as terrorism",
-     ""
-    ]
-   ]
+   "row_labels": [
+    "allege that the autho",
+    "work of COSYFOP and",
+    "activities; anti-union",
+    "harassment towards",
+    "organization; and am",
+    "would result in crimi",
+    "union activity in the c",
+    "organization or even",
+    "union activities as ter"
+   ],
+   "data": {
+    "allege that the autho": {
+     "plainant or": "rities are i"
+    },
+    "work of COSYFOP and": {
+     "plainant or": "hindering"
+    },
+    "activities; anti-union": {
+     "plainant or": "measures"
+    },
+    "harassment towards": {
+     "plainant or": "members"
+    },
+    "organization; and am": {
+     "plainant or": "endments"
+    },
+    "would result in crimi": {
+     "plainant or": "nal punish"
+    },
+    "union activity in the c": {
+     "plainant or": "ase of the"
+    },
+    "organization or even": {
+     "plainant or": "classifying"
+    },
+    "union activities as ter": {
+     "plainant or": "rorism"
+    }
+   },
+   "source_doc": "report_of_the_committee_on_freedom_of_association",
+   "page": 28,
+   "metadata": {
+    "source_type": "international_oversight",
+    "source_act": null,
+    "effective_date": null,
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "reputable_secondary",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 3 columns: , Allegations: The complainant organizations, . It contains 9 data rows and 10 populated cells; sample values: Allegations: The complainant organizations, allege that the authorities are interfering in the, work of COSYFOP and hindering its trade union, activities; anti-union measures and judicial, harassment towards members of the.",
+  "summary": "Structured data table with 2 columns: Allegations: The com, plainant or. It contains 9 data rows and 20 populated cells; sample values: Allegations: The com, plainant or, allege that the autho, rities are i, work of COSYFOP and.",
   "chapter": "report_of_the_committee_on_freedom_of_association",
   "section_marker": "page 28",
-  "section_title": "",
+  "section_title": "Tobacco and Allied Workers’ Associations (IUF)",
   "extraction_evidence": {
    "n_words": 312,
    "n_chars": 2104,
@@ -153,284 +194,43 @@
  },
  {
   "kind": "table",
-  "node": "p012_t00",
-  "text": "Structured data table with 5 columns: , , 9556, 1 20, . It contains 2 data rows and 7 populated cells; sample values: 9556, 1 20, 37, 23 9, 229 132.",
-  "table_json": {
-   "columns": [
-    "",
-    "",
-    "9556",
-    "1 20",
-    ""
-   ],
-   "rows": [
-    [
-     "37",
-     "23 9",
-     "229 132",
-     "",
-     ""
-    ],
-    [
-     "341",
-     "1 4857",
-     "",
-     "",
-     ""
-    ]
-   ]
-  },
-  "summary": "Structured data table with 5 columns: , , 9556, 1 20, . It contains 2 data rows and 7 populated cells; sample values: 9556, 1 20, 37, 23 9, 229 132.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 12",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 349,
-   "n_chars": 2252,
-   "n_tables": 1,
-   "table_area": 0.141,
-   "table_word_share": 0.023,
-   "one_letter_word_share": 0.026,
-   "top_token_share": 0.063,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(165,122 296x229)"
-  }
- },
- {
-  "kind": "table",
-  "node": "p013_t00",
-  "text": "Structured data table with 25 columns: , , , , 7.8, . It contains 6 data rows and 8 populated cells; sample values: 7.8, 5.6, 5, 2.1 2.3 2.1, 1 0.7.",
-  "table_json": {
-   "columns": [
-    "",
-    "",
-    "",
-    "",
-    "7.8",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    ""
-   ],
-   "rows": [
-    [
-     "5.6",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     ""
-    ],
-    [
-     "",
-     "",
-     "",
-     "",
-     "5",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     ""
-    ],
-    [
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "2.1 2.3 2.1",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     ""
-    ],
-    [
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "1 0.7",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     ""
-    ],
-    [
-     "-1",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "-1",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     ""
-    ],
-    [
-     "-3",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     "",
-     ""
-    ]
-   ]
-  },
-  "summary": "Structured data table with 25 columns: , , , , 7.8, . It contains 6 data rows and 8 populated cells; sample values: 7.8, 5.6, 5, 2.1 2.3 2.1, 1 0.7.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 13",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 274,
-   "n_chars": 1969,
-   "n_tables": 1,
-   "table_area": 0.127,
-   "table_word_share": 0.058,
-   "one_letter_word_share": 0.055,
-   "top_token_share": 0.033,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(105,143 398x154)"
-  }
- },
- {
-  "kind": "table",
   "node": "p014_t00",
+  "retrievable": true,
   "text": "Structured data table with 3 columns: Indonesia, Cambodia, India. It contains 1 data rows and 6 populated cells; sample values: Indonesia, Cambodia, India, • The specific industry can generate added value to the local economy. • Must be higher than the provincial minimum wage (usually by 5 per cent and higher) • The industry involves a large number of businesses, • Family situation • Inflation rate • Cost of living • Productivity • Competitiveness of the country • Labour market situation • Profitability of the sector.",
   "table_json": {
-   "columns": [
+   "table_id": "p014_t00",
+   "caption": "Table 1: Criteria for setting minimum wage in Indonesia and Cambodia",
+   "col_labels": [
     "Indonesia",
     "Cambodia",
     "India"
    ],
-   "rows": [
-    [
-     "• The specific industry can generate added value to the local economy. • Must be higher than the provincial minimum wage (usually by 5 per cent and higher) • The industry involves a large number of businesses",
-     "• Family situation • Inflation rate • Cost of living • Productivity • Competitiveness of the country • Labour market situation • Profitability of the sector",
-     "• Minimum wages are set by the state governments • Criteria include unskilled, semi- skilled, skilled, and highly skilled work categories, as well as occupation-based categories • Geographic location and worker’s age are also taken into consideration • Minimum wage rates can differ across occupations, skills, sectors, and regions"
-    ]
-   ]
+   "row_labels": [
+    "• The specific industry can generate added value to the local economy. • Must be higher than the provincial minimum wage (usually by 5 per cent and higher) • The industry involves a large number of businesses"
+   ],
+   "data": {
+    "• The specific industry can generate added value to the local economy. • Must be higher than the provincial minimum wage (usually by 5 per cent and higher) • The industry involves a large number of businesses": {
+     "Cambodia": "• Family situation • Inflation rate • Cost of living • Productivity • Competitiveness of the country • Labour market situation • Profitability of the sector",
+     "India": "• Minimum wages are set by the state governments • Criteria include unskilled, semi- skilled, skilled, and highly skilled work categories, as well as occupation-based categories • Geographic location and worker’s age are also taken into consideration • Minimum wage rates can differ across occupations, skills, sectors, and regions"
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 14,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 3 columns: Indonesia, Cambodia, India. It contains 1 data rows and 6 populated cells; sample values: Indonesia, Cambodia, India, • The specific industry can generate added value to the local economy. • Must be higher than the provincial minimum wage (usually by 5 per cent and higher) • The industry involves a large number of businesses, • Family situation • Inflation rate • Cost of living • Productivity • Competitiveness of the country • Labour market situation • Profitability of the sector.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 14",
-  "section_title": "",
+  "section_title": "Table 1: Criteria for setting minimum wage in Indonesia and Cambodia",
   "extraction_evidence": {
    "n_words": 451,
    "n_chars": 3157,
@@ -446,43 +246,60 @@
  {
   "kind": "table",
   "node": "p014_t01",
+  "retrievable": true,
   "text": "Structured data table with 2 columns: Country, Minimum wage components. It contains 6 data rows and 14 populated cells; sample values: Country, Minimum wage components, Armenia, Basic wage, excluding wage supplements, bonuses and other incentives, Azerbaijan.",
   "table_json": {
-   "columns": [
+   "table_id": "p014_t01",
+   "caption": "Table 2: Minimum wage components in different countries",
+   "col_labels": [
     "Country",
     "Minimum wage components"
    ],
-   "rows": [
-    [
-     "Armenia",
-     "Basic wage, excluding wage supplements, bonuses and other incentives"
-    ],
-    [
-     "Azerbaijan",
-     "Basic wage, excluding bonuses"
-    ],
-    [
-     "Bahamas",
-     "Basic wage, excluding tips, bonuses, and other gratuities"
-    ],
-    [
-     "China",
-     "Basic wage, excluding allowances for shift work, night work, and special working conditions"
-    ],
-    [
-     "Guinea-Bissau",
-     "Basic wage, excluding compensation for risks, isolation and other conditions, gifts, bonuses, and equivalent services"
-    ],
-    [
-     "Israel",
-     "Basic wage, excluding family allowances, seniority bonuses, shift work allowances, the 13th month’s wage, and reimbursement of expenses"
-    ]
-   ]
+   "row_labels": [
+    "Armenia",
+    "Azerbaijan",
+    "Bahamas",
+    "China",
+    "Guinea-Bissau",
+    "Israel"
+   ],
+   "data": {
+    "Armenia": {
+     "Minimum wage components": "Basic wage, excluding wage supplements, bonuses and other incentives"
+    },
+    "Azerbaijan": {
+     "Minimum wage components": "Basic wage, excluding bonuses"
+    },
+    "Bahamas": {
+     "Minimum wage components": "Basic wage, excluding tips, bonuses, and other gratuities"
+    },
+    "China": {
+     "Minimum wage components": "Basic wage, excluding allowances for shift work, night work, and special working conditions"
+    },
+    "Guinea-Bissau": {
+     "Minimum wage components": "Basic wage, excluding compensation for risks, isolation and other conditions, gifts, bonuses, and equivalent services"
+    },
+    "Israel": {
+     "Minimum wage components": "Basic wage, excluding family allowances, seniority bonuses, shift work allowances, the 13th month’s wage, and reimbursement of expenses"
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 14,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 2 columns: Country, Minimum wage components. It contains 6 data rows and 14 populated cells; sample values: Country, Minimum wage components, Armenia, Basic wage, excluding wage supplements, bonuses and other incentives, Azerbaijan.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 14",
-  "section_title": "",
+  "section_title": "Table 2: Minimum wage components in different countries",
   "extraction_evidence": {
    "n_words": 451,
    "n_chars": 3157,
@@ -498,35 +315,52 @@
  {
   "kind": "table",
   "node": "p015_t00",
+  "retrievable": true,
   "text": "Structured data table with 2 columns: Country, Minimum wage components. It contains 4 data rows and 10 populated cells; sample values: Country, Minimum wage components, Kyrgyzstan, Basic wage, excluding bonuses and payments for work performed in special climate condi-tions and areas affected by radioactive contamination, Nepal.",
   "table_json": {
-   "columns": [
+   "table_id": "p015_t00",
+   "caption": "(Table 2 contd.)",
+   "col_labels": [
     "Country",
     "Minimum wage components"
    ],
-   "rows": [
-    [
-     "Kyrgyzstan",
-     "Basic wage, excluding bonuses and payments for work performed in special climate condi-tions and areas affected by radioactive contamination"
-    ],
-    [
-     "Nepal",
-     "Basic wage, excluding allowances and other benefits"
-    ],
-    [
-     "Cambodia",
-     "Basic wage, excluding benefits provided by employers solely to help workers perform their duties"
-    ],
-    [
-     "Brazil",
-     "Total remuneration received by an employee, including basic wage and contractual or agreed bonuses and allowances"
-    ]
-   ]
+   "row_labels": [
+    "Kyrgyzstan",
+    "Nepal",
+    "Cambodia",
+    "Brazil"
+   ],
+   "data": {
+    "Kyrgyzstan": {
+     "Minimum wage components": "Basic wage, excluding bonuses and payments for work performed in special climate condi-tions and areas affected by radioactive contamination"
+    },
+    "Nepal": {
+     "Minimum wage components": "Basic wage, excluding allowances and other benefits"
+    },
+    "Cambodia": {
+     "Minimum wage components": "Basic wage, excluding benefits provided by employers solely to help workers perform their duties"
+    },
+    "Brazil": {
+     "Minimum wage components": "Total remuneration received by an employee, including basic wage and contractual or agreed bonuses and allowances"
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 15,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 2 columns: Country, Minimum wage components. It contains 4 data rows and 10 populated cells; sample values: Country, Minimum wage components, Kyrgyzstan, Basic wage, excluding bonuses and payments for work performed in special climate condi-tions and areas affected by radioactive contamination, Nepal.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 15",
-  "section_title": "",
+  "section_title": "(Table 2 contd.)",
   "extraction_evidence": {
    "n_words": 534,
    "n_chars": 3302,
@@ -542,69 +376,86 @@
  {
   "kind": "table",
   "node": "p016_t00",
+  "retrievable": true,
   "text": "Structured data table with 4 columns: Countries, Minimum wage adjusted to current USD rate (Monthly), Per capita GDP in USD, Percentage of Min wage in Per capita GDP. It contains 8 data rows and 36 populated cells; sample values: Countries, Minimum wage adjusted to current USD rate (Monthly), Per capita GDP in USD, Percentage of Min wage in Per capita GDP, Bangladesh.",
   "table_json": {
-   "columns": [
+   "table_id": "p016_t00",
+   "caption": "Table 3: Minimum wage and per capita GDP in selected apparel exporting countries.",
+   "col_labels": [
     "Countries",
     "Minimum wage adjusted to current USD rate (Monthly)",
     "Per capita GDP in USD",
     "Percentage of Min wage in Per capita GDP"
    ],
-   "rows": [
-    [
-     "Bangladesh",
-     "72.42",
-     "2,470",
-     "2.93"
-    ],
-    [
-     "Cambodia",
-     "200.00",
-     "1,900",
-     "10.53"
-    ],
-    [
-     "China",
-     "303.59",
-     "13,720",
-     "2.21"
-    ],
-    [
-     "India",
-     "171.18",
-     "2,600",
-     "6.58"
-    ],
-    [
-     "Indonesia",
-     "242.94",
-     "4,788",
-     "5.07"
-    ],
-    [
-     "Pakistan",
-     "110.59",
-     "1,535",
-     "7.20"
-    ],
-    [
-     "Sri Lanka",
-     "38.47",
-     "3988",
-     "0.96"
-    ],
-    [
-     "Vietnam",
-     "170.35",
-     "4480",
-     "3.80"
-    ]
-   ]
+   "row_labels": [
+    "Bangladesh",
+    "Cambodia",
+    "China",
+    "India",
+    "Indonesia",
+    "Pakistan",
+    "Sri Lanka",
+    "Vietnam"
+   ],
+   "data": {
+    "Bangladesh": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 72.42,
+     "Per capita GDP in USD": 2470,
+     "Percentage of Min wage in Per capita GDP": 2.93
+    },
+    "Cambodia": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 200.0,
+     "Per capita GDP in USD": 1900,
+     "Percentage of Min wage in Per capita GDP": 10.53
+    },
+    "China": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 303.59,
+     "Per capita GDP in USD": 13720,
+     "Percentage of Min wage in Per capita GDP": 2.21
+    },
+    "India": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 171.18,
+     "Per capita GDP in USD": 2600,
+     "Percentage of Min wage in Per capita GDP": 6.58
+    },
+    "Indonesia": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 242.94,
+     "Per capita GDP in USD": 4788,
+     "Percentage of Min wage in Per capita GDP": 5.07
+    },
+    "Pakistan": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 110.59,
+     "Per capita GDP in USD": 1535,
+     "Percentage of Min wage in Per capita GDP": 7.2
+    },
+    "Sri Lanka": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 38.47,
+     "Per capita GDP in USD": 3988,
+     "Percentage of Min wage in Per capita GDP": 0.96
+    },
+    "Vietnam": {
+     "Minimum wage adjusted to current USD rate (Monthly)": 170.35,
+     "Per capita GDP in USD": 4480,
+     "Percentage of Min wage in Per capita GDP": 3.8
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 16,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 4 columns: Countries, Minimum wage adjusted to current USD rate (Monthly), Per capita GDP in USD, Percentage of Min wage in Per capita GDP. It contains 8 data rows and 36 populated cells; sample values: Countries, Minimum wage adjusted to current USD rate (Monthly), Per capita GDP in USD, Percentage of Min wage in Per capita GDP, Bangladesh.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 16",
-  "section_title": "",
+  "section_title": "Table 3: Minimum wage and per capita GDP in selected apparel exporting countries.",
   "extraction_evidence": {
    "n_words": 316,
    "n_chars": 2014,
@@ -620,90 +471,107 @@
  {
   "kind": "table",
   "node": "p017_t00",
-  "text": "Structured data table with 3 columns: Category, Percentage of factories surveyed, . It contains 14 data rows and 33 populated cells; sample values: Category, Percentage of factories surveyed, Size-wise, Large, 7.9.",
+  "retrievable": true,
+  "text": "Structured data table with 3 columns: Category, Percentage of factories surveye, d. It contains 14 data rows and 34 populated cells; sample values: Category, Percentage of factories surveye, d, Size-wise, Large.",
   "table_json": {
-   "columns": [
+   "table_id": "p017_t00",
+   "caption": "Table 4: Distribution of surveyed factories",
+   "col_labels": [
     "Category",
-    "Percentage of factories surveyed",
-    ""
+    "Percentage of factories surveye",
+    "d"
    ],
-   "rows": [
-    [
-     "Size-wise",
-     "Large",
-     "7.9"
-    ],
-    [
-     "",
-     "Medium",
-     "39.5"
-    ],
-    [
-     "",
-     "Small",
-     "52.6"
-    ],
-    [
-     "",
-     "Total",
-     "100.0"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "38.2"
-    ],
-    [
-     "",
-     "Gazipur",
-     "34.2"
-    ],
-    [
-     "",
-     "Chattogram",
-     "10.5"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "17.1"
-    ],
-    [
-     "",
-     "Total",
-     "100.0"
-    ],
-    [
-     "Membership-wise",
-     "Non-Member",
-     "25.0"
-    ],
-    [
-     "",
-     "BGMEA",
-     "51.3"
-    ],
-    [
-     "",
-     "BKMEA",
-     "15.8"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "7.9"
-    ],
-    [
-     "",
-     "Total",
-     "100.0"
-    ]
-   ]
+   "row_labels": [
+    "Size-wise",
+    "row_2",
+    "row_3",
+    "row_4",
+    "Location-wise",
+    "row_6",
+    "row_7",
+    "row_8",
+    "row_9",
+    "Membership-wise",
+    "row_11",
+    "row_12",
+    "row_13",
+    "row_14"
+   ],
+   "data": {
+    "Size-wise": {
+     "Percentage of factories surveye": "Large",
+     "d": 7.9
+    },
+    "row_2": {
+     "Percentage of factories surveye": "Medium",
+     "d": 39.5
+    },
+    "row_3": {
+     "Percentage of factories surveye": "Small",
+     "d": 52.6
+    },
+    "row_4": {
+     "Percentage of factories surveye": "Total",
+     "d": 100.0
+    },
+    "Location-wise": {
+     "Percentage of factories surveye": "Dhaka",
+     "d": 38.2
+    },
+    "row_6": {
+     "Percentage of factories surveye": "Gazipur",
+     "d": 34.2
+    },
+    "row_7": {
+     "Percentage of factories surveye": "Chattogram",
+     "d": 10.5
+    },
+    "row_8": {
+     "Percentage of factories surveye": "Narayanganj",
+     "d": 17.1
+    },
+    "row_9": {
+     "Percentage of factories surveye": "Total",
+     "d": 100.0
+    },
+    "Membership-wise": {
+     "Percentage of factories surveye": "Non-Member",
+     "d": 25.0
+    },
+    "row_11": {
+     "Percentage of factories surveye": "BGMEA",
+     "d": 51.3
+    },
+    "row_12": {
+     "Percentage of factories surveye": "BKMEA",
+     "d": 15.8
+    },
+    "row_13": {
+     "Percentage of factories surveye": "BGMEA & BKMEA",
+     "d": 7.9
+    },
+    "row_14": {
+     "Percentage of factories surveye": "Total",
+     "d": 100.0
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 17,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 3 columns: Category, Percentage of factories surveyed, . It contains 14 data rows and 33 populated cells; sample values: Category, Percentage of factories surveyed, Size-wise, Large, 7.9.",
+  "summary": "Structured data table with 3 columns: Category, Percentage of factories surveye, d. It contains 14 data rows and 34 populated cells; sample values: Category, Percentage of factories surveye, d, Size-wise, Large.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 17",
-  "section_title": "",
+  "section_title": "Table 4: Distribution of surveyed factories",
   "extraction_evidence": {
    "n_words": 309,
    "n_chars": 2003,
@@ -718,258 +586,117 @@
  },
  {
   "kind": "table",
-  "node": "p018_t00",
-  "text": "Structured data table with 5 columns: Category, , Male, Female, Overall. It contains 19 data rows and 84 populated cells; sample values: Category, Male, Female, Overall, % of surveyed respondent.",
-  "table_json": {
-   "columns": [
-    "Category",
-    "",
-    "Male",
-    "Female",
-    "Overall"
-   ],
-   "rows": [
-    [
-     "% of surveyed respondent",
-     "",
-     "46.0",
-     "54.0",
-     "100.0"
-    ],
-    [
-     "Mean age",
-     "",
-     "29.0",
-     "27.0",
-     "27.9"
-    ],
-    [
-     "Area",
-     "Dhaka",
-     "37.5",
-     "38.7",
-     "38.2"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "35.6",
-     "33.1",
-     "34.2"
-    ],
-    [
-     "",
-     "Gazipur",
-     "15.4",
-     "6.5",
-     "10.5"
-    ],
-    [
-     "",
-     "Chattogram",
-     "11.5",
-     "21.8",
-     "17.1"
-    ],
-    [
-     "Educational Qualification",
-     "Never gone to school",
-     "1.0",
-     "4.8",
-     "3.1"
-    ],
-    [
-     "",
-     "Class 1- 5",
-     "28.8",
-     "37.1",
-     "33.3"
-    ],
-    [
-     "",
-     "Class 6 - 10",
-     "48.1",
-     "45.2",
-     "46.5"
-    ],
-    [
-     "",
-     "SSC passed",
-     "14.4",
-     "11.3",
-     "12.7"
-    ],
-    [
-     "",
-     "HSC passed",
-     "5.8",
-     "1.6",
-     "3.5"
-    ],
-    [
-     "",
-     "More than HSC",
-     "1.9",
-     "0.0",
-     "0.9"
-    ],
-    [
-     "Marital status",
-     "Never married",
-     "22.1",
-     "12.9",
-     "17.1"
-    ],
-    [
-     "",
-     "Married",
-     "77.9",
-     "84.7",
-     "81.6"
-    ],
-    [
-     "",
-     "Widower/Widow",
-     "0.0",
-     "1.6",
-     "0.9"
-    ],
-    [
-     "",
-     "Divorced",
-     "0.0",
-     "0.8",
-     "0.4"
-    ],
-    [
-     "Type of employment",
-     "Contractual",
-     "3.8",
-     "0.8",
-     "2.2"
-    ],
-    [
-     "",
-     "Permanent",
-     "92.3",
-     "88.7",
-     "90.4"
-    ],
-    [
-     "",
-     "Others",
-     "3.8",
-     "10.5",
-     "7.5"
-    ]
-   ]
-  },
-  "summary": "Structured data table with 5 columns: Category, , Male, Female, Overall. It contains 19 data rows and 84 populated cells; sample values: Category, Male, Female, Overall, % of surveyed respondent.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 18",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 402,
-   "n_chars": 2533,
-   "n_tables": 1,
-   "table_area": 0.277,
-   "table_word_share": 0.261,
-   "one_letter_word_share": 0.022,
-   "top_token_share": 0.055,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(72,214 453x295)"
-  }
- },
- {
-  "kind": "table",
   "node": "p020_t00",
-  "text": "Structured data table with 4 columns: Category, , Factories practice grading (per cent), Factories do not practice grading (per cent). It contains 12 data rows and 42 populated cells; sample values: Category, Factories practice grading (per cent), Factories do not practice grading (per cent), Overall, 57.9.",
+  "retrievable": true,
+  "text": "Structured data table with 4 columns: Category, Facto, ries practice Factories d, o n. It contains 13 data rows and 46 populated cells; sample values: Category, Facto, ries practice Factories d, o n, gradin.",
   "table_json": {
-   "columns": [
+   "table_id": "p020_t00",
+   "caption": "Table 6: Status of the surveyed factories in terms of availability of grading system",
+   "col_labels": [
     "Category",
-    "",
-    "Factories practice grading (per cent)",
-    "Factories do not practice grading (per cent)"
+    "Facto",
+    "ries practice Factories d",
+    "o n"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "57.9",
-     "42.1"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "83.3",
-     "16.7"
-    ],
-    [
-     "",
-     "Medium",
-     "76.7",
-     "23.3"
-    ],
-    [
-     "",
-     "Small",
-     "40.0",
-     "60.0"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "37.9",
-     "62.1"
-    ],
-    [
-     "",
-     "Gazipur",
-     "73.1",
-     "26.9"
-    ],
-    [
-     "",
-     "Chattogram",
-     "100.0",
-     "0.0"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "46.2",
-     "53.8"
-    ],
-    [
-     "Membership-wise",
-     "Non-Member",
-     "21.1",
-     "78.9"
-    ],
-    [
-     "",
-     "BGMEA",
-     "61.5",
-     "38.5"
-    ],
-    [
-     "",
-     "BKMEA",
-     "91.7",
-     "8.3"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "83.3",
-     "16.7"
-    ]
-   ]
+   "row_labels": [
+    "row_1",
+    "Overall",
+    "Size-wise",
+    "row_4",
+    "row_5",
+    "Location-wise",
+    "row_7",
+    "row_8",
+    "row_9",
+    "Membership-wise",
+    "row_11",
+    "row_12",
+    "row_13"
+   ],
+   "data": {
+    "row_1": {
+     "Facto": "gradin",
+     "ries practice Factories d": "g (per cent) gradin",
+     "o n": "g (p"
+    },
+    "Overall": {
+     "Facto": "",
+     "ries practice Factories d": 57.9,
+     "o n": 42.1
+    },
+    "Size-wise": {
+     "Facto": "Large",
+     "ries practice Factories d": 83.3,
+     "o n": 16.7
+    },
+    "row_4": {
+     "Facto": "Medium",
+     "ries practice Factories d": 76.7,
+     "o n": 23.3
+    },
+    "row_5": {
+     "Facto": "Small",
+     "ries practice Factories d": 40.0,
+     "o n": 60.0
+    },
+    "Location-wise": {
+     "Facto": "Dhaka",
+     "ries practice Factories d": 37.9,
+     "o n": 62.1
+    },
+    "row_7": {
+     "Facto": "Gazipur",
+     "ries practice Factories d": 73.1,
+     "o n": 26.9
+    },
+    "row_8": {
+     "Facto": "Chattogram",
+     "ries practice Factories d": 100.0,
+     "o n": 0.0
+    },
+    "row_9": {
+     "Facto": "Narayanganj",
+     "ries practice Factories d": 46.2,
+     "o n": 53.8
+    },
+    "Membership-wise": {
+     "Facto": "Non-Member",
+     "ries practice Factories d": 21.1,
+     "o n": 78.9
+    },
+    "row_11": {
+     "Facto": "BGMEA",
+     "ries practice Factories d": 61.5,
+     "o n": 38.5
+    },
+    "row_12": {
+     "Facto": "BKMEA",
+     "ries practice Factories d": 91.7,
+     "o n": 8.3
+    },
+    "row_13": {
+     "Facto": "BGMEA & BKMEA",
+     "ries practice Factories d": 83.3,
+     "o n": 16.7
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 20,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 4 columns: Category, , Factories practice grading (per cent), Factories do not practice grading (per cent). It contains 12 data rows and 42 populated cells; sample values: Category, Factories practice grading (per cent), Factories do not practice grading (per cent), Overall, 57.9.",
+  "summary": "Structured data table with 4 columns: Category, Facto, ries practice Factories d, o n. It contains 13 data rows and 46 populated cells; sample values: Category, Facto, ries practice Factories d, o n, gradin.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 20",
-  "section_title": "",
+  "section_title": "Table 6: Status of the surveyed factories in terms of availability of grading system",
   "extraction_evidence": {
    "n_words": 347,
    "n_chars": 2064,
@@ -985,65 +712,82 @@
  {
   "kind": "table",
   "node": "p020_t01",
+  "retrievable": true,
   "text": "Structured data table with 3 columns: Grade, At present (per cent of workers), When joined (per cent of workers). It contains 9 data rows and 30 populated cells; sample values: Grade, At present (per cent of workers), When joined (per cent of workers), Grade 1, 0.0.",
   "table_json": {
-   "columns": [
+   "table_id": "p020_t01",
+   "caption": "Table 7: Grade-wise distribution of surveyed workers",
+   "col_labels": [
     "Grade",
     "At present (per cent of workers)",
     "When joined (per cent of workers)"
    ],
-   "rows": [
-    [
-     "Grade 1",
-     "0.0",
-     "0.0"
-    ],
-    [
-     "Grade 2",
-     "0.0",
-     "0.0"
-    ],
-    [
-     "Grade 3",
-     "0.0",
-     "0.0"
-    ],
-    [
-     "Grade 4",
-     "7.5",
-     "0.9"
-    ],
-    [
-     "Grade 5",
-     "14.5",
-     "4.4"
-    ],
-    [
-     "Grade 6",
-     "11.4",
-     "8.3"
-    ],
-    [
-     "Grade 7",
-     "7.0",
-     "22.8"
-    ],
-    [
-     "Not sure",
-     "31.1",
-     "35.5"
-    ],
-    [
-     "Do not have any grade in the factory",
-     "28.5",
-     "28.1"
-    ]
-   ]
+   "row_labels": [
+    "Grade 1",
+    "Grade 2",
+    "Grade 3",
+    "Grade 4",
+    "Grade 5",
+    "Grade 6",
+    "Grade 7",
+    "Not sure",
+    "Do not have any grade in the factory"
+   ],
+   "data": {
+    "Grade 1": {
+     "At present (per cent of workers)": 0.0,
+     "When joined (per cent of workers)": 0.0
+    },
+    "Grade 2": {
+     "At present (per cent of workers)": 0.0,
+     "When joined (per cent of workers)": 0.0
+    },
+    "Grade 3": {
+     "At present (per cent of workers)": 0.0,
+     "When joined (per cent of workers)": 0.0
+    },
+    "Grade 4": {
+     "At present (per cent of workers)": 7.5,
+     "When joined (per cent of workers)": 0.9
+    },
+    "Grade 5": {
+     "At present (per cent of workers)": 14.5,
+     "When joined (per cent of workers)": 4.4
+    },
+    "Grade 6": {
+     "At present (per cent of workers)": 11.4,
+     "When joined (per cent of workers)": 8.3
+    },
+    "Grade 7": {
+     "At present (per cent of workers)": 7.0,
+     "When joined (per cent of workers)": 22.8
+    },
+    "Not sure": {
+     "At present (per cent of workers)": 31.1,
+     "When joined (per cent of workers)": 35.5
+    },
+    "Do not have any grade in the factory": {
+     "At present (per cent of workers)": 28.5,
+     "When joined (per cent of workers)": 28.1
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 20,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 3 columns: Grade, At present (per cent of workers), When joined (per cent of workers). It contains 9 data rows and 30 populated cells; sample values: Grade, At present (per cent of workers), When joined (per cent of workers), Grade 1, 0.0.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 20",
-  "section_title": "",
+  "section_title": "Table 7: Grade-wise distribution of surveyed workers",
   "extraction_evidence": {
    "n_words": 347,
    "n_chars": 2064,
@@ -1059,80 +803,102 @@
  {
   "kind": "table",
   "node": "p021_t00",
-  "text": "Structured data table with 3 columns: Category, , Training/educational sessions arranged on wage-related issues by factories (per cent). It contains 12 data rows and 29 populated cells; sample values: Category, Training/educational sessions arranged on wage-related issues by factories (per cent), Overall, 63.2, Size-wise.",
+  "retrievable": true,
+  "text": "Structured data table with 3 columns: Category, Training/educati, onal. It contains 13 data rows and 32 populated cells; sample values: Category, Training/educati, onal, wage-related iss, ues b.",
   "table_json": {
-   "columns": [
+   "table_id": "p021_t00",
+   "caption": "issues",
+   "col_labels": [
     "Category",
-    "",
-    "Training/educational sessions arranged on wage-related issues by factories (per cent)"
+    "Training/educati",
+    "onal"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "63.2"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "100.0"
-    ],
-    [
-     "",
-     "Medium",
-     "76.7"
-    ],
-    [
-     "",
-     "Small",
-     "47.5"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "55.2"
-    ],
-    [
-     "",
-     "Gazipur",
-     "73.1"
-    ],
-    [
-     "",
-     "Chattogram",
-     "87.5"
-    ],
-    [
-     "",
-     "Narayangonj",
-     "46.2"
-    ],
-    [
-     "Membership -wise",
-     "Non-Member",
-     "26.3"
-    ],
-    [
-     "",
-     "BGMEA",
-     "74.4"
-    ],
-    [
-     "",
-     "BKMEA",
-     "83.3"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "66.7"
-    ]
-   ]
+   "row_labels": [
+    "row_1",
+    "Overall",
+    "Size-wise",
+    "row_4",
+    "row_5",
+    "Location-wise",
+    "row_7",
+    "row_8",
+    "row_9",
+    "Membership -wise",
+    "row_11",
+    "row_12",
+    "row_13"
+   ],
+   "data": {
+    "row_1": {
+     "Training/educati": "wage-related iss",
+     "onal": "ues b"
+    },
+    "Overall": {
+     "Training/educati": "",
+     "onal": 63.2
+    },
+    "Size-wise": {
+     "Training/educati": "Large",
+     "onal": 100.0
+    },
+    "row_4": {
+     "Training/educati": "Medium",
+     "onal": 76.7
+    },
+    "row_5": {
+     "Training/educati": "Small",
+     "onal": 47.5
+    },
+    "Location-wise": {
+     "Training/educati": "Dhaka",
+     "onal": 55.2
+    },
+    "row_7": {
+     "Training/educati": "Gazipur",
+     "onal": 73.1
+    },
+    "row_8": {
+     "Training/educati": "Chattogram",
+     "onal": 87.5
+    },
+    "row_9": {
+     "Training/educati": "Narayangonj",
+     "onal": 46.2
+    },
+    "Membership -wise": {
+     "Training/educati": "Non-Member",
+     "onal": 26.3
+    },
+    "row_11": {
+     "Training/educati": "BGMEA",
+     "onal": 74.4
+    },
+    "row_12": {
+     "Training/educati": "BKMEA",
+     "onal": 83.3
+    },
+    "row_13": {
+     "Training/educati": "BGMEA & BKMEA",
+     "onal": 66.7
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 21,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 3 columns: Category, , Training/educational sessions arranged on wage-related issues by factories (per cent). It contains 12 data rows and 29 populated cells; sample values: Category, Training/educational sessions arranged on wage-related issues by factories (per cent), Overall, 63.2, Size-wise.",
+  "summary": "Structured data table with 3 columns: Category, Training/educati, onal. It contains 13 data rows and 32 populated cells; sample values: Category, Training/educati, onal, wage-related iss, ues b.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 21",
-  "section_title": "",
+  "section_title": "issues",
   "extraction_evidence": {
    "n_words": 328,
    "n_chars": 2158,
@@ -1148,119 +914,176 @@
  {
   "kind": "table",
   "node": "p022_t00",
-  "text": "Structured data table with 6 columns: Category, , Has WPC Committee (per cent of factories), Wage issue is discussed in PC Committee meeting (per cent of factories), Aware of minimum wage regulations (per cent of factories), Maintain wage-related information (per cent of factories). It contains 12 data rows and 68 populated cells; sample values: Category, Has WPC Committee (per cent of factories), Wage issue is discussed in PC Committee meeting (per cent of factories), Aware of minimum wage regulations (per cent of factories), Maintain wage-related information (per cent of factories).",
+  "retrievable": true,
+  "text": "Structured data table with 6 columns: Category, H, as WPC Wa, ge issue is, Aware of M, aint. It contains 17 data rows and 91 populated cells; sample values: Category, H, as WPC Wa, ge issue is, Aware of M.",
   "table_json": {
-   "columns": [
+   "table_id": "p022_t00",
+   "caption": "Table 9: Different indicators regarding wage and others (per centof surveyed factories)",
+   "col_labels": [
     "Category",
-    "",
-    "Has WPC Committee (per cent of factories)",
-    "Wage issue is discussed in PC Committee meeting (per cent of factories)",
-    "Aware of minimum wage regulations (per cent of factories)",
-    "Maintain wage-related information (per cent of factories)"
+    "H",
+    "as WPC Wa",
+    "ge issue is",
+    "Aware of M",
+    "aint"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "72.4",
-     "80.0",
-     "69.7",
-     "97.4"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "100.0",
-     "83.3",
-     "66.7",
-     "100.0"
-    ],
-    [
-     "",
-     "Medium",
-     "93.3",
-     "85.7",
-     "73.3",
-     "100.0"
-    ],
-    [
-     "",
-     "Small",
-     "52.5",
-     "71.4",
-     "67.5",
-     "95.0"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "55.2",
-     "100.0",
-     "69.0",
-     "100.0"
-    ],
-    [
-     "",
-     "Gazipur",
-     "92.3",
-     "87.5",
-     "61.5",
-     "100.0"
-    ],
-    [
-     "",
-     "Chattogram",
-     "87.5",
-     "42.9",
-     "100.0",
-     "100.0"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "61.5",
-     "50.0",
-     "69.2",
-     "84.6"
-    ],
-    [
-     "Membership- wise",
-     "Non-Member",
-     "31.6",
-     "100.0",
-     "52.6",
-     "89.5"
-    ],
-    [
-     "",
-     "BGMEA",
-     "84.6",
-     "93.9",
-     "66.7",
-     "100.0"
-    ],
-    [
-     "",
-     "BKMEA",
-     "83.3",
-     "40.0",
-     "100.0",
-     "100.0"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "100.0",
-     "50.0",
-     "83.3",
-     "100.0"
-    ]
-   ]
+   "row_labels": [
+    "row_1",
+    "row_2",
+    "row_3",
+    "row_4",
+    "row_5",
+    "Overall",
+    "Size-wise",
+    "row_8",
+    "row_9",
+    "Location-wise",
+    "row_11",
+    "row_12",
+    "row_13",
+    "Membership-",
+    "wise",
+    "row_16",
+    "row_17"
+   ],
+   "data": {
+    "row_1": {
+     "H": "Co",
+     "as WPC Wa": "mmittee dis",
+     "ge issue is": "cussed in",
+     "Aware of M": "minimum wage wa",
+     "aint": "ge-re"
+    },
+    "row_2": {
+     "H": "(p",
+     "as WPC Wa": "er cent of PC",
+     "ge issue is": "Committee",
+     "Aware of M": "regulations inf",
+     "aint": "orma"
+    },
+    "row_3": {
+     "H": "fa",
+     "as WPC Wa": "ctories)",
+     "ge issue is": "meeting",
+     "Aware of M": "(per cent of (p",
+     "aint": "er cen"
+    },
+    "row_4": {
+     "H": "",
+     "as WPC Wa": "(p",
+     "ge issue is": "er cent of",
+     "Aware of M": "factories) fa",
+     "aint": "ctori"
+    },
+    "row_5": {
+     "H": "",
+     "as WPC Wa": "fa",
+     "ge issue is": "ctories)",
+     "Aware of M": "",
+     "aint": ""
+    },
+    "Overall": {
+     "H": "",
+     "as WPC Wa": 72.4,
+     "ge issue is": 80.0,
+     "Aware of M": 69.7,
+     "aint": 97.4
+    },
+    "Size-wise": {
+     "H": "Large",
+     "as WPC Wa": 100.0,
+     "ge issue is": 83.3,
+     "Aware of M": 66.7,
+     "aint": 100.0
+    },
+    "row_8": {
+     "H": "Medium",
+     "as WPC Wa": 93.3,
+     "ge issue is": 85.7,
+     "Aware of M": 73.3,
+     "aint": 100.0
+    },
+    "row_9": {
+     "H": "Small",
+     "as WPC Wa": 52.5,
+     "ge issue is": 71.4,
+     "Aware of M": 67.5,
+     "aint": 95.0
+    },
+    "Location-wise": {
+     "H": "Dhaka",
+     "as WPC Wa": 55.2,
+     "ge issue is": 100.0,
+     "Aware of M": 69.0,
+     "aint": 100.0
+    },
+    "row_11": {
+     "H": "Gazipur",
+     "as WPC Wa": 92.3,
+     "ge issue is": 87.5,
+     "Aware of M": 61.5,
+     "aint": 100.0
+    },
+    "row_12": {
+     "H": "Chattogram",
+     "as WPC Wa": 87.5,
+     "ge issue is": 42.9,
+     "Aware of M": 100.0,
+     "aint": 100.0
+    },
+    "row_13": {
+     "H": "Narayanganj",
+     "as WPC Wa": 61.5,
+     "ge issue is": 50.0,
+     "Aware of M": 69.2,
+     "aint": 84.6
+    },
+    "Membership-": {
+     "H": "Non-Member",
+     "as WPC Wa": 31.6,
+     "ge issue is": 100.0,
+     "Aware of M": 52.6,
+     "aint": 89.5
+    },
+    "wise": {
+     "H": "BGMEA",
+     "as WPC Wa": 84.6,
+     "ge issue is": 93.9,
+     "Aware of M": 66.7,
+     "aint": 100.0
+    },
+    "row_16": {
+     "H": "BKMEA",
+     "as WPC Wa": 83.3,
+     "ge issue is": 40.0,
+     "Aware of M": 100.0,
+     "aint": 100.0
+    },
+    "row_17": {
+     "H": "BGMEA & BKMEA",
+     "as WPC Wa": 100.0,
+     "ge issue is": 50.0,
+     "Aware of M": 83.3,
+     "aint": 100.0
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 22,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 6 columns: Category, , Has WPC Committee (per cent of factories), Wage issue is discussed in PC Committee meeting (per cent of factories), Aware of minimum wage regulations (per cent of factories), Maintain wage-related information (per cent of factories). It contains 12 data rows and 68 populated cells; sample values: Category, Has WPC Committee (per cent of factories), Wage issue is discussed in PC Committee meeting (per cent of factories), Aware of minimum wage regulations (per cent of factories), Maintain wage-related information (per cent of factories).",
+  "summary": "Structured data table with 6 columns: Category, H, as WPC Wa, ge issue is, Aware of M, aint. It contains 17 data rows and 91 populated cells; sample values: Category, H, as WPC Wa, ge issue is, Aware of M.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 22",
-  "section_title": "",
+  "section_title": "Table 9: Different indicators regarding wage and others (per centof surveyed factories)",
   "extraction_evidence": {
    "n_words": 384,
    "n_chars": 2257,
@@ -1276,257 +1099,110 @@
  {
   "kind": "table",
   "node": "p023_t00",
-  "text": "Structured data table with 4 columns: Category, , Less than 5%, 5 or More than 5%. It contains 12 data rows and 42 populated cells; sample values: Category, Less than 5%, 5 or More than 5%, Overall, 17.1.",
+  "retrievable": true,
+  "text": "Structured data table with 4 columns: Category, Less, than 5% 5 or, More t. It contains 12 data rows and 43 populated cells; sample values: Category, Less, than 5% 5 or, More t, Overall.",
   "table_json": {
-   "columns": [
+   "table_id": "p023_t00",
+   "caption": "Table 10: Per cent of surveyed factories provide the yearly increment",
+   "col_labels": [
     "Category",
-    "",
-    "Less than 5%",
-    "5 or More than 5%"
+    "Less",
+    "than 5% 5 or",
+    "More t"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "17.1",
-     "82.9"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "0.0",
-     "100.0"
-    ],
-    [
-     "",
-     "Medium",
-     "13.3",
-     "86.7"
-    ],
-    [
-     "",
-     "Small",
-     "22.5",
-     "77.5"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "24.1",
-     "75.9"
-    ],
-    [
-     "",
-     "Gazipur",
-     "7.7",
-     "92.3"
-    ],
-    [
-     "",
-     "Chattogram",
-     "12.5",
-     "87.5"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "23.1",
-     "76.9"
-    ],
-    [
-     "Membership-wise",
-     "Non-Member",
-     "15.8",
-     "84.2"
-    ],
-    [
-     "",
-     "BGMEA",
-     "20.5",
-     "79.5"
-    ],
-    [
-     "",
-     "BKMEA",
-     "8.3",
-     "91.7"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "16.7",
-     "83.3%"
-    ]
-   ]
+   "row_labels": [
+    "Overall",
+    "Size-wise",
+    "row_3",
+    "row_4",
+    "Location-wise",
+    "row_6",
+    "row_7",
+    "row_8",
+    "Membership-wise",
+    "row_10",
+    "row_11",
+    "row_12"
+   ],
+   "data": {
+    "Overall": {
+     "Less": "",
+     "than 5% 5 or": 17.1,
+     "More t": 82.9
+    },
+    "Size-wise": {
+     "Less": "Large",
+     "than 5% 5 or": 0.0,
+     "More t": 100.0
+    },
+    "row_3": {
+     "Less": "Medium",
+     "than 5% 5 or": 13.3,
+     "More t": 86.7
+    },
+    "row_4": {
+     "Less": "Small",
+     "than 5% 5 or": 22.5,
+     "More t": 77.5
+    },
+    "Location-wise": {
+     "Less": "Dhaka",
+     "than 5% 5 or": 24.1,
+     "More t": 75.9
+    },
+    "row_6": {
+     "Less": "Gazipur",
+     "than 5% 5 or": 7.7,
+     "More t": 92.3
+    },
+    "row_7": {
+     "Less": "Chattogram",
+     "than 5% 5 or": 12.5,
+     "More t": 87.5
+    },
+    "row_8": {
+     "Less": "Narayanganj",
+     "than 5% 5 or": 23.1,
+     "More t": 76.9
+    },
+    "Membership-wise": {
+     "Less": "Non-Member",
+     "than 5% 5 or": 15.8,
+     "More t": 84.2
+    },
+    "row_10": {
+     "Less": "BGMEA",
+     "than 5% 5 or": 20.5,
+     "More t": 79.5
+    },
+    "row_11": {
+     "Less": "BKMEA",
+     "than 5% 5 or": 8.3,
+     "More t": 91.7
+    },
+    "row_12": {
+     "Less": "BGMEA & BKMEA",
+     "than 5% 5 or": 16.7,
+     "More t": "83.3%"
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 23,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 4 columns: Category, , Less than 5%, 5 or More than 5%. It contains 12 data rows and 42 populated cells; sample values: Category, Less than 5%, 5 or More than 5%, Overall, 17.1.",
+  "summary": "Structured data table with 4 columns: Category, Less, than 5% 5 or, More t. It contains 12 data rows and 43 populated cells; sample values: Category, Less, than 5% 5 or, More t, Overall.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 23",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 309,
-   "n_chars": 1741,
-   "n_tables": 2,
-   "table_area": 0.411,
-   "table_word_share": 0.508,
-   "one_letter_word_share": 0.013,
-   "top_token_share": 0.091,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(72,102 453x192) ; (72,441 453x245)"
-  }
- },
- {
-  "kind": "table",
-  "node": "p023_t01",
-  "text": "Structured data table with 8 columns: Category, , In 2022, , , In 2023. It contains 13 data rows and 96 populated cells; sample values: Category, In 2022, In 2023, First week, Second week.",
-  "table_json": {
-   "columns": [
-    "Category",
-    "",
-    "In 2022",
-    "",
-    "",
-    "In 2023",
-    "",
-    ""
-   ],
-   "rows": [
-    [
-     "",
-     "",
-     "First week",
-     "Second week",
-     "Third week",
-     "First week",
-     "Second week",
-     "Third week"
-    ],
-    [
-     "Overall",
-     "",
-     "86.8",
-     "13.2",
-     "0.0",
-     "80.3",
-     "18.4",
-     "1.3"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "100.0",
-     "0.0",
-     "0.0",
-     "100.0",
-     "0.0",
-     "0.0"
-    ],
-    [
-     "",
-     "Medium",
-     "96.7",
-     "3.3",
-     "0.0",
-     "96.7",
-     "3.3",
-     "0.0"
-    ],
-    [
-     "",
-     "Small",
-     "77.5",
-     "22.5",
-     "0.0",
-     "65.0",
-     "32.5",
-     "2.5"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "79.3",
-     "20.7",
-     "0.0",
-     "75.9",
-     "20.7",
-     "3.4"
-    ],
-    [
-     "",
-     "Gazipur",
-     "96.2",
-     "3.8",
-     "0.0",
-     "88.5",
-     "11.5",
-     "0.0"
-    ],
-    [
-     "",
-     "Chattogram",
-     "100.0",
-     "0.0",
-     "0.0",
-     "100.0",
-     "0.0",
-     "0.0"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "76.9",
-     "23.1",
-     "0.0",
-     "61.5",
-     "38.5",
-     "0.0"
-    ],
-    [
-     "Membership -wise",
-     "Non-Member",
-     "63.2",
-     "36.8",
-     "0.0",
-     "57.9",
-     "36.8",
-     "5.3"
-    ],
-    [
-     "",
-     "BGMEA",
-     "92.3",
-     "7.7",
-     "0.0",
-     "84.6",
-     "15.4",
-     "0.0"
-    ],
-    [
-     "",
-     "BKMEA",
-     "100.0",
-     "0.0",
-     "0.0",
-     "91.7",
-     "8.3",
-     "0.0"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "100.0",
-     "0.0",
-     "0.0",
-     "100.0",
-     "0.0",
-     "0.0"
-    ]
-   ]
-  },
-  "summary": "Structured data table with 8 columns: Category, , In 2022, , , In 2023. It contains 13 data rows and 96 populated cells; sample values: Category, In 2022, In 2023, First week, Second week.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 23",
-  "section_title": "",
+  "section_title": "Table 10: Per cent of surveyed factories provide the yearly increment",
   "extraction_evidence": {
    "n_words": 309,
    "n_chars": 1741,
@@ -1542,119 +1218,136 @@
  {
   "kind": "table",
   "node": "p024_t00",
-  "text": "Structured data table with 6 columns: Category, , Grade 3 to 4, Grade 4 to 5, Grade 5 to 6, Grade 7 to 6. It contains 12 data rows and 68 populated cells; sample values: Category, Grade 3 to 4, Grade 4 to 5, Grade 5 to 6, Grade 7 to 6.",
+  "retrievable": true,
+  "text": "Structured data table with 6 columns: Category, Grad, e 3 to 4 Grad, e 4 to 5 Grad, e 5 to 6 Grad, e 7. It contains 12 data rows and 70 populated cells; sample values: Category, Grad, e 3 to 4 Grad, e 4 to 5 Grad, e 5 to 6 Grad.",
   "table_json": {
-   "columns": [
+   "table_id": "p024_t00",
+   "caption": "Table 12: Average number of months for promotion to different grades",
+   "col_labels": [
     "Category",
-    "",
-    "Grade 3 to 4",
-    "Grade 4 to 5",
-    "Grade 5 to 6",
-    "Grade 7 to 6"
+    "Grad",
+    "e 3 to 4 Grad",
+    "e 4 to 5 Grad",
+    "e 5 to 6 Grad",
+    "e 7"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "31",
-     "24",
-     "18",
-     "17"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "16",
-     "13",
-     "16",
-     "17"
-    ],
-    [
-     "",
-     "Medium",
-     "40",
-     "28",
-     "20",
-     "19"
-    ],
-    [
-     "",
-     "Small",
-     "25",
-     "21",
-     "14",
-     "14"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "22",
-     "21",
-     "19",
-     "19"
-    ],
-    [
-     "",
-     "Gazipur",
-     "37",
-     "23",
-     "18",
-     "18"
-    ],
-    [
-     "",
-     "Chattogram",
-     "37",
-     "27",
-     "14",
-     "12"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "23",
-     "22",
-     "16",
-     "15"
-    ],
-    [
-     "Membership -wise",
-     "Non-Member",
-     "-",
-     "15",
-     "10",
-     "18"
-    ],
-    [
-     "",
-     "BGMEA",
-     "27",
-     "22",
-     "19",
-     "18"
-    ],
-    [
-     "",
-     "BKMEA",
-     "39",
-     "26",
-     "16",
-     "14"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "36",
-     "32",
-     "20",
-     "16"
-    ]
-   ]
+   "row_labels": [
+    "Overall",
+    "Size-wise",
+    "row_3",
+    "row_4",
+    "Location-wise",
+    "row_6",
+    "row_7",
+    "row_8",
+    "Membership",
+    "-wise",
+    "row_11",
+    "row_12"
+   ],
+   "data": {
+    "Overall": {
+     "Grad": "",
+     "e 3 to 4 Grad": 31,
+     "e 4 to 5 Grad": 24,
+     "e 5 to 6 Grad": 18,
+     "e 7": 17
+    },
+    "Size-wise": {
+     "Grad": "Large",
+     "e 3 to 4 Grad": 16,
+     "e 4 to 5 Grad": 13,
+     "e 5 to 6 Grad": 16,
+     "e 7": 17
+    },
+    "row_3": {
+     "Grad": "Medium",
+     "e 3 to 4 Grad": 40,
+     "e 4 to 5 Grad": 28,
+     "e 5 to 6 Grad": 20,
+     "e 7": 19
+    },
+    "row_4": {
+     "Grad": "Small",
+     "e 3 to 4 Grad": 25,
+     "e 4 to 5 Grad": 21,
+     "e 5 to 6 Grad": 14,
+     "e 7": 14
+    },
+    "Location-wise": {
+     "Grad": "Dhaka",
+     "e 3 to 4 Grad": 22,
+     "e 4 to 5 Grad": 21,
+     "e 5 to 6 Grad": 19,
+     "e 7": 19
+    },
+    "row_6": {
+     "Grad": "Gazipur",
+     "e 3 to 4 Grad": 37,
+     "e 4 to 5 Grad": 23,
+     "e 5 to 6 Grad": 18,
+     "e 7": 18
+    },
+    "row_7": {
+     "Grad": "Chattogram",
+     "e 3 to 4 Grad": 37,
+     "e 4 to 5 Grad": 27,
+     "e 5 to 6 Grad": 14,
+     "e 7": 12
+    },
+    "row_8": {
+     "Grad": "Narayanganj",
+     "e 3 to 4 Grad": 23,
+     "e 4 to 5 Grad": 22,
+     "e 5 to 6 Grad": 16,
+     "e 7": 15
+    },
+    "Membership": {
+     "Grad": "Non-Member",
+     "e 3 to 4 Grad": "-",
+     "e 4 to 5 Grad": 15,
+     "e 5 to 6 Grad": 10,
+     "e 7": 18
+    },
+    "-wise": {
+     "Grad": "BGMEA",
+     "e 3 to 4 Grad": 27,
+     "e 4 to 5 Grad": 22,
+     "e 5 to 6 Grad": 19,
+     "e 7": 18
+    },
+    "row_11": {
+     "Grad": "BKMEA",
+     "e 3 to 4 Grad": 39,
+     "e 4 to 5 Grad": 26,
+     "e 5 to 6 Grad": 16,
+     "e 7": 14
+    },
+    "row_12": {
+     "Grad": "BGMEA & BKMEA",
+     "e 3 to 4 Grad": 36,
+     "e 4 to 5 Grad": 32,
+     "e 5 to 6 Grad": 20,
+     "e 7": 16
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 24,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 6 columns: Category, , Grade 3 to 4, Grade 4 to 5, Grade 5 to 6, Grade 7 to 6. It contains 12 data rows and 68 populated cells; sample values: Category, Grade 3 to 4, Grade 4 to 5, Grade 5 to 6, Grade 7 to 6.",
+  "summary": "Structured data table with 6 columns: Category, Grad, e 3 to 4 Grad, e 4 to 5 Grad, e 5 to 6 Grad, e 7. It contains 12 data rows and 70 populated cells; sample values: Category, Grad, e 3 to 4 Grad, e 4 to 5 Grad, e 5 to 6 Grad.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 24",
-  "section_title": "",
+  "section_title": "Table 12: Average number of months for promotion to different grades",
   "extraction_evidence": {
    "n_words": 422,
    "n_chars": 2371,
@@ -1670,25 +1363,42 @@
  {
   "kind": "table",
   "node": "p024_t01",
+  "retrievable": true,
   "text": "Structured data table with 3 columns: Category, Per cent of factories in 2022, Per cent of factories in 2023. It contains 1 data rows and 6 populated cells; sample values: Category, Per cent of factories in 2022, Per cent of factories in 2023, MFS, 50.0.",
   "table_json": {
-   "columns": [
+   "table_id": "p024_t01",
+   "caption": "Table 13: Factories pay wages using MFS",
+   "col_labels": [
     "Category",
     "Per cent of factories in 2022",
     "Per cent of factories in 2023"
    ],
-   "rows": [
-    [
-     "MFS",
-     "50.0",
-     "39.5"
-    ]
-   ]
+   "row_labels": [
+    "MFS"
+   ],
+   "data": {
+    "MFS": {
+     "Per cent of factories in 2022": 50.0,
+     "Per cent of factories in 2023": 39.5
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 24,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 3 columns: Category, Per cent of factories in 2022, Per cent of factories in 2023. It contains 1 data rows and 6 populated cells; sample values: Category, Per cent of factories in 2022, Per cent of factories in 2023, MFS, 50.0.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 24",
-  "section_title": "",
+  "section_title": "Table 13: Factories pay wages using MFS",
   "extraction_evidence": {
    "n_words": 422,
    "n_chars": 2371,
@@ -1704,35 +1414,52 @@
  {
   "kind": "table",
   "node": "p025_t00",
+  "retrievable": true,
   "text": "Structured data table with 2 columns: Category, Per cent of workers. It contains 4 data rows and 10 populated cells; sample values: Category, Per cent of workers, Got MFS account, 79.4, Got DFS Account.",
   "table_json": {
-   "columns": [
+   "table_id": "p025_t00",
+   "caption": "Table 14: RMG Workers and their MFS usage status",
+   "col_labels": [
     "Category",
     "Per cent of workers"
    ],
-   "rows": [
-    [
-     "Got MFS account",
-     "79.4"
-    ],
-    [
-     "Got DFS Account",
-     "32.9"
-    ],
-    [
-     "Use MFS account for other purchases",
-     "26.3"
-    ],
-    [
-     "Use DFS account for other purchases",
-     "0.0"
-    ]
-   ]
+   "row_labels": [
+    "Got MFS account",
+    "Got DFS Account",
+    "Use MFS account for other purchases",
+    "Use DFS account for other purchases"
+   ],
+   "data": {
+    "Got MFS account": {
+     "Per cent of workers": 79.4
+    },
+    "Got DFS Account": {
+     "Per cent of workers": 32.9
+    },
+    "Use MFS account for other purchases": {
+     "Per cent of workers": 26.3
+    },
+    "Use DFS account for other purchases": {
+     "Per cent of workers": 0.0
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 25,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 2 columns: Category, Per cent of workers. It contains 4 data rows and 10 populated cells; sample values: Category, Per cent of workers, Got MFS account, 79.4, Got DFS Account.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 25",
-  "section_title": "",
+  "section_title": "Table 14: RMG Workers and their MFS usage status",
   "extraction_evidence": {
    "n_words": 381,
    "n_chars": 2316,
@@ -1748,31 +1475,48 @@
  {
   "kind": "table",
   "node": "p025_t01",
+  "retrievable": true,
   "text": "Structured data table with 2 columns: Category, Per cent of workers. It contains 3 data rows and 8 populated cells; sample values: Category, Per cent of workers, Cash, 45.6, MFS.",
   "table_json": {
-   "columns": [
+   "table_id": "p025_t01",
+   "caption": "Table 15: RMG Workers’ preferred medium for receiving wage",
+   "col_labels": [
     "Category",
     "Per cent of workers"
    ],
-   "rows": [
-    [
-     "Cash",
-     "45.6"
-    ],
-    [
-     "MFS",
-     "37.7"
-    ],
-    [
-     "DFS",
-     "16.7"
-    ]
-   ]
+   "row_labels": [
+    "Cash",
+    "MFS",
+    "DFS"
+   ],
+   "data": {
+    "Cash": {
+     "Per cent of workers": 45.6
+    },
+    "MFS": {
+     "Per cent of workers": 37.7
+    },
+    "DFS": {
+     "Per cent of workers": 16.7
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 25,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 2 columns: Category, Per cent of workers. It contains 3 data rows and 8 populated cells; sample values: Category, Per cent of workers, Cash, 45.6, MFS.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 25",
-  "section_title": "",
+  "section_title": "Table 15: RMG Workers’ preferred medium for receiving wage",
   "extraction_evidence": {
    "n_words": 381,
    "n_chars": 2316,
@@ -1788,31 +1532,48 @@
  {
   "kind": "table",
   "node": "p025_t02",
+  "retrievable": true,
   "text": "Structured data table with 2 columns: Range (In BDT), Per cent of suppliers. It contains 3 data rows and 8 populated cells; sample values: Range (In BDT), Per cent of suppliers, Brands, 55.3, Government.",
   "table_json": {
-   "columns": [
+   "table_id": "p025_t02",
+   "caption": "Table 16: Responsibility of minimum wage implementation as per RMG enterprises",
+   "col_labels": [
     "Range (In BDT)",
     "Per cent of suppliers"
    ],
-   "rows": [
-    [
-     "Brands",
-     "55.3"
-    ],
-    [
-     "Government",
-     "34.2"
-    ],
-    [
-     "Factory",
-     "10.5"
-    ]
-   ]
+   "row_labels": [
+    "Brands",
+    "Government",
+    "Factory"
+   ],
+   "data": {
+    "Brands": {
+     "Per cent of suppliers": 55.3
+    },
+    "Government": {
+     "Per cent of suppliers": 34.2
+    },
+    "Factory": {
+     "Per cent of suppliers": 10.5
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 25,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 2 columns: Range (In BDT), Per cent of suppliers. It contains 3 data rows and 8 populated cells; sample values: Range (In BDT), Per cent of suppliers, Brands, 55.3, Government.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 25",
-  "section_title": "",
+  "section_title": "Table 16: Responsibility of minimum wage implementation as per RMG enterprises",
   "extraction_evidence": {
    "n_words": 381,
    "n_chars": 2316,
@@ -1828,31 +1589,48 @@
  {
   "kind": "table",
   "node": "p026_t00",
+  "retrievable": true,
   "text": "Structured data table with 2 columns: Category, Per cent of factories brands/buyers adjusted their price. It contains 3 data rows and 8 populated cells; sample values: Category, Per cent of factories brands/buyers adjusted their price, Upward Adjustment in Price, 12.0, Downward Adjustment in Price.",
   "table_json": {
-   "columns": [
+   "table_id": "p026_t00",
+   "caption": "Table 17: Change in price by brands after the announcement minimum wage in 2018",
+   "col_labels": [
     "Category",
     "Per cent of factories brands/buyers adjusted their price"
    ],
-   "rows": [
-    [
-     "Upward Adjustment in Price",
-     "12.0"
-    ],
-    [
-     "Downward Adjustment in Price",
-     "2.7"
-    ],
-    [
-     "No Adjustment in Price",
-     "85.3"
-    ]
-   ]
+   "row_labels": [
+    "Upward Adjustment in Price",
+    "Downward Adjustment in Price",
+    "No Adjustment in Price"
+   ],
+   "data": {
+    "Upward Adjustment in Price": {
+     "Per cent of factories brands/buyers adjusted their price": 12.0
+    },
+    "Downward Adjustment in Price": {
+     "Per cent of factories brands/buyers adjusted their price": 2.7
+    },
+    "No Adjustment in Price": {
+     "Per cent of factories brands/buyers adjusted their price": 85.3
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 26,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 2 columns: Category, Per cent of factories brands/buyers adjusted their price. It contains 3 data rows and 8 populated cells; sample values: Category, Per cent of factories brands/buyers adjusted their price, Upward Adjustment in Price, 12.0, Downward Adjustment in Price.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 26",
-  "section_title": "",
+  "section_title": "Table 17: Change in price by brands after the announcement minimum wage in 2018",
   "extraction_evidence": {
    "n_words": 511,
    "n_chars": 3137,
@@ -1868,29 +1646,46 @@
  {
   "kind": "table",
   "node": "p026_t01",
+  "retrievable": true,
   "text": "Structured data table with 5 columns: Category, Pressure/ motivation from brands for paying using DFS, Pressure/ motivation from brands for paying using MFS, Would agree if brands directly pay additional wage through DFS, Would agree if brands directly pay additional wage through MFS. It contains 1 data rows and 10 populated cells; sample values: Category, Pressure/ motivation from brands for paying using DFS, Pressure/ motivation from brands for paying using MFS, Would agree if brands directly pay additional wage through DFS, Would agree if brands directly pay additional wage through MFS.",
   "table_json": {
-   "columns": [
+   "table_id": "p026_t01",
+   "caption": "Table 18: Brands and RMG enterprises’ role in implementing MFS",
+   "col_labels": [
     "Category",
     "Pressure/ motivation from brands for paying using DFS",
     "Pressure/ motivation from brands for paying using MFS",
     "Would agree if brands directly pay additional wage through DFS",
     "Would agree if brands directly pay additional wage through MFS"
    ],
-   "rows": [
-    [
-     "Per cent of RMG enterprises",
-     "9.2",
-     "5.3",
-     "68.4",
-     "72.4"
-    ]
-   ]
+   "row_labels": [
+    "Per cent of RMG enterprises"
+   ],
+   "data": {
+    "Per cent of RMG enterprises": {
+     "Pressure/ motivation from brands for paying using DFS": 9.2,
+     "Pressure/ motivation from brands for paying using MFS": 5.3,
+     "Would agree if brands directly pay additional wage through DFS": 68.4,
+     "Would agree if brands directly pay additional wage through MFS": 72.4
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 26,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 5 columns: Category, Pressure/ motivation from brands for paying using DFS, Pressure/ motivation from brands for paying using MFS, Would agree if brands directly pay additional wage through DFS, Would agree if brands directly pay additional wage through MFS. It contains 1 data rows and 10 populated cells; sample values: Category, Pressure/ motivation from brands for paying using DFS, Pressure/ motivation from brands for paying using MFS, Would agree if brands directly pay additional wage through DFS, Would agree if brands directly pay additional wage through MFS.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 26",
-  "section_title": "",
+  "section_title": "Table 18: Brands and RMG enterprises’ role in implementing MFS",
   "extraction_evidence": {
    "n_words": 511,
    "n_chars": 3137,
@@ -1906,29 +1701,46 @@
  {
   "kind": "table",
   "node": "p027_t00",
+  "retrievable": true,
   "text": "Structured data table with 5 columns: Item, 2017, 2019, 2021, 2023. It contains 1 data rows and 10 populated cells; sample values: Item, 2017, 2019, 2021, 2023.",
   "table_json": {
-   "columns": [
+   "table_id": "p027_t00",
+   "caption": "Table 19: Per cent of factories inquired by DIFE regarding wages during the inspection",
+   "col_labels": [
     "Item",
     "2017",
     "2019",
     "2021",
     "2023"
    ],
-   "rows": [
-    [
-     "DIFE checked wage issues during inspection (per cent of factories)",
-     "42.1",
-     "50.0",
-     "57.9",
-     "60.5"
-    ]
-   ]
+   "row_labels": [
+    "DIFE checked wage issues during inspection (per cent of factories)"
+   ],
+   "data": {
+    "DIFE checked wage issues during inspection (per cent of factories)": {
+     "2017": 42.1,
+     "2019": 50.0,
+     "2021": 57.9,
+     "2023": 60.5
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 27,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
   "summary": "Structured data table with 5 columns: Item, 2017, 2019, 2021, 2023. It contains 1 data rows and 10 populated cells; sample values: Item, 2017, 2019, 2021, 2023.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 27",
-  "section_title": "",
+  "section_title": "Table 19: Per cent of factories inquired by DIFE regarding wages during the inspection",
   "extraction_evidence": {
    "n_words": 306,
    "n_chars": 1842,
@@ -1944,106 +1756,117 @@
  {
   "kind": "table",
   "node": "p027_t01",
-  "text": "Structured data table with 5 columns: Category, , Per cent change in 2019, Per cent change in 2021, Per cent change in 2023. It contains 12 data rows and 55 populated cells; sample values: Category, Per cent change in 2019, Per cent change in 2021, Per cent change in 2023, Overall.",
+  "retrievable": true,
+  "text": "Structured data table with 5 columns: Category, Per ce, nt change in Per ce, nt change in Per ce, nt ch. It contains 13 data rows and 59 populated cells; sample values: Category, Per ce, nt change in Per ce, nt change in Per ce, nt ch.",
   "table_json": {
-   "columns": [
+   "table_id": "p027_t01",
+   "caption": "Table 20: Changes in the mean export of surveyed RMG factories",
+   "col_labels": [
     "Category",
-    "",
-    "Per cent change in 2019",
-    "Per cent change in 2021",
-    "Per cent change in 2023"
+    "Per ce",
+    "nt change in Per ce",
+    "nt change in Per ce",
+    "nt ch"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "-3.2",
-     "-5.6",
-     "18.8"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "3.1",
-     "-1.8",
-     "45.1"
-    ],
-    [
-     "",
-     "Medium",
-     "-4.6",
-     "-2.8",
-     "37.5"
-    ],
-    [
-     "",
-     "Small",
-     "-1.2",
-     "-10.3",
-     "-11.4"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "-15.5",
-     "-22.0",
-     "-11.5"
-    ],
-    [
-     "",
-     "Gazipur",
-     "-15.9",
-     "-5.5",
-     "44.7"
-    ],
-    [
-     "",
-     "Chattogram",
-     "5.1",
-     "-16.0",
-     "31.5"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "-12.0",
-     "1.5",
-     "9.9"
-    ],
-    [
-     "Membership -wise",
-     "Non-Member",
-     "-23.5",
-     "-16.4",
-     "-16.1"
-    ],
-    [
-     "",
-     "BGMEA",
-     "-8.6",
-     "-7.9",
-     "11.0"
-    ],
-    [
-     "",
-     "BKMEA",
-     "-8.0",
-     "-4.2",
-     "40.4"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "-0.8",
-     "7.7",
-     "16.7"
-    ]
-   ]
+   "row_labels": [
+    "row_1",
+    "Overall",
+    "Size-wise",
+    "row_4",
+    "row_5",
+    "Location-wise",
+    "row_7",
+    "row_8",
+    "row_9",
+    "Membership -wise",
+    "row_11",
+    "row_12",
+    "row_13"
+   ],
+   "data": {
+    "row_1": {
+     "Per ce": "",
+     "nt change in Per ce": 2021,
+     "nt ch": 202
+    },
+    "Overall": {
+     "Per ce": "",
+     "nt change in Per ce": -5.6,
+     "nt ch": 18.8
+    },
+    "Size-wise": {
+     "Per ce": "Large",
+     "nt change in Per ce": -1.8,
+     "nt ch": 45.1
+    },
+    "row_4": {
+     "Per ce": "Medium",
+     "nt change in Per ce": -2.8,
+     "nt ch": 37.5
+    },
+    "row_5": {
+     "Per ce": "Small",
+     "nt change in Per ce": -10.3,
+     "nt ch": -11.4
+    },
+    "Location-wise": {
+     "Per ce": "Dhaka",
+     "nt change in Per ce": -22.0,
+     "nt ch": -11.5
+    },
+    "row_7": {
+     "Per ce": "Gazipur",
+     "nt change in Per ce": -5.5,
+     "nt ch": 44.7
+    },
+    "row_8": {
+     "Per ce": "Chattogram",
+     "nt change in Per ce": -16.0,
+     "nt ch": 31.5
+    },
+    "row_9": {
+     "Per ce": "Narayanganj",
+     "nt change in Per ce": 1.5,
+     "nt ch": 9.9
+    },
+    "Membership -wise": {
+     "Per ce": "Non-Member",
+     "nt change in Per ce": -16.4,
+     "nt ch": -16.1
+    },
+    "row_11": {
+     "Per ce": "BGMEA",
+     "nt change in Per ce": -7.9,
+     "nt ch": 11.0
+    },
+    "row_12": {
+     "Per ce": "BKMEA",
+     "nt change in Per ce": -4.2,
+     "nt ch": 40.4
+    },
+    "row_13": {
+     "Per ce": "BGMEA & BKMEA",
+     "nt change in Per ce": 7.7,
+     "nt ch": 16.7
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 27,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 5 columns: Category, , Per cent change in 2019, Per cent change in 2021, Per cent change in 2023. It contains 12 data rows and 55 populated cells; sample values: Category, Per cent change in 2019, Per cent change in 2021, Per cent change in 2023, Overall.",
+  "summary": "Structured data table with 5 columns: Category, Per ce, nt change in Per ce, nt change in Per ce, nt ch. It contains 13 data rows and 59 populated cells; sample values: Category, Per ce, nt change in Per ce, nt change in Per ce, nt ch.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 27",
-  "section_title": "",
+  "section_title": "Table 20: Changes in the mean export of surveyed RMG factories",
   "extraction_evidence": {
    "n_words": 306,
    "n_chars": 1842,
@@ -2058,526 +1881,63 @@
  },
  {
   "kind": "table",
-  "node": "p028_t00",
-  "text": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 12 data rows and 68 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "table_json": {
-   "columns": [
-    "Category",
-    "",
-    "2017",
-    "2019",
-    "2021",
-    "2023"
-   ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "5.38",
-     "5.68",
-     "5.44",
-     "5.99"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "10.30",
-     "11.70",
-     "11.80",
-     "13.20"
-    ],
-    [
-     "",
-     "Medium",
-     "5.00",
-     "5.40",
-     "5.20",
-     "6.00"
-    ],
-    [
-     "",
-     "Small",
-     "4.80",
-     "4.80",
-     "4.40",
-     "4.60"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "5.10",
-     "5.10",
-     "5.20",
-     "5.20"
-    ],
-    [
-     "",
-     "Gazipur",
-     "5.50",
-     "5.60",
-     "5.10",
-     "5.80"
-    ],
-    [
-     "",
-     "Chattogram",
-     "5.10",
-     "6.60",
-     "6.10",
-     "9.00"
-    ],
-    [
-     "",
-     "Narayanganj",
-     "6.10",
-     "6.80",
-     "6.60",
-     "6.30"
-    ],
-    [
-     "Membership- wise",
-     "Non-Member",
-     "3.20",
-     "3.70",
-     "4.10",
-     "4.20"
-    ],
-    [
-     "",
-     "BGMEA",
-     "5.80",
-     "6.00",
-     "5.60",
-     "5.90"
-    ],
-    [
-     "",
-     "BKMEA",
-     "7.00",
-     "7.50",
-     "7.20",
-     "9.20"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "4.70",
-     "4.70",
-     "4.50",
-     "4.50"
-    ]
-   ]
-  },
-  "summary": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 12 data rows and 68 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 28",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 345,
-   "n_chars": 2127,
-   "n_tables": 1,
-   "table_area": 0.181,
-   "table_word_share": 0.206,
-   "one_letter_word_share": 0.02,
-   "top_token_share": 0.049,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(72,270 454x192)"
-  }
- },
- {
-  "kind": "table",
-  "node": "p029_t00",
-  "text": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 12 data rows and 68 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "table_json": {
-   "columns": [
-    "Category",
-    "",
-    "2017",
-    "2019",
-    "2021",
-    "2023"
-   ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "6.05",
-     "6.36",
-     "5.86",
-     "6.30"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "5.3",
-     "5.7",
-     "5.7",
-     "5.8"
-    ],
-    [
-     "",
-     "Medium",
-     "6.1",
-     "6.5",
-     "5.9",
-     "6.6"
-    ],
-    [
-     "",
-     "Small",
-     "6.1",
-     "6.4",
-     "5.8",
-     "6.1"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "5.9",
-     "6.2",
-     "5.9",
-     "5.7"
-    ],
-    [
-     "",
-     "Gazipur",
-     "6.0",
-     "5.9",
-     "5.2",
-     "5.5"
-    ],
-    [
-     "",
-     "Chattogram",
-     "7.0",
-     "8.5",
-     "8.3",
-     "10.1"
-    ],
-    [
-     "",
-     "Narayangonj",
-     "5.6",
-     "6.3",
-     "5.5",
-     "7.0"
-    ],
-    [
-     "Membership -wise",
-     "Non-Member",
-     "4.2",
-     "4.4",
-     "4.4",
-     "4.7"
-    ],
-    [
-     "",
-     "BGMEA",
-     "6.5",
-     "6.8",
-     "6.1",
-     "6.3"
-    ],
-    [
-     "",
-     "BKMEA",
-     "7.0",
-     "7.3",
-     "6.9",
-     "8.4"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "5.7",
-     "6.3",
-     "5.8",
-     "6.0"
-    ]
-   ]
-  },
-  "summary": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 12 data rows and 68 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 29",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 289,
-   "n_chars": 1712,
-   "n_tables": 2,
-   "table_area": 0.361,
-   "table_word_share": 0.491,
-   "one_letter_word_share": 0.017,
-   "top_token_share": 0.017,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(72,102 454x192) ; (72,441 454x192)"
-  }
- },
- {
-  "kind": "table",
-  "node": "p029_t01",
-  "text": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 12 data rows and 68 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "table_json": {
-   "columns": [
-    "Category",
-    "",
-    "2017",
-    "2019",
-    "2021",
-    "2023"
-   ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "5.00",
-     "5.17",
-     "4.71",
-     "5.11"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "8.20",
-     "8.70",
-     "8.00",
-     "8.50"
-    ],
-    [
-     "",
-     "Medium",
-     "5.60",
-     "5.90",
-     "5.10",
-     "5.70"
-    ],
-    [
-     "",
-     "Small",
-     "3.90",
-     "4.00",
-     "3.80",
-     "4.00"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "5.50",
-     "5.50",
-     "5.20",
-     "5.20"
-    ],
-    [
-     "",
-     "Gazipur",
-     "5.50",
-     "5.50",
-     "4.60",
-     "5.20"
-    ],
-    [
-     "",
-     "Chattogram",
-     "4.30",
-     "5.30",
-     "5.10",
-     "6.60"
-    ],
-    [
-     "",
-     "Narayangonj",
-     "3.50",
-     "3.70",
-     "3.80",
-     "3.90"
-    ],
-    [
-     "Membership -wise",
-     "Non-Member",
-     "3.20",
-     "3.50",
-     "3.50",
-     "3.70"
-    ],
-    [
-     "",
-     "BGMEA",
-     "5.80",
-     "6.00",
-     "5.40",
-     "5.70"
-    ],
-    [
-     "",
-     "BKMEA",
-     "5.10",
-     "5.30",
-     "4.60",
-     "5.90"
-    ],
-    [
-     "",
-     "BGMEA & BKMEA",
-     "4.50",
-     "4.20",
-     "3.80",
-     "4.00"
-    ]
-   ]
-  },
-  "summary": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 12 data rows and 68 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 29",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 289,
-   "n_chars": 1712,
-   "n_tables": 2,
-   "table_area": 0.361,
-   "table_word_share": 0.491,
-   "one_letter_word_share": 0.017,
-   "top_token_share": 0.017,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(72,102 454x192) ; (72,441 454x192)"
-  }
- },
- {
-  "kind": "table",
   "node": "p030_t00",
+  "retrievable": true,
   "text": "Structured data table with 4 columns: Year, Per worker export output in USD, Exchange rate, Per worker export output in BDT. It contains 4 data rows and 20 populated cells; sample values: Year, Per worker export output in USD, Exchange rate, Per worker export output in BDT, 2017.",
   "table_json": {
-   "columns": [
+   "table_id": "p030_t00",
+   "caption": "Table 24: Mean output (export) per worker",
+   "col_labels": [
     "Year",
     "Per worker export output in USD",
     "Exchange rate",
     "Per worker export output in BDT"
    ],
-   "rows": [
-    [
-     "2017",
-     "2,134",
-     "79.12",
-     "168,842"
-    ],
-    [
-     "2019",
-     "2,461",
-     "84.50",
-     "207,955"
-    ],
-    [
-     "2021",
-     "2,336",
-     "84.81",
-     "198,116"
-    ],
-    [
-     "2023",
-     "2,030",
-     "99.46",
-     "201,904"
-    ]
-   ]
-  },
-  "summary": "Structured data table with 4 columns: Year, Per worker export output in USD, Exchange rate, Per worker export output in BDT. It contains 4 data rows and 20 populated cells; sample values: Year, Per worker export output in USD, Exchange rate, Per worker export output in BDT, 2017.",
-  "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
-  "section_marker": "page 30",
-  "section_title": "",
-  "extraction_evidence": {
-   "n_words": 358,
-   "n_chars": 2135,
-   "n_tables": 2,
-   "table_area": 0.205,
-   "table_word_share": 0.218,
-   "one_letter_word_share": 0.02,
-   "top_token_share": 0.05,
-   "legacy_font_share": 0.0,
-   "table_bboxes": "(72,158 454x85) ; (72,545 454x133)"
-  }
- },
- {
-  "kind": "table",
-  "node": "p030_t01",
-  "text": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 8 data rows and 47 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
-  "table_json": {
-   "columns": [
-    "Category",
-    "",
+   "row_labels": [
     "2017",
     "2019",
     "2021",
     "2023"
    ],
-   "rows": [
-    [
-     "Overall",
-     "",
-     "3.00",
-     "3.20",
-     "3.40",
-     "4.10"
-    ],
-    [
-     "Size-wise",
-     "Large",
-     "2.93",
-     "3.43",
-     "4.00",
-     "4.33"
-    ],
-    [
-     "",
-     "Medium",
-     "3.24",
-     "3.56",
-     "3.84",
-     "4.63"
-    ],
-    [
-     "",
-     "Small",
-     "2.84",
-     "2.84",
-     "3.10",
-     "3.61"
-    ],
-    [
-     "Location-wise",
-     "Dhaka",
-     "1.95",
-     "2.22",
-     "2.47",
-     "3.24"
-    ],
-    [
-     "",
-     "Gazipur",
-     "4.10",
-     "4.03",
-     "4.24",
-     "4.95"
-    ],
-    [
-     "",
-     "Chattogram",
-     "2.89",
-     "3.49",
-     "3.86",
-     "4.50"
-    ],
-    [
-     "",
-     "Narayangonj",
-     "2.19",
-     "2.19",
-     "2.72",
-     "3.07"
-    ]
-   ]
+   "data": {
+    "2017": {
+     "Per worker export output in USD": 2134,
+     "Exchange rate": 79.12,
+     "Per worker export output in BDT": 168842
+    },
+    "2019": {
+     "Per worker export output in USD": 2461,
+     "Exchange rate": 84.5,
+     "Per worker export output in BDT": 207955
+    },
+    "2021": {
+     "Per worker export output in USD": 2336,
+     "Exchange rate": 84.81,
+     "Per worker export output in BDT": 198116
+    },
+    "2023": {
+     "Per worker export output in USD": 2030,
+     "Exchange rate": 99.46,
+     "Per worker export output in BDT": 201904
+    }
+   },
+   "source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+   "page": 30,
+   "metadata": {
+    "source_type": "policy_advocacy",
+    "source_act": null,
+    "effective_date": "2024-03",
+    "legal_status": null,
+    "in_force": false,
+    "authority_rank": "advocacy_report",
+    "translation_status": "original_english",
+    "text_layer": null
+   }
   },
-  "summary": "Structured data table with 6 columns: Category, , 2017, 2019, 2021, 2023. It contains 8 data rows and 47 populated cells; sample values: Category, 2017, 2019, 2021, 2023.",
+  "summary": "Structured data table with 4 columns: Year, Per worker export output in USD, Exchange rate, Per worker export output in BDT. It contains 4 data rows and 20 populated cells; sample values: Year, Per worker export output in USD, Exchange rate, Per worker export output in BDT, 2017.",
   "chapter": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "section_marker": "page 30",
-  "section_title": "",
+  "section_title": "Table 24: Mean output (export) per worker",
   "extraction_evidence": {
    "n_words": 358,
    "n_chars": 2135,

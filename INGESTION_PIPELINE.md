@@ -74,6 +74,8 @@ Raw documents (docs/)
 
 **Layering rule at retrieval:** where the overlay and the base cover the same provision, the overlay text supersedes the base for answering — and *both are surfaced with labels*. The system says "this is the operative text; its ratification is pending," never silently picks one.
 
+*(Deferred open question — this belongs to the generation/prompt-design stage, not ingestion: when the overlay and the base cover the same provision, how exactly the labels and the conflict surface inside the generated spoken answer is a prompt-design decision. Ingestion's obligation is only to keep both layers present and clearly labeled; it does not need that answer to proceed, so it is left open here.)*
+
 **Resolution path:** when the Ordinance's ratification resolves, the overlay is either merged into the consolidated base or dropped — and that merge **re-triggers Stage 3 validation** like any new document. Consolidation is a process with triggers, not a one-time editing task.
 
 **Two different fields, both required:**
@@ -98,6 +100,7 @@ Every raw document enters through a router that classifies each page or section 
 
 - **Text-extractable PDFs:** layout-detection tools (e.g., unstructured.io's partition functions, or pdfplumber's table detection) identify table regions on a page versus body text.
 - **Bangla-script gazette PDFs:** standard text extraction failed entirely (pdftotext returned garbage; the real content only appeared after rendering to an image). Here, routing must happen **visually**: render the page, then classify by layout — a dense grid of short cells vs. flowing paragraphs — rather than by extracted text content.
+- **Gazette title pages are routed out as front matter, not chunked:** a gazette's masthead run — "The Bangladesh Gazette (Extraordinary)…", the registration number, publication date, issuing-ministry line, the "Dated: …" reference — is recognized at intake and emitted as a single `kind=front_matter` block with **`retrievable: false`**. Its fields (registration number, gazette name, publication date, issuing authority) populate **document-level metadata** (Stage 5); the block itself is **never an answer candidate**. This is the same principle as the header/footer pollution check in Stage 3, applied to page 1: a title page is page furniture too. Only the first front-matter block per document is kept; repeats deeper in the file are dropped as furniture.
 
 ---
 
@@ -112,6 +115,10 @@ Chapter → Section → Sub-section → Clause
 The chunker walks the document's actual numbering and headings, producing **one chunk per leaf node** — typically a clause or sub-section, the smallest unit that still stands on its own. **A chunk boundary never cuts across two different clauses.**
 
 **Fallback:** only if a single leaf node is still too long after the structural split do we fall back to token-based splitting *within* it — around **256–384 tokens with 15–20% overlap** as a reasonable starting point. This is exactly the kind of parameter the RAGAS evaluation harness should sweep over empirically once it exists, rather than treating as fixed.
+
+**Symmetric minimum: bare headings merge forward — never stand alone.** The too-long fallback handles oversized leaves; the opposite failure is the bare structural heading — `PRELIMINARY`, `CHAPTER II` — extracted as a chunk of one or two tokens. Such a chunk matches nothing at retrieval and carries meaning only as context for what follows it. So any leaf below a minimum-token threshold (10–15 tokens; implemented as **12**) merges **forward**: its text becomes a prefix on the *next* real node's chunk — `PRELIMINARY · Short title, commencement and application. (1) This Act…` — which is exactly how the heading functions in the source document. A bare heading at the very end of a document, with no following node, merges backward as a last resort.
+
+**Failure mode this prevents:** a bare heading becoming its own (useless) answer candidate — or the heading's signal being lost from the chunk it actually governs.
 
 **Failure mode this prevents:** a worker's question about Section 23 retrieving a chunk that starts mid-sentence in Section 22.
 
@@ -131,6 +138,8 @@ Tables never become flowing text:
 
 **Summary-embeds, JSON-generates:** each extracted table also gets a short natural-language summary generated alongside it (e.g., *"This table shows CPD's proposed minimum wage by grade, broken into basic, housing, food, medical, and transport allowances"*). The **summary is what gets embedded** for semantic search; the **full structured JSON is what gets handed to the LLM** once that summary is retrieved. This is the same principle as parent-child indexing, applied to tables instead of legal clauses.
 
+**Concrete chunk schema:** each table chunk is structured JSON with a stable shape — `table_id`, `caption` (the closest text line above the table on the page, captured at extraction time), `col_labels` / `row_labels`, `data` (nested: row label → column → value, with numeric-looking strings coerced to real numbers so the LLM can compute with them), and a `metadata` block copied from the document's Stage 5 tags (`source_type`, `source_act`, `effective_date`, `legal_status`, `in_force`, `authority_rank`, `translation_status`). This is what "never flatten tables" means concretely: a retrieved table chunk hands the LLM this dict — and the metadata block is why CPD's *proposed* wage figures can never surface as the operative gazette wage.
+
 ---
 
 ## Stage 3: Structural Validation Gate
@@ -140,7 +149,8 @@ A structure-aware chunker that silently mis-parses is *worse* than a naive fixed
 - **Section-number continuity:** the section numbers extracted from the Act must form the expected continuous sequence. A missing Section 24 is a parse failure, not missing law. Expected counts and ranges are recorded once from the gazette's own table of contents during Stage 0.
 - **Hierarchy integrity:** every clause's parent section must exist; sub-section/clause numbering must fit the document's own pattern; no leaf node may be parentless or attached to two parents.
 - **Header/footer pollution check:** page furniture (running headers, page numbers, gazette stamps) must not survive into chunk text.
-- **Table spot-checks:** extracted JSON row/column counts must match the source table's shape, and a random sample of cells is checked against the source document.
+- **Table validation (implemented inline at extraction):** every extracted table passes concrete checks before it can become a chunk — **no empty column headers** (a blank header makes the structured data uninterpretable) and **no flattened-line-break cells** (a cell matching `\d\s+\d` — `"23 9"`, `"229 132"` — is the signature of a two-column number flattened into one string: exactly the corruption Stage 2b exists to prevent). A failing table is retried **once** with alternate extraction settings; if it still fails it is **quarantined to the manual-review queue and never indexed** — the gate fails loud, per table.
+- **Non-empty node IDs:** every surviving chunk — prose or table — must carry a non-empty `node` ID. Stage 4's parent pointers and Stage 6's dedup key both hang off it, so a blank ID is a validation failure, not a silent gap. (Blanks found at the end of extraction are filled deterministically and counted in the run report.)
 - **Output:** a per-document validation report. Documents that fail are **blocked from the index** and queued for human review — the gate fails loud, never silently.
 
 This is cheap to build (pure assertions over data the pipeline already produces) and converts the riskiest assumption in the pipeline — "the parser walks the real structure" — into a checked invariant.

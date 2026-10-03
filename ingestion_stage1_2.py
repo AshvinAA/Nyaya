@@ -27,6 +27,8 @@
      routing_report.json    one record per page (the Stage 1 manifest)
      prose_chunks.json      Stage 2a chunks with hierarchy metadata
      tables_extracted.json  Stage 2b structured tables with summaries
+     flags_manual_review.json  quarantined tables / visual-routing pages
+     doc_metadata.json      document-level metadata (front-matter fields)
 ============================================================================
 """
 
@@ -55,6 +57,19 @@ TABLE_PAGE_RATIO = 0.5         # page is "table" when tables cover >= 50% of are
 MIXED_PAGE_RATIO = 0.08        # page is "mixed" when tables cover >= 8% of area
 EMPTY_PAGE_WORDS = 15          # fewer words + no tables = cover/blank page
 
+MIN_LEAF_TOKENS = 12           # Stage 2a: a leaf or bare heading whose own
+                               # text is shorter than this has no retrieval
+                               # signal ("PRELIMINARY", ~1 token) and merges
+                               # FORWARD into the next node instead
+FRONT_MATTER_MAX_LINES = 25    # leading lines scanned for a gazette masthead
+
+# Stage 2b retry: when gridline-based detection yields an invalid grid, retry
+# the same region with text-strategy settings (camelot's lattice -> stream
+# switch) before sending the table to the manual-transcription queue.
+TABLE_RETRY_SETTINGS = {"vertical_strategy": "text", "horizontal_strategy": "text",
+                        "snap_tolerance": 3, "intersection_tolerance": 3,
+                        "text_x_tolerance": 2}
+
 # ---------------------------------------------------------------------------
 # Small shared helpers used by every stage
 # ---------------------------------------------------------------------------
@@ -74,6 +89,69 @@ def doc_slug(path):
     # "docs/BangladeshGagetteSep2015.pdf" -> "bangladeshgagettesep2015"
     base = os.path.splitext(os.path.basename(path).lower())[0]  # name minus .pdf
     return re.sub(r"[^a-z0-9]+", "_", base).strip("_")          # non-alnum -> "_"
+
+# ---------------------------------------------------------------------------
+# Stage 5 metadata registry - per-document authority/applicability defaults
+# ---------------------------------------------------------------------------
+# Table chunks inherit a copy of these, so every table carries the fields the
+# agreed schema requires (source_type, legal_status, in_force, ...). In the
+# full pipeline Stage 5 fills these from the Stage 0 registry; the demo keys
+# them by doc_slug. Values mirror INGESTION_PIPELINE.md's vocabulary.
+DOC_META = {
+    "bangladesh_labour_act_2006_english_upto_2018": {
+        "source_type": "primary_law", "source_act": "Bangladesh Labour Act, 2006",
+        "effective_date": "2006-10-11", "legal_status": "ratified",
+        "in_force": True, "authority_rank": "official_gazette",
+        "translation_status": "official_english", "text_layer": "consolidated_base"},
+    "bangladesh_labour_rules_2015_english_unofficial": {
+        "source_type": "primary_law", "source_act": "Bangladesh Labour Rules, 2015",
+        "effective_date": "2015-09-15", "legal_status": "ratified",
+        "in_force": True, "authority_rank": "unofficial_translation",
+        "translation_status": "unofficial", "text_layer": "consolidated_base"},
+    "bangladeshgagette2025": {                  # 2025 amendment ordinance (Bangla)
+        "source_type": "primary_law",
+        "source_act": "Bangladesh Labour (Amendment) Ordinance, 2025",
+        "effective_date": None, "legal_status": "pending_ratification",
+        "in_force": True, "authority_rank": "official_gazette",
+        "translation_status": "original_bangla", "text_layer": "amendment_overlay"},
+    "bangladeshgagetteinbanglishjul2021": {     # identity unconfirmed until
+        "source_type": "primary_law", "source_act": None,  # manual transcription
+        "effective_date": None, "legal_status": "unverified",
+        "in_force": False, "authority_rank": "official_gazette",
+        "translation_status": "original_bangla", "text_layer": None},
+    "bangladeshgagettesep2015": {               # Sept-2015 Bangla gazette
+        "source_type": "primary_law",             # printing of the Act (its
+        "source_act": "Bangladesh Labour Act, 2006",  # p2 title block says so)
+        "effective_date": "2006-10-11", "legal_status": "ratified",
+        "in_force": True, "authority_rank": "official_gazette",
+        "translation_status": "original_bangla", "text_layer": "consolidated_base"},
+    "legal_500_bangladesh": {
+        "source_type": "secondary_legal_guide", "source_act": None,
+        "effective_date": None, "legal_status": None,
+        "in_force": False, "authority_rank": "reputable_secondary",
+        "translation_status": "original_english", "text_layer": None},
+    "report_of_the_committee_on_freedom_of_association": {
+        "source_type": "international_oversight", "source_act": None,
+        "effective_date": None, "legal_status": None,
+        "in_force": False, "authority_rank": "reputable_secondary",
+        "translation_status": "original_english", "text_layer": None},
+    "revision_of_the_minimum_wage_of_rmg_workers_in_2023": {   # CPD study
+        "source_type": "policy_advocacy", "source_act": None,
+        "effective_date": "2024-03", "legal_status": None,
+        "in_force": False, "authority_rank": "advocacy_report",
+        "translation_status": "original_english", "text_layer": None},
+}
+DEFAULT_DOC_META = {"source_type": None, "source_act": None,
+                    "effective_date": None, "legal_status": None,
+                    "in_force": False, "authority_rank": "reputable_secondary",
+                    "translation_status": "unknown", "text_layer": None}
+
+
+def doc_metadata(slug):
+    # per-document Stage 5 defaults; copied per chunk so callers can't mutate
+    meta = dict(DEFAULT_DOC_META)
+    meta.update(DOC_META.get(slug, {}))
+    return meta
 
 def preview(text, limit=500):
     # shortens text for console display so samples stay readable
@@ -96,6 +174,72 @@ def split_long_text(text, max_tokens=TOKEN_CAP, overlap_ratio=OVERLAP_RATIO):
     if cur:                                          # flush whatever is left
         pieces.append(" ".join(cur))
     return pieces or [text]                          # never return an empty list
+
+# ---------------------------------------------------------------------------
+# Front-matter detection (Stage 1 classification / Stage 3 strip check)
+# ---------------------------------------------------------------------------
+# A gazette's masthead - "Translated from Bengali / Registered No. DA-1 / The
+# Bangladesh Gazette / Published by the Authority / Ministry of Labour and
+# Employment / Gazette Notification Dated: ..." - is document identity, not
+# law. It must populate document-level metadata and NEVER reach the index as
+# an answer candidate: a letterhead chunk semantically matches any query
+# containing "Bangladesh" or "Ministry of Labour" and would be handed to the
+# LLM as if it were a provision.
+FRONT_MATTER_RE = re.compile(
+    r"translated\s+from|registered\s+no|gazette|published\s+by\s+the\s+authority"
+    r"|ministry\s+of|dated\s*:|bengali\s+year|people['’]?s\s+republic"
+    r"|additional\s+issue|extraordinary|\bs\.?\s?r\.?\s?o\.?\b"
+    r"|(mon|tues|wednes|thurs|fri|satur|sun)day\b", re.I)
+# a run only counts as front matter when at least one of these strong
+# masthead signals is present - stops a body paragraph that merely mentions
+# the gazette from being stripped off the top of a page
+STRONG_FM_RE = re.compile(
+    r"registered\s+no|published\s+by\s+the\s+authority|translated\s+from"
+    r"|gazette\s+notification|people['’]?s\s+republic", re.I)
+# ALL-CAPS lines inside a masthead run only count as front matter when they
+# name the instrument - this stops a bare heading like "PRELIMINARY" (also
+# upper-case) from being swallowed into the preamble
+GAZETTE_TITLE_KW = re.compile(
+    r"gazette|rules|act\b|ordinance|order\b|notification|s\.?r\.?o\.?", re.I)
+
+
+def is_front_matter_line(line, in_run):
+    # a masthead pattern match, or an instrument-title line continuing a run
+    if FRONT_MATTER_RE.search(line):
+        return True
+    return bool(in_run and line.isupper() and len(line) <= 90
+                and GAZETTE_TITLE_KW.search(line))
+
+
+def extract_front_matter_fields(preamble):
+    """Pull document-identity fields straight out of the masthead text - raw
+    strings, merged into the document-level metadata registry (Stage 5 can
+    normalize them later)."""
+    fields = {"registration_no": None, "gazette_name": None,
+              "title_line": None, "publication_date": None,
+              "issuing_authority": None, "dated_reference": None}
+    m = re.search(r"Registered\s+No\.?\s*([A-Za-z]+\s*-\s*\S+|\S+)", preamble, re.I)
+    if m:
+        fields["registration_no"] = re.sub(r"-\s+", "-", m.group(1)).rstrip(".")
+    m = re.search(r"(The\s+Bangladesh\s+Gazette[^.\n]*?)(?=\s+Published\b|\.|\s*$)",
+                  preamble, re.I)
+    if m:
+        fields["gazette_name"] = normalize(m.group(1))
+    m = re.search(r"((?:The\s+)?Bangladesh\s+(?:Labour\s+)?(?:Rules|Act|Ordinance)"
+                  r"[^.\n]{0,60})", preamble, re.I)
+    if m:
+        fields["title_line"] = normalize(m.group(1))
+    m = re.search(r"((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)"
+                  r"[^,\n]*,\s*[A-Za-z]+\s+\d{1,2},\s*\d{4})", preamble)
+    if m:
+        fields["publication_date"] = normalize(m.group(1))
+    m = re.search(r"(Ministry\s+of[^\n.]*)", preamble, re.I)
+    if m:
+        fields["issuing_authority"] = normalize(m.group(1))
+    m = re.search(r"Dated\s*:\s*(.+)", preamble, re.I)
+    if m:
+        fields["dated_reference"] = normalize(m.group(1))
+    return fields
 
 # ---------------------------------------------------------------------------
 # Stage 1 - Content-type routing: every page is classified before chunking
@@ -243,6 +387,48 @@ def flush_pending(state, pending, blocks):
         pending.clear()        # careful: caller passes the live list
 
 
+def merge_short_leaves_forward(blocks, min_tokens=MIN_LEAF_TOKENS):
+    """Stage 2a minimum-token merge rule: a structural leaf or bare heading
+    whose own text is too short to carry retrieval signal ("PRELIMINARY",
+    ~1 token) must never be emitted standalone - it merges FORWARD, becoming
+    a prefix on the next surviving node ("PRELIMINARY" ends up opening the
+    Rule 1 chunk). Symmetric to the too-long token-split fallback.
+    Returns (blocks, n_merged)."""
+    merged, carry, n_merged = [], "", 0
+    for b in blocks:
+        if b["kind"] in ("leaf", "section_header") \
+                and estimate_tokens(b["text"]) < min_tokens:
+            carry = (carry + " " + b["text"]).strip()  # hold as prefix for
+            n_merged += 1                              # the next real node
+            continue
+        if carry:                                  # first real node after the
+            b["text"] = normalize(carry + " " + b["text"])   # short run gets
+            carry = ""                             # the heading as prefix
+        merged.append(b)
+    if carry and merged:                           # trailing bare heading with
+        merged[-1]["text"] = normalize(            # no next node: merge
+            merged[-1]["text"] + " " + carry)      # backward as last resort
+        n_merged += 1
+    elif carry:                                    # the whole page was bare
+        merged.append({"kind": "leaf", "node": "", "text": carry,
+                       "chapter": "", "section_marker": "",
+                       "section_title": ""})       # headings - keep them
+    return merged, n_merged
+
+
+def ensure_node_ids(chunks):
+    """Every surviving chunk needs a non-empty node ID - Stage 4 parent
+    pointers and Stage 6 dedup hashes key off it. Fills any blank with a
+    deterministic page-local counter ID and returns how many were filled
+    (the driver reports the total; it must be counted, never assumed)."""
+    filled = 0
+    for i, c in enumerate(chunks):
+        if not c.get("node"):
+            c["node"] = "blk%03d" % (i + 1)
+            filled += 1
+    return filled
+
+
 def hierarchy_chunk(text, doc_label):
     """Stage 2a. Walks a document's lines, tracking Chapter -> Section ->
     Sub-section -> Clause numbers. Produces one structured block per leaf
@@ -250,19 +436,47 @@ def hierarchy_chunk(text, doc_label):
     without legal numbering.
 
     Returns (blocks, stats) where blocks carry:
-        kind          leaf | body | section_header | prose_fallback
+        kind          leaf | section_header | front_matter | prose_fallback
         node          full hierarchical marker, e.g.  23 / (3) / (b)
         chapter       the last SECTION-heading seen above this block
         section       the highest-level heading above this block
         section_title the heading text, e.g. 'Compensation for injury'
     """
     lines = [ln for ln in text.splitlines() if ln.strip()]  # non-empty, in order
+
+    # --- front-matter strip: a gazette masthead is document identity, not --
+    # law. Cut the leading run off the body; keep it as one non-retrievable
+    # kind=front_matter block whose fields feed document-level metadata.
+    cut, grace = 0, 0
+    for i, raw in enumerate(lines[:FRONT_MATTER_MAX_LINES]):
+        if is_front_matter_line(raw.strip(), cut > 0):
+            cut, grace = i + 1, 0                  # extend the masthead run
+        elif cut == 0 and grace < 2:               # allow a short non-matching
+            grace += 1                             # lead-in (logo / mojibake
+                                                   # title line) before the
+        else:                                      # masthead proper begins
+            break                                  # real content begins here
+    fm_blocks = []
+    head_text = normalize(" ".join(ln.strip() for ln in lines[:cut]))
+    if cut and STRONG_FM_RE.search(head_text):     # require a real masthead
+        fm_blocks = [{"kind": "front_matter",      # signal - never strip a
+                      "node": "front_matter",      # body paragraph that just
+                      "retrievable": False,        # mentions the gazette
+                      "text": head_text,
+                      "doc_fields": extract_front_matter_fields(head_text),
+                      "chapter": doc_label, "section_marker": "",
+                      "section_title": ""}]
+    else:
+        cut, head_text = 0, ""                     # not a masthead: the page
+    remainder_text = normalize(" ".join(           # keeps ALL of its lines
+        ln.strip() for ln in lines[cut:]))
+
     blocks, pending = [], []                     # output blocks + current buffer
     state = {"node": "", "chapter": "", "section_marker": "",
              "section_title": ""}                # hierarchy tracker
     struct_hits = 0                              # leaves actually cut by structure
 
-    for raw in lines:                            # walk once, top to bottom
+    for raw in lines[cut:]:                      # walk once, top to bottom
         line = raw.strip()                       # trimmed copy for matching
         # --- pattern A: numbered section heading like "23. Title here" ------
         if SECTION_RE.match(line):
@@ -320,20 +534,29 @@ def hierarchy_chunk(text, doc_label):
 
     flush_pending(state, pending, blocks)          # close the final open block
 
+    # --- min-token merge rule: bare headings never stand alone -------------
+    blocks, tiny_merged = merge_short_leaves_forward(blocks)
+
     # --- decide: did structure actually work for this document? ------------
     structured = struct_hits >= 3
     if structured:
-        return blocks, {"strategy": "hierarchical", "leaves": len(blocks),
-                        "struct_hits": struct_hits}
+        return fm_blocks + blocks, {
+            "strategy": "hierarchical",
+            "leaves": len(blocks) + len(fm_blocks),
+            "struct_hits": struct_hits, "tiny_merged": tiny_merged}
 
     # --- fallback path: documents without legal numbering ------------------
-    return sentence_fallback(text, doc_label), {"strategy": "sentence_fallback"}
+    fb_blocks = sentence_fallback(remainder_text, doc_label)
+    return fm_blocks + fb_blocks, {"strategy": "sentence_fallback",
+                                   "tiny_merged": 0}
 
 
 def sentence_fallback(text, doc_label):
     """>= 90%-prose documents without CHAPTER/section/callout numbering get
     sentence-grouped chunks (~cap tokens, ~15% overlap forwards)."""
     norm = normalize(text)                         # flatten line breaks first
+    if not norm:                                   # page was all front matter
+        return []                                  # -> nothing left to chunk
     pieces = split_long_text(norm)                 # overlapping token-capped pieces
     return [{"kind": "prose_fallback", "node": "part%02d" % (i + 1),
              "text": p, "chapter": doc_label, "section_marker": "",
@@ -361,27 +584,131 @@ def summarize_table(rows):
         ", ".join(cells[:5]) or "none")
 
 
-def table_chunk(rows, page, doc_label, tbl_index, evidence):
-    """Stage 2b: build one structured table chunk (JSON payload + summary).
-    Returns None when the grid carries no recoverable text at all - callers
-    then route the page to the manual-transcription queue instead."""
+DIGIT_SPACE_DIGIT_RE = re.compile(r"\d\s+\d")      # "23 9", "229 132": a
+                                                   # line break flattened
+                                                   # into a space
+
+
+def validate_table(rows_c):
+    """Inline Stage 3 table gate (Stage 3 isn't coded yet, so its two
+    concrete checks run here at extraction time; rejected tables go straight
+    to the manual queue and are NEVER indexed):
+      1. empty-string column header(s) -> the header row was mis-detected
+      2. digit-space-digit in any cell -> a multi-line cell's line break was
+         flattened into a space, silently merging two numbers
+    Returns (ok, reasons)."""
+    reasons = []
+    header = rows_c[0]                             # first row = column labels
+    empty_cols = [i for i, c in enumerate(header) if not c]
+    if empty_cols:
+        reasons.append("empty column header(s) at index %s" % empty_cols)
+    for ri, row in enumerate(rows_c):
+        for ci, cell in enumerate(row):
+            if DIGIT_SPACE_DIGIT_RE.search(cell):
+                reasons.append("row %d col %d: digit-space-digit in '%s' "
+                               "(flattened line break)" % (ri, ci, cell))
+    return (not reasons), reasons
+
+
+def coerce_cell(value):
+    # '17568' -> 17568, '19,310' -> 19310, '3.5' -> 3.5, else the string -
+    # numeric cells should land in the JSON as numbers, per the schema
+    s = str(value).strip()
+    if re.fullmatch(r"-?\d[\d,]*", s):
+        return int(s.replace(",", ""))
+    if re.fullmatch(r"-?\d+\.\d+", s):
+        return float(s)
+    return s
+
+
+def table_chunk(rows, page, doc_label, tbl_index, evidence, caption=""):
+    """Stage 2b: build one structured table chunk in the agreed schema -
+    table_id / caption / col_labels / row_labels / data / metadata.
+    Returns (chunk, None) when the grid passes validation, or (None, reason)
+    when it must be quarantined to the manual queue instead."""
     rows_c = [[clean_cell(c) for c in row] for row in rows]     # clean every cell
     width = max(len(r) for r in rows_c) if rows_c else 0        # widest row
     rows_c = [r + [""] * (width - len(r)) for r in rows_c]      # pad short rows
     rows_c = [r for r in rows_c if any(c for c in r)]           # drop blank rows
     if not rows_c:                                              # empty grid ->
-        return None                                             # reject here
-    summary = summarize_table(rows_c)                           # embed this
-    return {"kind": "table",
-            "node": "p%03d_t%02d" % (page, tbl_index),
+        return None, None                                       # nothing to see
+    ok, reasons = validate_table(rows_c)           # inline Stage 3 gate
+    if not ok:
+        return None, "; ".join(reasons)            # -> manual queue, no index
+    table_id = "p%03d_t%02d" % (page, tbl_index)
+    col_labels = rows_c[0]                         # header row = column labels
+    data = {}                                      # row_label -> {col: value}
+    for row in rows_c[1:]:
+        label = row[0] or "row_%d" % (len(data) + 1)   # 1st column = row label
+        key, n = label, 2
+        while key in data:                         # disambiguate duplicate
+            key = "%s (%d)" % (label, n); n += 1   # row labels
+        data[key] = {col: coerce_cell(cell)
+                     for col, cell in zip(col_labels[1:], row[1:])}
+    summary = summarize_table(rows_c)              # embed this
+    return {"kind": "table", "node": table_id,
+            "retrievable": True,                   # passed validation
             "text": summary,                       # what gets embedded
-            "table_json": {"columns": rows_c[0] if rows_c else [],
-                           "rows": rows_c[1:]},    # what the LLM would get
+            "table_json": {                        # what the LLM would get
+                "table_id": table_id,
+                "caption": caption,                # filled by Stage 5/QA
+                "col_labels": col_labels,
+                "row_labels": list(data),
+                "data": data,
+                "source_doc": doc_label,
+                "page": page,
+                "metadata": doc_metadata(doc_label)},   # Stage 5 fields
             "summary": summary,
-            "chapter": doc_label,                  # hierarchy metadata placeholders
+            "chapter": doc_label,                  # hierarchy metadata
             "section_marker": "page %d" % page,
-            "section_title": "",
-            "extraction_evidence": evidence}       # transparency for QA
+            "section_title": caption,
+            "extraction_evidence": evidence}, None  # transparency for QA
+
+
+def find_caption(page, bbox, window=90):
+    """Best-effort caption: the closest line of text just ABOVE the table's
+    top edge (within `window` points). Returns '' when nothing is there - a
+    missing caption is metadata debt, not a validation failure."""
+    x0, top, x1, bottom = bbox
+    above = [w for w in page.extract_words()
+             if w["bottom"] <= top and w["bottom"] >= top - window]
+    if not above:
+        return ""
+    closest = max(w["top"] for w in above)         # the line nearest the table
+    line = sorted((w for w in above if abs(w["top"] - closest) < 3),
+                  key=lambda w: w["x0"])           # reading order left -> right
+    return normalize(" ".join(w["text"] for w in line))[:200]
+
+
+def table_chunk_with_retry(page, tbl, page_number, doc_label, tbl_index, evidence):
+    """Extract + validate one detected table. On validation failure, retry
+    ONCE on the same region with text-strategy settings (camelot's lattice ->
+    stream switch); if the retry also fails, return the combined reason for
+    the manual queue. Returns (chunk_or_None, reason_or_None)."""
+    caption = find_caption(page, tbl.bbox)         # best-effort label
+    chunk, reason = table_chunk(tbl.extract() or [], page_number, doc_label,
+                                tbl_index, evidence, caption)
+    if chunk or reason is None:                    # passed, or empty grid
+        return chunk, reason
+    try:                                           # retry with text strategy
+        rows2 = page.crop(tbl.bbox).extract_table(TABLE_RETRY_SETTINGS) or []
+    except Exception as exc:                       # a failed retry still
+        return None, "%s | retry raised: %s" % (reason, exc)   # quarantines
+    chunk2, reason2 = table_chunk(rows2, page_number, doc_label,
+                                  tbl_index, evidence, caption)
+    if chunk2:
+        return chunk2, None
+    return None, "%s | retry(text-strategy): %s" % (reason, reason2)
+
+
+def flag_table_rejected(node_id, page, doc_label, reason):
+    """Stage 2b/3: a table that failed validation is quarantined - it goes to
+    the manual queue and is never indexed (a garbled wage figure that 'looks
+    structured' is worse than a missing one)."""
+    return {"kind": "table_validation_failed", "node": node_id,
+            "text": "[TABLE REJECTED BY VALIDATION - quarantined for manual "
+                    "review; never indexed]",
+            "doc": doc_label, "page": page, "reason": reason}
 
 
 def flag_unextractable(page, doc_label, reason):
@@ -415,8 +742,10 @@ def process_pdf(path, max_pages):
     """Run Stage 1 (routing) + Stage 2a/2b (chunking) over one PDF."""
     slug = doc_slug(path)                          # stable id used in all records
     rec = {"doc": slug, "path": path, "routing": [], "prose": [],
-           "tables": [], "flags": [], "stats": []}
+           "tables": [], "flags": [], "stats": [], "doc_metadata": {}}
     counts = {}                                    # label -> how many pages
+    fm_seen = False                                # front-matter block emitted
+                                                   # once per document
 
     with pdfplumber.open(path) as pdf:             # open lazily, page by page
         pages = pdf.pages[: max_pages] if max_pages > 0 else pdf.pages
@@ -440,14 +769,21 @@ def process_pdf(path, max_pages):
                 continue
 
             if label == "table":                   # ---- Stage 2b: tables ----
-                found = page.extract_tables()      # detected grids -> cells
-                made = 0                                    # tables kept
-                for i, rows in enumerate(found or []):
-                    chunk = table_chunk(rows, page.page_number, slug, i, evidence)
+                found = page.find_tables()         # detected grids (bboxes let
+                made = rejected = 0                # us retry + caption them)
+                for i, t in enumerate(found or []):
+                    chunk, reason = table_chunk_with_retry(
+                        page, t, page.page_number, slug, i, evidence)
                     if chunk:                               # structured JSON chunk
                         rec["tables"].append(chunk)
                         made += 1
-                if made == 0:                      # routed as table but the
+                    elif reason:                   # failed validation -> manual
+                        # queue, never indexed (inline Stage 3 table gate)
+                        rec["flags"].append(flag_table_rejected(
+                            "p%03d_t%02d" % (page.page_number, i),
+                            page.page_number, slug, reason))
+                        rejected += 1
+                if made == 0 and rejected == 0:    # routed as table but the
                     # grid yielded no readable cells -> manual queue, never
                     # flatten the page text just to have "a chunk"
                     rec["flags"].append(flag_unextractable(
@@ -460,17 +796,25 @@ def process_pdf(path, max_pages):
             page_tables = []                       # tables found on this page
             if label == "mixed":                   # pull tables out FIRST so
                 tbls = page.find_tables()          # prose never happens to
-                kept = 0                           # tables kept from this page
-                for i, t in enumerate(tbls):       # contain their cells
+                kept = rejected = 0                # contain their cells
+                for i, t in enumerate(tbls):
                     rows = t.extract()
                     if rows and len(rows) >= 2:    # skip 1-row false positives
-                        ch = table_chunk(rows, page.page_number, slug, i, evidence)
+                        ch, reason = table_chunk_with_retry(
+                            page, t, page.page_number, slug, i, evidence)
                         if ch:
                             page_tables.append(ch)
                             kept += 1
+                        elif reason:               # rejected grid: quarantine
+                            rec["flags"].append(flag_table_rejected(
+                                "p%03d_t%02d" % (page.page_number, i),
+                                page.page_number, slug, reason))
+                            rejected += 1
                 rec["tables"].extend(page_tables)
-                text = (text_outside_tables(page, tbls) if kept
-                        else page.extract_text()) or ""  # prose-only text
+                # strip table regions from the prose text whenever a grid was
+                # real OR rejected (rejected cells are garbage, not prose)
+                text = (text_outside_tables(page, tbls) if (kept or rejected)
+                        else page.extract_text()) or ""
             else:
                 text = page.extract_text() or ""  # pure prose page
                 # KNOWN LIMITATION: two-column layouts (e.g. Legal 500's Q&A
@@ -481,14 +825,27 @@ def process_pdf(path, max_pages):
 
             blocks, stats = hierarchy_chunk(text, slug)  # Stage 2a chunking
             for b in blocks:                       # attach doc/page metadata
+                if b["kind"] == "front_matter":    # masthead repeats on later
+                    if fm_seen:                    # pages are page furniture;
+                        continue                   # keep only the first and lift
+                    fm_seen = True                 # its fields into the
+                    rec["doc_metadata"] = {        # document-level registry
+                        **doc_metadata(slug),
+                        **b.get("doc_fields", {})}
                 rec["prose"].append({**b, "doc": slug,
                                      "path": os.path.basename(path),
                                      "page": page.page_number,
+                                     "retrievable": b.get("retrievable", True),
                                      "est_tokens": estimate_tokens(b["text"])})
             rec["stats"].append({"page": page.page_number, "route": label,
                                  "strategy": stats.get("strategy"),
                                  "leaves": len(blocks),
                                  "tables": len(page_tables)})
+
+    # ---- Stage 3-style inline assert: every surviving chunk needs an ID ----
+    # (parent pointers in Stage 4 and dedup hashes in Stage 6 key off it)
+    rec["node_ids_filled"] = (ensure_node_ids(rec["prose"])
+                              + ensure_node_ids(rec["tables"]))
     rec["route_counts"] = counts                   # routing histogram
     return rec
 
@@ -502,14 +859,22 @@ def process_text_file(path):
     label, evidence = classify_text_document(text)  # Stage 1 on plain text
     rec = {"doc": slug, "path": path, "routing": [{"page": None,
             "label": label, "evidence": evidence}], "prose": [],
-            "tables": [], "flags": [], "stats": [], "route_counts": {label: 1}}
+            "tables": [], "flags": [], "stats": [], "doc_metadata": {},
+            "route_counts": {label: 1}}
     if label in ("prose", "mixed"):                # only text types here
         blocks, stats = hierarchy_chunk(text, slug) # Stage 2a (fallback)
         rec["stats"].append({"route": label, "strategy": stats.get("strategy"),
                              "leaves": len(blocks), "tables": 0})
-        rec["prose"] = [{**b, "doc": slug, "path": os.path.basename(path),
-                         "page": None, "est_tokens": estimate_tokens(b["text"])}
-                        for b in blocks]           # attach metadata
+        for b in blocks:                           # attach metadata
+            if b["kind"] == "front_matter":        # plain-text docs can have
+                rec["doc_metadata"] = {**doc_metadata(slug),   # mastheads too
+                                       **b.get("doc_fields", {})}
+            rec["prose"].append({**b, "doc": slug,
+                                 "path": os.path.basename(path),
+                                 "page": None,
+                                 "retrievable": b.get("retrievable", True),
+                                 "est_tokens": estimate_tokens(b["text"])})
+    rec["node_ids_filled"] = ensure_node_ids(rec["prose"])   # ID assert pass
     return rec
 
 
@@ -535,6 +900,7 @@ def main():
                   if f.lower().endswith((".pdf", ".txt", ".md")))
 
     routing_all, prose_all, tables_all, flags_all = [], [], [], []
+    doc_meta_all = {}                                    # slug -> doc metadata
     totals = {"table": 0, "prose": 0, "mixed": 0, "empty": 0,
               "visual_routing_required": 0}              # corpus-wide histogram
 
@@ -548,17 +914,25 @@ def main():
         print("route:    %s" % rec["route_counts"])
         print("=" * 76)
         for c in rec["prose"][:3]:               # sample: first 3 prose chunks
-            print("\n[PROSE] node=%s  page=%s  ~%d tok  strategy-relevant: kind=%s"
-                  % (c["node"], c["page"], c["est_tokens"], c["kind"]))
+            print("\n[PROSE] node=%s  page=%s  ~%d tok  kind=%s  retrievable=%s"
+                  % (c["node"], c["page"], c["est_tokens"], c["kind"],
+                     c.get("retrievable", True)))
             print("  %s" % preview(c["text"], 280))
         if rec["tables"]:
             t = rec["tables"][0]                 # sample: first table chunk
-            cols = t["table_json"]["columns"]
-            print("\n[TABLE] node=%s  page=%s" % (t["node"], t["section_marker"]))
-            print("  summary : %s" % preview(t["summary"], 220))
-            print("  columns : %s" % (", ".join(cols[:8]) or "(none)"))
-            if t["table_json"]["rows"]:
-                print("  row[0]  : %s" % ", ".join(t["table_json"]["rows"][0][:8]))
+            tj = t["table_json"]
+            print("\n[TABLE] node=%s  page=%s  caption=%s"
+                  % (t["node"], tj["page"], tj["caption"] or "(none)"))
+            print("  summary    : %s" % preview(t["summary"], 220))
+            print("  col_labels : %s" % (", ".join(
+                str(c) for c in tj["col_labels"][:8]) or "(none)"))
+            if tj["row_labels"]:
+                first = tj["row_labels"][0]
+                print("  row[%s]: %s" % (first, ", ".join(
+                    str(v) for v in list(tj["data"][first].values())[:8])))
+        if rec.get("doc_metadata"):              # front-matter -> doc registry
+            print("\n[DOC-META] %s" % preview(
+                json.dumps(rec["doc_metadata"], ensure_ascii=False), 300))
         for f in rec["flags"][:2]:               # sample: flagged pages
             print("\n[FLAGGED] %s  (%s)" % (f["node"], f["reason"]))
 
@@ -568,6 +942,8 @@ def main():
         prose_all.extend(rec["prose"])
         tables_all.extend(rec["tables"])
         flags_all.extend(rec["flags"])
+        doc_meta_all[rec["doc"]] = {**doc_metadata(rec["doc"]),
+                                    **rec.get("doc_metadata", {})}
         for k, v in rec["route_counts"].items(): # corpus-wide routing tally
             totals[k] = totals.get(k, 0) + v
 
@@ -582,16 +958,21 @@ def main():
     dump("prose_chunks.json", prose_all)         # Stage 2a output
     dump("tables_extracted.json", tables_all)    # Stage 2b output
     dump("flags_manual_review.json", flags_all)  # visual-routing/manual queue
+    dump("doc_metadata.json", doc_meta_all)      # front-matter -> doc metadata
 
     # ---- totals ------------------------------------------------------------
     print("\n" + "=" * 76)
     print("CORPUS TOTALS  (docs=%d)" % len(docs))
     print("  pages routed: %s" % totals)
-    print("  prose chunks      : %d" % len(prose_all))
+    fm_count = sum(1 for c in prose_all if c["kind"] == "front_matter")
+    blank_nodes = sum(1 for c in prose_all + tables_all if not c.get("node"))
+    print("  prose chunks      : %d  (front_matter: %d, retrievable=false)"
+          % (len(prose_all), fm_count))
     print("  table chunks      : %d" % len(tables_all))
     print("  flagged for manual: %d" % len(flags_all))
-    print("  full details -> %s/{routing_report,prose_chunks,tables_extracted,flags_manual_review}.json"
-          % args.out_dir)
+    print("  blank node ids    : %d  (Stage 3 assert - must be 0)" % blank_nodes)
+    print("  full details -> %s/{routing_report,prose_chunks,tables_extracted,"
+          "flags_manual_review,doc_metadata}.json" % args.out_dir)
 
 
 if __name__ == "__main__":                       # run: venv/Scripts/python ingestion_stage1_2.py

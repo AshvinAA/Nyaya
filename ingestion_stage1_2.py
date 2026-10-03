@@ -120,6 +120,7 @@ def classify_page(page):
     tbls = page.find_tables()                  # detected table bboxes + cells
 
     # ---- evidence collection ---------------------------------------------
+    
     n_words = len(words)                       # extracted word count
     total_chars = len(normalize(text))         # normalized character count
     table_area = 0.0                           # fraction of page covered by tables

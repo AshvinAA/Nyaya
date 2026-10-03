@@ -13,7 +13,7 @@ Raw documents (docs/)
 ┌───────────────────────────────────────────┐
 │ Stage 0: Corpus consolidation &           │
 │          version resolution               │
-│ (the current law ≠ sum of gazette PDFs)   │
+│ (ratified base + labeled overlay layers)  │
 └───────────────────────────────────────────┘
         │
         ▼
@@ -58,7 +58,7 @@ Raw documents (docs/)
 └───────────────────────────────────────────┘
 ```
 
-**Documents in scope:** the official 2015 Labour Act gazette, the EPZ Act, the Labour Rules, the CPD wage-revision report, the Legal 500 guide, and the wage gazettes. The **consolidated current text produced in Stage 0 becomes the primary prose ingestion source**; the raw gazettes remain in the corpus as tagged historical versions.
+**Documents in scope:** the official 2015 Labour Act gazette, the EPZ Act, the Labour Rules, the CPD wage-revision report, the Legal 500 guide, and the wage gazettes. The **consolidated base text produced in Stage 0 (Act + ratified amendments) becomes the primary prose ingestion source**, the 2025 Ordinance enters as a **labeled overlay layer**, and the raw gazettes remain in the corpus as tagged historical versions.
 
 ---
 
@@ -66,17 +66,22 @@ Raw documents (docs/)
 
 **The problem:** amendments are *deltas*, not standalone law. The 2018 amendment act and the 2025 Ordinance don't contain the current text — they contain instructions that modify it ("in section 23, after sub-section (2), insert…"). Ingesting the three gazettes side by side means the index holds three partially-overlapping versions of the same sections, with nothing that says which text is the law *today*. A worker asking about overtime pay must never retrieve the pre-2018 clause.
 
-Two acceptable strategies:
+**The consolidation rule: only ratified law merges into the base.**
 
-- **(a) Consolidated text as the primary source — preferred at this project's scale.** Maintain one manually consolidated current text (base Act with amendments applied) and ingest *that* as the authoritative prose source. The corpus is small and the stakes are high: a one-time human consolidation effort eliminates an entire class of retrieval errors and removes version ambiguity from every downstream stage.
-- **(b) Automated versioning — if consolidation is deferred.** Ingest each version separately, but attach amendment-mapping metadata (`in_force` flag, `applies_from` / `applies_to` dates, `amended_by` reference) and enforce a **"current version wins" filter** at retrieval: retrieval defaults to `in_force = true`; superseded versions are retrievable only for explicitly historical questions ("what did the law say before 2018?", "what changed in the 2025 Ordinance?").
+- **(a) Consolidated base text — ratified amendments only.** Maintain one manually consolidated base text: the Labour Act 2006 with the **ratified** amendment acts applied (2013 and 2018). This base is the single source of truth and the primary prose ingestion source. The corpus is small and the stakes are high: a one-time human consolidation effort eliminates an entire class of retrieval errors and removes version ambiguity from every downstream stage.
+- **The 2025 Ordinance is an overlay layer, never merged while unratified.** Because its ratification is genuinely unresolved, there may be no single canonical "current" text to consolidate *into* yet — and merging an unratified ordinance into the source of truth would recreate exactly the ambiguity Stage 0 exists to eliminate. Instead, the Ordinance is ingested as a separate, clearly-labeled overlay chunk set carrying its own `in_force` / `legal_status` tags.
+- **(b) Automated versioning — if consolidation is deferred.** Ingest each version separately, attach amendment-mapping metadata (`in_force`, `applies_from` / `applies_to`, `amended_by`, `text_layer`) and enforce a **"current version wins" filter** at retrieval: retrieval defaults to `in_force = true`; superseded versions are retrievable only for explicitly historical questions ("what did the law say before 2018?", "what changed in the 2025 Ordinance?").
+
+**Layering rule at retrieval:** where the overlay and the base cover the same provision, the overlay text supersedes the base for answering — and *both are surfaced with labels*. The system says "this is the operative text; its ratification is pending," never silently picks one.
+
+**Resolution path:** when the Ordinance's ratification resolves, the overlay is either merged into the consolidated base or dropped — and that merge **re-triggers Stage 3 validation** like any new document. Consolidation is a process with triggers, not a one-time editing task.
 
 **Two different fields, both required:**
 
 - `legal_status` (`ratified` / `pending_ratification` / `superseded`) is about **authority** — is this provision settled law?
 - `in_force` is about **applicability** — is this the text that governs *today*?
 
-The 2025 Ordinance makes the distinction concrete: it is the operative text while its ratification remains unresolved. The system must be able to say "this is the current text, and its ratification is pending" — not collapse the two facts into one flag.
+The 2025 Ordinance makes the distinction concrete: as an overlay it is `in_force: true` (operative from promulgation) while `legal_status: pending_ratification`; the consolidated base is `in_force: true` and `legal_status: ratified`. The system must be able to say "this is the current text, and its ratification is pending" — not collapse the two facts into one flag.
 
 ---
 
@@ -140,6 +145,10 @@ A structure-aware chunker that silently mis-parses is *worse* than a naive fixed
 
 This is cheap to build (pure assertions over data the pipeline already produces) and converts the riskiest assumption in the pipeline — "the parser walks the real structure" — into a checked invariant.
 
+**The gate re-runs on every ingestion — it is not a one-time step.** Any corpus change re-triggers validation, most importantly Stage 0 consolidation edits: when the 2025 Ordinance's status resolves and the overlay is merged into (or dropped from) the consolidated base, the merged text passes through this same gate before it can reach the index.
+
+**Validation pass-rate is an evaluation artifact.** Report per-document validation pass-rates alongside the RAGAS retrieval/generation scores — a concrete, measurable corpus-quality signal that pairs naturally with the ablation table in the evaluation writeup.
+
 ---
 
 ## Stage 4: Parent-Child Indexing
@@ -162,7 +171,9 @@ Every chunk — prose or table — carries metadata that isn't used for semantic
 | Field | Purpose |
 |---|---|
 | `source_act` | Which law (Labour Act vs. EPZ Act vs. wage gazette) — prevents citing the wrong act for the wrong worker type |
-| `section_path` | Full hierarchical path (Chapter → Section → Sub-section → Clause), filterable — workers think in topics ("wages", "maternity"), not bare section numbers |
+| `text_layer` | Which layer this chunk came from: `consolidated_base` (Act + ratified amendments) vs. `amendment_overlay` (the unratified 2025 Ordinance) — drives the overlay-supersedes-base rule from Stage 0 |
+| `section_path` | Full hierarchical path (Chapter → Section → Sub-section → Clause), filterable |
+| `topic_tags` | Thin, manually-curated topic vocabulary (`termination`, `notice_period`, `maternity`, …) layered on top of `section_path` — workers ask by colloquial topic, not by the Act's structural path, and the two aren't the same shape. Kept deliberately small; Bangla→English register bridging stays the job of multi-query expansion at retrieval, not of these tags |
 | `section_number` | Precise citation; overlapping-coverage detection during corpus QA |
 | `effective_date` | Which version this text belongs to, since the Act has layered amendments (2015 gazette → 2018 amendments → 2025 Ordinance) |
 | `in_force` | **Applicability:** whether this is the text that governs today — deliberately distinct from `legal_status` (see Stage 0) |
@@ -227,7 +238,7 @@ Final chunks (children, with parent-pointers and metadata attached) are embedded
 
 ## Design Principles Recap
 
-1. **Consolidate before you ingest** — index the law as it currently stands, not the sum of its gazettes; keep authority (`legal_status`) and applicability (`in_force`) as separate, explicit fields.
+1. **Consolidate before you ingest** — ratified amendments merge into one base text; unratified changes stay as labeled overlay layers and are never silently merged; authority (`legal_status`) and applicability (`in_force`) remain separate, explicit fields.
 2. **Route before chunking** — prose and tables have different failure modes; treat them differently from the first step.
 3. **Respect the document's own structure — and verify it** — a hierarchy parser without a validation gate is a liability; continuity checks make structure a checked invariant, not an assumption.
 4. **Never flatten tables** — extract structure, embed a summary, hand the LLM the structured data.

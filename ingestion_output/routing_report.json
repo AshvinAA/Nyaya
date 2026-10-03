@@ -128,6 +128,358 @@
   }
  },
  {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 9,
+  "label": "prose",
+  "evidence": {
+   "n_words": 332,
+   "n_chars": 2083,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.036,
+   "top_token_share": 0.057,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 10,
+  "label": "prose",
+  "evidence": {
+   "n_words": 449,
+   "n_chars": 2796,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.007,
+   "top_token_share": 0.071,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 11,
+  "label": "prose",
+  "evidence": {
+   "n_words": 584,
+   "n_chars": 3308,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.065,
+   "top_token_share": 0.046,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 12,
+  "label": "prose",
+  "evidence": {
+   "n_words": 416,
+   "n_chars": 2351,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.019,
+   "top_token_share": 0.075,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 13,
+  "label": "prose",
+  "evidence": {
+   "n_words": 547,
+   "n_chars": 3131,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.024,
+   "top_token_share": 0.075,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 14,
+  "label": "prose",
+  "evidence": {
+   "n_words": 625,
+   "n_chars": 3528,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.029,
+   "top_token_share": 0.066,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 15,
+  "label": "prose",
+  "evidence": {
+   "n_words": 599,
+   "n_chars": 3516,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.015,
+   "top_token_share": 0.063,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 16,
+  "label": "prose",
+  "evidence": {
+   "n_words": 555,
+   "n_chars": 3244,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.022,
+   "top_token_share": 0.07,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 17,
+  "label": "prose",
+  "evidence": {
+   "n_words": 536,
+   "n_chars": 3208,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.043,
+   "top_token_share": 0.052,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 18,
+  "label": "prose",
+  "evidence": {
+   "n_words": 525,
+   "n_chars": 3112,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.025,
+   "top_token_share": 0.05,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 19,
+  "label": "prose",
+  "evidence": {
+   "n_words": 589,
+   "n_chars": 3320,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.031,
+   "top_token_share": 0.07,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 20,
+  "label": "prose",
+  "evidence": {
+   "n_words": 578,
+   "n_chars": 3430,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.024,
+   "top_token_share": 0.066,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 21,
+  "label": "prose",
+  "evidence": {
+   "n_words": 564,
+   "n_chars": 3450,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.021,
+   "top_token_share": 0.083,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 22,
+  "label": "prose",
+  "evidence": {
+   "n_words": 129,
+   "n_chars": 760,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.008,
+   "top_token_share": 0.054,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 23,
+  "label": "prose",
+  "evidence": {
+   "n_words": 535,
+   "n_chars": 3181,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.039,
+   "top_token_share": 0.049,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 24,
+  "label": "prose",
+  "evidence": {
+   "n_words": 522,
+   "n_chars": 3002,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.025,
+   "top_token_share": 0.059,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 25,
+  "label": "prose",
+  "evidence": {
+   "n_words": 117,
+   "n_chars": 680,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.009,
+   "top_token_share": 0.068,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 26,
+  "label": "prose",
+  "evidence": {
+   "n_words": 570,
+   "n_chars": 3137,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.046,
+   "top_token_share": 0.063,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 27,
+  "label": "prose",
+  "evidence": {
+   "n_words": 566,
+   "n_chars": 3256,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.044,
+   "top_token_share": 0.071,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 28,
+  "label": "prose",
+  "evidence": {
+   "n_words": 169,
+   "n_chars": 938,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.03,
+   "top_token_share": 0.065,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 29,
+  "label": "prose",
+  "evidence": {
+   "n_words": 559,
+   "n_chars": 3294,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.013,
+   "top_token_share": 0.05,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_act_2006_english_upto_2018",
+  "page": 30,
+  "label": "prose",
+  "evidence": {
+   "n_words": 499,
+   "n_chars": 3014,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.008,
+   "top_token_share": 0.06,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
   "doc": "bangladesh_labour_rules_2015_english_unofficial",
   "page": 1,
   "label": "prose",
@@ -251,6 +603,358 @@
    "table_word_share": 0.0,
    "one_letter_word_share": 0.021,
    "top_token_share": 0.081,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 9,
+  "label": "prose",
+  "evidence": {
+   "n_words": 418,
+   "n_chars": 2546,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.041,
+   "top_token_share": 0.057,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 10,
+  "label": "prose",
+  "evidence": {
+   "n_words": 500,
+   "n_chars": 2981,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.022,
+   "top_token_share": 0.092,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 11,
+  "label": "prose",
+  "evidence": {
+   "n_words": 454,
+   "n_chars": 2732,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.024,
+   "top_token_share": 0.07,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 12,
+  "label": "prose",
+  "evidence": {
+   "n_words": 576,
+   "n_chars": 3568,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.028,
+   "top_token_share": 0.069,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 13,
+  "label": "prose",
+  "evidence": {
+   "n_words": 465,
+   "n_chars": 2889,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.026,
+   "top_token_share": 0.082,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 14,
+  "label": "prose",
+  "evidence": {
+   "n_words": 135,
+   "n_chars": 833,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.022,
+   "top_token_share": 0.089,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 15,
+  "label": "prose",
+  "evidence": {
+   "n_words": 296,
+   "n_chars": 1779,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.03,
+   "top_token_share": 0.091,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 16,
+  "label": "prose",
+  "evidence": {
+   "n_words": 372,
+   "n_chars": 2282,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.013,
+   "top_token_share": 0.056,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 17,
+  "label": "prose",
+  "evidence": {
+   "n_words": 526,
+   "n_chars": 3140,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.023,
+   "top_token_share": 0.048,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 18,
+  "label": "prose",
+  "evidence": {
+   "n_words": 594,
+   "n_chars": 3553,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.02,
+   "top_token_share": 0.061,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 19,
+  "label": "prose",
+  "evidence": {
+   "n_words": 218,
+   "n_chars": 1213,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.023,
+   "top_token_share": 0.073,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 20,
+  "label": "prose",
+  "evidence": {
+   "n_words": 640,
+   "n_chars": 3830,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.025,
+   "top_token_share": 0.052,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 21,
+  "label": "prose",
+  "evidence": {
+   "n_words": 643,
+   "n_chars": 3782,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.051,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 22,
+  "label": "prose",
+  "evidence": {
+   "n_words": 603,
+   "n_chars": 3660,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.036,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 23,
+  "label": "prose",
+  "evidence": {
+   "n_words": 589,
+   "n_chars": 3652,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.027,
+   "top_token_share": 0.059,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 24,
+  "label": "prose",
+  "evidence": {
+   "n_words": 653,
+   "n_chars": 4005,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.018,
+   "top_token_share": 0.067,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 25,
+  "label": "prose",
+  "evidence": {
+   "n_words": 613,
+   "n_chars": 3681,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.01,
+   "top_token_share": 0.046,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 26,
+  "label": "prose",
+  "evidence": {
+   "n_words": 522,
+   "n_chars": 3046,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.023,
+   "top_token_share": 0.079,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 27,
+  "label": "prose",
+  "evidence": {
+   "n_words": 590,
+   "n_chars": 3534,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.014,
+   "top_token_share": 0.061,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 28,
+  "label": "prose",
+  "evidence": {
+   "n_words": 560,
+   "n_chars": 3344,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.018,
+   "top_token_share": 0.052,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 29,
+  "label": "prose",
+  "evidence": {
+   "n_words": 434,
+   "n_chars": 2554,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.023,
+   "top_token_share": 0.051,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladesh_labour_rules_2015_english_unofficial",
+  "page": 30,
+  "label": "prose",
+  "evidence": {
+   "n_words": 485,
+   "n_chars": 3006,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.027,
+   "top_token_share": 0.054,
    "legacy_font_share": 0.0,
    "table_bboxes": ""
   }
@@ -400,6 +1104,358 @@
   }
  },
  {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 9,
+  "label": "prose",
+  "evidence": {
+   "n_words": 365,
+   "n_chars": 2150,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.033,
+   "top_token_share": 0.038,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 10,
+  "label": "prose",
+  "evidence": {
+   "n_words": 457,
+   "n_chars": 2608,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.013,
+   "top_token_share": 0.085,
+   "legacy_font_share": 0.004,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 11,
+  "label": "prose",
+  "evidence": {
+   "n_words": 412,
+   "n_chars": 2353,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.027,
+   "top_token_share": 0.068,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 12,
+  "label": "prose",
+  "evidence": {
+   "n_words": 401,
+   "n_chars": 2319,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.01,
+   "top_token_share": 0.07,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 13,
+  "label": "prose",
+  "evidence": {
+   "n_words": 400,
+   "n_chars": 2388,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.018,
+   "top_token_share": 0.07,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 14,
+  "label": "prose",
+  "evidence": {
+   "n_words": 478,
+   "n_chars": 2747,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.023,
+   "top_token_share": 0.063,
+   "legacy_font_share": 0.004,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 15,
+  "label": "prose",
+  "evidence": {
+   "n_words": 366,
+   "n_chars": 2205,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.063,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 16,
+  "label": "prose",
+  "evidence": {
+   "n_words": 415,
+   "n_chars": 2465,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.005,
+   "top_token_share": 0.055,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 17,
+  "label": "prose",
+  "evidence": {
+   "n_words": 340,
+   "n_chars": 2085,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.021,
+   "top_token_share": 0.047,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 18,
+  "label": "prose",
+  "evidence": {
+   "n_words": 469,
+   "n_chars": 2681,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.06,
+   "legacy_font_share": 0.004,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 19,
+  "label": "prose",
+  "evidence": {
+   "n_words": 316,
+   "n_chars": 1933,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.019,
+   "top_token_share": 0.073,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 20,
+  "label": "prose",
+  "evidence": {
+   "n_words": 337,
+   "n_chars": 2185,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.0,
+   "top_token_share": 0.08,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 21,
+  "label": "prose",
+  "evidence": {
+   "n_words": 346,
+   "n_chars": 1953,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.043,
+   "top_token_share": 0.052,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 22,
+  "label": "prose",
+  "evidence": {
+   "n_words": 378,
+   "n_chars": 2148,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.042,
+   "top_token_share": 0.066,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 23,
+  "label": "prose",
+  "evidence": {
+   "n_words": 382,
+   "n_chars": 2251,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.05,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 24,
+  "label": "prose",
+  "evidence": {
+   "n_words": 322,
+   "n_chars": 1942,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.012,
+   "top_token_share": 0.05,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 25,
+  "label": "prose",
+  "evidence": {
+   "n_words": 373,
+   "n_chars": 2163,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.0,
+   "top_token_share": 0.064,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 26,
+  "label": "prose",
+  "evidence": {
+   "n_words": 421,
+   "n_chars": 2386,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.01,
+   "top_token_share": 0.067,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 27,
+  "label": "prose",
+  "evidence": {
+   "n_words": 333,
+   "n_chars": 1983,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.015,
+   "top_token_share": 0.111,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 28,
+  "label": "prose",
+  "evidence": {
+   "n_words": 371,
+   "n_chars": 2276,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.011,
+   "top_token_share": 0.094,
+   "legacy_font_share": 0.005,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 29,
+  "label": "prose",
+  "evidence": {
+   "n_words": 359,
+   "n_chars": 2051,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.014,
+   "top_token_share": 0.07,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagetteinbanglishjul2021",
+  "page": 30,
+  "label": "prose",
+  "evidence": {
+   "n_words": 361,
+   "n_chars": 2127,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.069,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
   "doc": "bangladeshgagettesep2015",
   "page": 1,
   "label": "visual_routing_required",
@@ -524,6 +1580,358 @@
    "one_letter_word_share": 0.044,
    "top_token_share": 0.064,
    "legacy_font_share": 0.008,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 9,
+  "label": "prose",
+  "evidence": {
+   "n_words": 434,
+   "n_chars": 2695,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.03,
+   "top_token_share": 0.058,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 10,
+  "label": "prose",
+  "evidence": {
+   "n_words": 406,
+   "n_chars": 2517,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.02,
+   "top_token_share": 0.081,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 11,
+  "label": "prose",
+  "evidence": {
+   "n_words": 381,
+   "n_chars": 2404,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.013,
+   "top_token_share": 0.068,
+   "legacy_font_share": 0.008,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 12,
+  "label": "prose",
+  "evidence": {
+   "n_words": 272,
+   "n_chars": 1751,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.007,
+   "top_token_share": 0.066,
+   "legacy_font_share": 0.011,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 13,
+  "label": "prose",
+  "evidence": {
+   "n_words": 380,
+   "n_chars": 2344,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.037,
+   "top_token_share": 0.045,
+   "legacy_font_share": 0.008,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 14,
+  "label": "prose",
+  "evidence": {
+   "n_words": 491,
+   "n_chars": 2993,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.022,
+   "top_token_share": 0.063,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 15,
+  "label": "prose",
+  "evidence": {
+   "n_words": 391,
+   "n_chars": 2412,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.038,
+   "top_token_share": 0.056,
+   "legacy_font_share": 0.008,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 16,
+  "label": "prose",
+  "evidence": {
+   "n_words": 504,
+   "n_chars": 2953,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.054,
+   "top_token_share": 0.048,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 17,
+  "label": "prose",
+  "evidence": {
+   "n_words": 351,
+   "n_chars": 2004,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.028,
+   "top_token_share": 0.071,
+   "legacy_font_share": 0.009,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 18,
+  "label": "prose",
+  "evidence": {
+   "n_words": 344,
+   "n_chars": 2020,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.009,
+   "top_token_share": 0.061,
+   "legacy_font_share": 0.009,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 19,
+  "label": "prose",
+  "evidence": {
+   "n_words": 417,
+   "n_chars": 2391,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.031,
+   "top_token_share": 0.079,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 20,
+  "label": "prose",
+  "evidence": {
+   "n_words": 440,
+   "n_chars": 2487,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.032,
+   "top_token_share": 0.068,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 21,
+  "label": "prose",
+  "evidence": {
+   "n_words": 418,
+   "n_chars": 2425,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.074,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 22,
+  "label": "prose",
+  "evidence": {
+   "n_words": 419,
+   "n_chars": 2479,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.019,
+   "top_token_share": 0.06,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 23,
+  "label": "prose",
+  "evidence": {
+   "n_words": 467,
+   "n_chars": 2778,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.028,
+   "top_token_share": 0.066,
+   "legacy_font_share": 0.006,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 24,
+  "label": "prose",
+  "evidence": {
+   "n_words": 382,
+   "n_chars": 2252,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.018,
+   "top_token_share": 0.073,
+   "legacy_font_share": 0.008,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 25,
+  "label": "prose",
+  "evidence": {
+   "n_words": 323,
+   "n_chars": 1995,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.056,
+   "top_token_share": 0.053,
+   "legacy_font_share": 0.009,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 26,
+  "label": "prose",
+  "evidence": {
+   "n_words": 324,
+   "n_chars": 2005,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.034,
+   "top_token_share": 0.049,
+   "legacy_font_share": 0.009,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 27,
+  "label": "prose",
+  "evidence": {
+   "n_words": 418,
+   "n_chars": 2407,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.077,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 28,
+  "label": "prose",
+  "evidence": {
+   "n_words": 395,
+   "n_chars": 2292,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.03,
+   "top_token_share": 0.068,
+   "legacy_font_share": 0.008,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 29,
+  "label": "prose",
+  "evidence": {
+   "n_words": 411,
+   "n_chars": 2347,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.027,
+   "top_token_share": 0.058,
+   "legacy_font_share": 0.007,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "bangladeshgagettesep2015",
+  "page": 30,
+  "label": "prose",
+  "evidence": {
+   "n_words": 416,
+   "n_chars": 2633,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.029,
+   "top_token_share": 0.075,
+   "legacy_font_share": 0.007,
    "table_bboxes": ""
   }
  },
@@ -784,6 +2192,358 @@
   }
  },
  {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 9,
+  "label": "prose",
+  "evidence": {
+   "n_words": 629,
+   "n_chars": 4027,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.105,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 10,
+  "label": "prose",
+  "evidence": {
+   "n_words": 667,
+   "n_chars": 4280,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.012,
+   "top_token_share": 0.12,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 11,
+  "label": "prose",
+  "evidence": {
+   "n_words": 640,
+   "n_chars": 4200,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.009,
+   "top_token_share": 0.123,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 12,
+  "label": "prose",
+  "evidence": {
+   "n_words": 592,
+   "n_chars": 3820,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.007,
+   "top_token_share": 0.096,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 13,
+  "label": "prose",
+  "evidence": {
+   "n_words": 679,
+   "n_chars": 4292,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.019,
+   "top_token_share": 0.09,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 14,
+  "label": "prose",
+  "evidence": {
+   "n_words": 597,
+   "n_chars": 3911,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.012,
+   "top_token_share": 0.112,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 15,
+  "label": "prose",
+  "evidence": {
+   "n_words": 615,
+   "n_chars": 3962,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.013,
+   "top_token_share": 0.101,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 16,
+  "label": "prose",
+  "evidence": {
+   "n_words": 657,
+   "n_chars": 4353,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.006,
+   "top_token_share": 0.1,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 17,
+  "label": "prose",
+  "evidence": {
+   "n_words": 568,
+   "n_chars": 3661,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.106,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 18,
+  "label": "prose",
+  "evidence": {
+   "n_words": 670,
+   "n_chars": 4236,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.009,
+   "top_token_share": 0.113,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 19,
+  "label": "prose",
+  "evidence": {
+   "n_words": 646,
+   "n_chars": 4203,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.014,
+   "top_token_share": 0.096,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 20,
+  "label": "prose",
+  "evidence": {
+   "n_words": 705,
+   "n_chars": 4293,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.026,
+   "top_token_share": 0.099,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 21,
+  "label": "prose",
+  "evidence": {
+   "n_words": 676,
+   "n_chars": 4254,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.024,
+   "top_token_share": 0.101,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 22,
+  "label": "prose",
+  "evidence": {
+   "n_words": 653,
+   "n_chars": 4220,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.003,
+   "top_token_share": 0.141,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 23,
+  "label": "prose",
+  "evidence": {
+   "n_words": 678,
+   "n_chars": 4338,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.015,
+   "top_token_share": 0.09,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 24,
+  "label": "prose",
+  "evidence": {
+   "n_words": 709,
+   "n_chars": 4695,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.007,
+   "top_token_share": 0.114,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 25,
+  "label": "prose",
+  "evidence": {
+   "n_words": 681,
+   "n_chars": 4329,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.022,
+   "top_token_share": 0.084,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 26,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 225,
+   "n_chars": 1415,
+   "n_tables": 1,
+   "table_area": 0.061,
+   "table_word_share": 0.098,
+   "one_letter_word_share": 0.071,
+   "top_token_share": 0.076,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(100,172 438x70)"
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 27,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 320,
+   "n_chars": 2293,
+   "n_tables": 1,
+   "table_area": 0.027,
+   "table_word_share": 0.031,
+   "one_letter_word_share": 0.059,
+   "top_token_share": 0.047,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(100,115 438x30)"
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 28,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 312,
+   "n_chars": 2104,
+   "n_tables": 1,
+   "table_area": 0.08,
+   "table_word_share": 0.205,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.064,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(59,511 274x147)"
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 29,
+  "label": "prose",
+  "evidence": {
+   "n_words": 582,
+   "n_chars": 3760,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.012,
+   "top_token_share": 0.107,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "report_of_the_committee_on_freedom_of_association",
+  "page": 30,
+  "label": "prose",
+  "evidence": {
+   "n_words": 600,
+   "n_chars": 3913,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.087,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
   "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
   "page": 1,
   "label": "empty",
@@ -909,6 +2669,358 @@
    "top_token_share": 0.05,
    "legacy_font_share": 0.0,
    "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 9,
+  "label": "empty",
+  "evidence": {
+   "n_words": 11,
+   "n_chars": 56,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.0,
+   "top_token_share": 0.182,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 10,
+  "label": "prose",
+  "evidence": {
+   "n_words": 575,
+   "n_chars": 3704,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.021,
+   "top_token_share": 0.083,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 11,
+  "label": "prose",
+  "evidence": {
+   "n_words": 474,
+   "n_chars": 3038,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.027,
+   "top_token_share": 0.076,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 12,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 349,
+   "n_chars": 2252,
+   "n_tables": 1,
+   "table_area": 0.141,
+   "table_word_share": 0.023,
+   "one_letter_word_share": 0.026,
+   "top_token_share": 0.063,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(165,122 296x229)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 13,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 274,
+   "n_chars": 1969,
+   "n_tables": 1,
+   "table_area": 0.127,
+   "table_word_share": 0.058,
+   "one_letter_word_share": 0.055,
+   "top_token_share": 0.033,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(105,143 398x154)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 14,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 451,
+   "n_chars": 3157,
+   "n_tables": 2,
+   "table_area": 0.249,
+   "table_word_share": 0.426,
+   "one_letter_word_share": 0.049,
+   "top_token_share": 0.04,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,200 453x138) ; (72,555 453x127)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 15,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 534,
+   "n_chars": 3302,
+   "n_tables": 1,
+   "table_area": 0.092,
+   "table_word_share": 0.12,
+   "one_letter_word_share": 0.03,
+   "top_token_share": 0.047,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,96 453x98)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 16,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 316,
+   "n_chars": 2014,
+   "n_tables": 1,
+   "table_area": 0.135,
+   "table_word_share": 0.174,
+   "one_letter_word_share": 0.009,
+   "top_token_share": 0.044,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,172 454x144)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 17,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 309,
+   "n_chars": 2003,
+   "n_tables": 1,
+   "table_area": 0.208,
+   "table_word_share": 0.123,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.071,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,452 453x221)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 18,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 402,
+   "n_chars": 2533,
+   "n_tables": 1,
+   "table_area": 0.277,
+   "table_word_share": 0.261,
+   "one_letter_word_share": 0.022,
+   "top_token_share": 0.055,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,214 453x295)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 19,
+  "label": "prose",
+  "evidence": {
+   "n_words": 512,
+   "n_chars": 3142,
+   "n_tables": 0,
+   "table_area": 0.0,
+   "table_word_share": 0.0,
+   "one_letter_word_share": 0.029,
+   "top_token_share": 0.078,
+   "legacy_font_share": 0.0,
+   "table_bboxes": ""
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 20,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 347,
+   "n_chars": 2064,
+   "n_tables": 2,
+   "table_area": 0.33,
+   "table_word_share": 0.314,
+   "one_letter_word_share": 0.035,
+   "top_token_share": 0.055,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,214 454x203) ; (72,565 454x148)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 21,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 328,
+   "n_chars": 2158,
+   "n_tables": 1,
+   "table_area": 0.191,
+   "table_word_share": 0.125,
+   "one_letter_word_share": 0.015,
+   "top_token_share": 0.064,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,256 453x203)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 22,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 384,
+   "n_chars": 2257,
+   "n_tables": 1,
+   "table_area": 0.237,
+   "table_word_share": 0.266,
+   "one_letter_word_share": 0.026,
+   "top_token_share": 0.055,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,102 454x252)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 23,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 309,
+   "n_chars": 1741,
+   "n_tables": 2,
+   "table_area": 0.411,
+   "table_word_share": 0.508,
+   "one_letter_word_share": 0.013,
+   "top_token_share": 0.091,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,102 453x192) ; (72,441 453x245)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 24,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 422,
+   "n_chars": 2371,
+   "n_tables": 2,
+   "table_area": 0.208,
+   "table_word_share": 0.235,
+   "one_letter_word_share": 0.028,
+   "top_token_share": 0.045,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,186 453x192) ; (72,526 453x30)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 25,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 381,
+   "n_chars": 2316,
+   "n_tables": 3,
+   "table_area": 0.18,
+   "table_word_share": 0.134,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.06,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,102 454x74) ; (72,323 454x59) ; (72,586 454x59)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 26,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 511,
+   "n_chars": 3137,
+   "n_tables": 2,
+   "table_area": 0.135,
+   "table_word_share": 0.137,
+   "one_letter_word_share": 0.008,
+   "top_token_share": 0.061,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,214 454x70) ; (72,488 454x74)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 27,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 306,
+   "n_chars": 1842,
+   "n_tables": 2,
+   "table_area": 0.251,
+   "table_word_share": 0.291,
+   "one_letter_word_share": 0.016,
+   "top_token_share": 0.056,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,102 454x64) ; (72,453 454x203)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 28,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 345,
+   "n_chars": 2127,
+   "n_tables": 1,
+   "table_area": 0.181,
+   "table_word_share": 0.206,
+   "one_letter_word_share": 0.02,
+   "top_token_share": 0.049,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,270 454x192)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 29,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 289,
+   "n_chars": 1712,
+   "n_tables": 2,
+   "table_area": 0.361,
+   "table_word_share": 0.491,
+   "one_letter_word_share": 0.017,
+   "top_token_share": 0.017,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,102 454x192) ; (72,441 454x192)"
+  }
+ },
+ {
+  "doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+  "page": 30,
+  "label": "mixed",
+  "evidence": {
+   "n_words": 358,
+   "n_chars": 2135,
+   "n_tables": 2,
+   "table_area": 0.205,
+   "table_word_share": 0.218,
+   "one_letter_word_share": 0.02,
+   "top_token_share": 0.05,
+   "legacy_font_share": 0.0,
+   "table_bboxes": "(72,158 454x85) ; (72,545 454x133)"
   }
  }
 ]

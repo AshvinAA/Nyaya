@@ -1,0 +1,10 @@
+[
+ {
+  "kind": "needs_manual_transcription",
+  "node": "p001",
+  "text": "[TABLE PAGE - PDF-layer returned no table structure; marked for one-time manual transcription]",
+  "doc": "bangladeshgagettesep2015",
+  "page": 1,
+  "reason": "text-layer garbage (top-token share 0.04, one-letter 0.12)"
+ }
+]

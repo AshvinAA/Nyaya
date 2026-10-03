@@ -1,8 +1,32 @@
-langchain-community 
-langchain_text_splitters
-langchain_openai
-langchain_chroma
-python_dotenv
-langchain-huggingface sentence-transformers
-ollama 
-llamma3.2
+# =============================================================================
+# Nyaya - project dependencies
+#
+# Install with:
+#     pip install -r requirements.txt
+# (in the project venv:  venv/Scripts/python -m pip install -r requirements.txt)
+#
+# Versions are pinned to the exact set the project was built and tested with.
+# =============================================================================
+
+# --- LangChain stack ---------------------------------------------------------
+langchain-community==0.4.2        # loaders, retrievers, community integrations
+langchain-text-splitters==1.1.2   # token-based splitting (Stage 2a fallback path)
+langchain-openai==1.6.2           # OpenAI chat + embeddings wrappers
+langchain-chroma==1.1.0           # Chroma vector store (pulls chromadb itself)
+langchain-huggingface==1.2.2      # local HF embeddings (e.g. BGE-M3)
+langchain-ollama==1.1.0           # LangChain wrapper for local Ollama chat models
+
+# --- Local model serving -------------------------------------------------------
+ollama==0.6.2                     # Python client for a local Ollama server
+# NOTE: "llama3.2" is NOT a pip package (the old requirements.txt had a typo,
+# "llamma3.2"). It is an Ollama *model* - install it with:
+#     ollama pull llama3.2
+
+# --- Embeddings / sentence models ----------------------------------------------
+sentence-transformers==6.0.1      # HuggingFace sentence encoders (pulls torch)
+
+# --- PDF ingestion (Stage 1 + Stage 2 in ingestion_stage1_2.py) ----------------
+pdfplumber==0.11.10               # text extraction + table detection/extraction
+
+# --- Misc -----------------------------------------------------------------------
+python-dotenv==1.2.3              # loads .env files (API keys, endpoints)

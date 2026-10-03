@@ -33,8 +33,9 @@ Every advanced technique in the pipeline exists because the corpus is genuinely 
 
 ### Ingestion Pipeline
 
-- **Structure-aware chunking** that follows the legal corpus's own hierarchy (Chapter → Section → Clause) rather than naive fixed-size splitting.
-- **Parent-child indexing** so retrieval precision and generation context don't trade off against each other.
+- **Corpus consolidation and version resolution** — the index reflects the law as it currently stands (2015 Act + 2018 amendments + 2025 Ordinance), not the sum of its gazettes; authority (`legal_status`) and applicability (`in_force`) are tracked as separate, explicit fields.
+- **Structure-aware chunking** that follows the legal corpus's own hierarchy (Chapter → Section → Clause) rather than naive fixed-size splitting — with a **structural validation gate** so a mis-parsed document can never silently reach the index.
+- **Parent-child indexing** so retrieval precision and generation context don't trade off against each other, with **embed-time context injection** (the hierarchical path is embedded, never shown to the LLM as law text).
 - **A separate structured path for data tables** (wage grades, survey statistics) so they aren't destroyed by being flattened into prose.
 - **Deduplication logic** that removes true redundancy while preserving meaningful version history across amended law.
 

@@ -39,7 +39,11 @@ Every advanced technique in the pipeline exists because the corpus is genuinely 
 - **A separate structured path for data tables** (wage grades, survey statistics) so they aren't destroyed by being flattened into prose — extracted as structured JSON with a validation gate (empty-header and flattened-cell checks; one retry, then quarantine to manual review, never indexed).
 - **Deduplication logic** that removes true redundancy while preserving meaningful version history across amended law.
 
-📄 See [INGESTION_PIPELINE.md](INGESTION_PIPELINE.md) for the full ingestion architecture.
+📄 See [INGESTION_PIPELINE.md](INGESTION_PIPELINE.md) for the full ingestion architecture, and [`ingestion/`](ingestion/README.md) for the implementation — one module per stage, run end to end with:
+
+```bash
+venv/Scripts/python ingestion/run_pipeline.py --full
+```
 
 ### Retrieval
 

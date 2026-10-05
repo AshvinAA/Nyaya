@@ -1,0 +1,81 @@
+{
+ "n_children": 192,
+ "n_scored": 180,
+ "backend": "embedding:sentence-transformers/all-MiniLM-L6-v2",
+ "threshold": 0.92,
+ "n_exact_dups": 12,
+ "n_near_dups": 10,
+ "n_demoted": 22,
+ "pairs": [
+  {
+   "winner": "chk0143",
+   "loser": "chk0001",
+   "similarity": 0.949,
+   "winner_doc": "bangladeshgagettesep2015",
+   "loser_doc": "bangladesh_labour_act_2006_english_upto_2018"
+  },
+  {
+   "winner": "chk0144",
+   "loser": "chk0002",
+   "similarity": 0.996,
+   "winner_doc": "bangladeshgagettesep2015",
+   "loser_doc": "bangladesh_labour_act_2006_english_upto_2018"
+  },
+  {
+   "winner": "chk0146",
+   "loser": "chk0004",
+   "similarity": 1.0,
+   "winner_doc": "bangladeshgagettesep2015",
+   "loser_doc": "bangladesh_labour_act_2006_english_upto_2018"
+  },
+  {
+   "winner": "chk0151",
+   "loser": "chk0009",
+   "similarity": 0.953,
+   "winner_doc": "bangladeshgagettesep2015",
+   "loser_doc": "bangladesh_labour_act_2006_english_upto_2018"
+  },
+  {
+   "winner": "chk0011",
+   "loser": "chk0153",
+   "similarity": 0.93,
+   "winner_doc": "bangladesh_labour_act_2006_english_upto_2018",
+   "loser_doc": "bangladeshgagettesep2015"
+  },
+  {
+   "winner": "chk0155",
+   "loser": "chk0013",
+   "similarity": 0.997,
+   "winner_doc": "bangladeshgagettesep2015",
+   "loser_doc": "bangladesh_labour_act_2006_english_upto_2018"
+  },
+  {
+   "winner": "chk0014",
+   "loser": "chk0156",
+   "similarity": 0.995,
+   "winner_doc": "bangladesh_labour_act_2006_english_upto_2018",
+   "loser_doc": "bangladeshgagettesep2015"
+  },
+  {
+   "winner": "chk0019",
+   "loser": "chk0162",
+   "similarity": 0.996,
+   "winner_doc": "bangladesh_labour_act_2006_english_upto_2018",
+   "loser_doc": "bangladeshgagettesep2015"
+  },
+  {
+   "winner": "chk0021",
+   "loser": "chk0164",
+   "similarity": 0.987,
+   "winner_doc": "bangladesh_labour_act_2006_english_upto_2018",
+   "loser_doc": "bangladeshgagettesep2015"
+  },
+  {
+   "winner": "chk0028",
+   "loser": "chk0171",
+   "similarity": 1.0,
+   "winner_doc": "bangladesh_labour_act_2006_english_upto_2018",
+   "loser_doc": "bangladeshgagettesep2015"
+  }
+ ]
+}

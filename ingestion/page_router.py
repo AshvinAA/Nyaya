@@ -31,7 +31,7 @@
  "Bangladesh" or "Ministry of Labour" and would be handed to the LLM as if
  it were a provision.
 
- Used by: stage2_intake.py (the driver that applies this router).
+ Used by: document_intake.py (the driver that applies this router).
 ============================================================================
 """
 

@@ -24,7 +24,6 @@ DOCS_DIR = "docs"                   # folder holding the raw corpus PDFs
 OUT_DIR = "ingestion_output"        # folder where stage outputs are written
 DB_DIR = "db/chroma_db"             # Chroma persistence dir (Stage 7)
 COLLECTION = "nyaya_children"       # collection of child chunks
-DB_PARENT_DIR = "db/parents"        # JSON file store of parent chunks (Stage 4)
 
 # ---------------------------------------------------------------------------
 # Runtime
@@ -55,13 +54,14 @@ OVERLAP_RATIO = 0.15                # 15% overlap between split pieces
 # Stage 3 - Structural validation gate
 # ---------------------------------------------------------------------------
 VALIDATION_STRICT = False           # True = also treat review items as failures
-BACKWARD_HEADING_WORD_CAP = 12      # a leftover short heading at END of doc is
-                                    # merged BACKWARD inside its section only
-                                    # if its text is at most this many words
-
-# Stage 3 table gate: digit-space-digit inside a cell means a line break got
-# flattened away, silently merging two numbers ("229 132") - fatal per table
-DIGIT_SPACE_DIGIT_IN_CELL = True    # (kept explicit; behavior identical to Day 1)
+                                    # (CLI: --strict)
+PARENTLESS_FAIL_RATE = 0.5          # a doc where MORE than this fraction of
+                                    # leaves are parentless clauses has a
+                                    # broken hierarchy parse -> hard failure
+POLLUTION_MAX_TOKENS = 10           # page furniture is short (page numbers,
+                                    # running headers); longer text is content
+POLLUTION_MIN_PAGES = 3             # a short text repeated on at least this
+                                    # many pages of one doc is furniture
 
 # ---------------------------------------------------------------------------
 # Stage 4 - Parent-child indexing
@@ -83,8 +83,13 @@ PARENT_TOKEN_SOFT_CAP = 5000        # hard cap on a parent's character length
 NEARDUP_MIN_TOKENS = 6              # chunks shorter than this skip near-dup
                                     # checks (short legal-marker phrases like
                                     # "Given under my hand" dup-legally on purpose)
-NEARDUP_SIM_THRESHOLD = 0.8         # cosine similarity at/above which two
+NEARDUP_SIM_THRESHOLD = 0.92        # cosine similarity at/above which two
                                     # chunks are the same fact restated
-MINHASH_PERMUTATIONS = 128          # LSH signature size for candidate blocks
-MINHASH_BANDS = 32                  # 128-row sigs -> 32 bands x 4 rows blocking
-                                    # (minHash blocking - see dedup docstring)
+DEDUP_MODEL = "sentence-transformers/all-MiniLM-L6-v2"   # small cached model
+                                    # used ONLY to score near-dup pairs here;
+                                    # the retrieval index itself uses the
+                                    # BGE-M3 model in Stage 7
+# Scaling note (from the plan): pairwise similarity is O(n^2) across chunks.
+# At this corpus's size (thousands of chunks, not millions) that is fine.
+# If the corpus ever grows, switch to minHash/LSH blocking first and run
+# embedding similarity only WITHIN candidate blocks.

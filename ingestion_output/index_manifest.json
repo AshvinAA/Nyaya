@@ -1,0 +1,27 @@
+{
+ "n_children_in": 192,
+ "n_indexed": 170,
+ "excluded": 22,
+ "model": "BAAI/bge-m3",
+ "requested_model": "BAAI/bge-m3",
+ "dim": 1024,
+ "db_dir": "db/chroma_db",
+ "collection": "nyaya_children",
+ "collection_count": 170,
+ "filterable_fields": [
+  "doc",
+  "kind",
+  "node",
+  "source_act",
+  "source_type",
+  "legal_status",
+  "in_force",
+  "authority_rank",
+  "translation_status",
+  "text_layer",
+  "effective_date",
+  "section_number",
+  "section_path",
+  "parent_id"
+ ]
+}

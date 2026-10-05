@@ -6,7 +6,7 @@
  -----------------------
  Every ingested document gets a document-level metadata record describing
  WHO produced it, WHAT kind of authority it carries, and whether its text
- is the law in force today. Per-chunk metadata (stage5_metadata.py) is
+ is the law in force today. Per-chunk metadata (metadata_tagger.py) is
  derived from these defaults and from each chunk's position in the
  document hierarchy.
 
@@ -27,9 +27,9 @@
  NOTE: summarize_table() lives here too - not because tables have anything
  to do with metadata, but because the summary text is what carries the
  table's document metadata into the embedding (Stage 7), and it keeps
- stage2b_tables.py focused on extraction mechanics.
+ table_extractor.py focused on extraction mechanics.
 
- Used by: stage2b_tables.py (table metadata blocks), stage5_metadata.py
+ Used by: table_extractor.py (table metadata blocks), metadata_tagger.py
  (per-chunk tagging), run_pipeline.py (doc_metadata.json output).
 ============================================================================
 """

@@ -10,7 +10,7 @@
  stage, it lives in that stage's file instead - that keeps each stage
  module readable as a self-contained unit.
 
- Used by: every stage module (stage1..stage7) and run_pipeline.py
+ Used by: every pipeline module and run_pipeline.py
 ============================================================================
 """
 
@@ -44,6 +44,11 @@ def doc_slug(path):
     # "docs/BangladeshGagetteSep2015.pdf" -> "bangladeshgagettesep2015"
     base = os.path.splitext(os.path.basename(path).lower())[0]  # name minus .pdf
     return re.sub(r"[^a-z0-9]+", "_", base).strip("_")          # non-alnum -> "_"
+
+
+def clean_cell(value):
+    # pdfplumber table cells carry embedded newlines; flatten and trim them
+    return normalize(str(value)) if value is not None else ""
 
 
 # ---------------------------------------------------------------------------

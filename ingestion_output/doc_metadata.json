@@ -1,14 +1,4 @@
 {
- "bangladesh_labour_act_2006_english_upto_2018": {
-  "source_type": "primary_law",
-  "source_act": "Bangladesh Labour Act, 2006",
-  "effective_date": "2006-10-11",
-  "legal_status": "ratified",
-  "in_force": true,
-  "authority_rank": "official_gazette",
-  "translation_status": "official_english",
-  "text_layer": "consolidated_base"
- },
  "bangladesh_labour_rules_2015_english_unofficial": {
   "source_type": "primary_law",
   "source_act": "Bangladesh Labour Rules, 2015",
@@ -24,65 +14,5 @@
   "publication_date": "Tuesday, September 15, 2015",
   "issuing_authority": "Ministry of Labour and Employment",
   "dated_reference": "31 Bhadra, 1422, Bengali Year/15 September 2015, AD S.R.O. No. 291-Law/2015.- In exercise of the power conferred by Section 351 of the Bangladesh Labour"
- },
- "bangladeshgagette2025": {
-  "source_type": "primary_law",
-  "source_act": "Bangladesh Labour (Amendment) Ordinance, 2025",
-  "effective_date": null,
-  "legal_status": "pending_ratification",
-  "in_force": true,
-  "authority_rank": "official_gazette",
-  "translation_status": "original_bangla",
-  "text_layer": "amendment_overlay"
- },
- "bangladeshgagetteinbanglishjul2021": {
-  "source_type": "primary_law",
-  "source_act": null,
-  "effective_date": null,
-  "legal_status": "unverified",
-  "in_force": false,
-  "authority_rank": "official_gazette",
-  "translation_status": "original_bangla",
-  "text_layer": null
- },
- "bangladeshgagettesep2015": {
-  "source_type": "primary_law",
-  "source_act": "Bangladesh Labour Act, 2006",
-  "effective_date": "2006-10-11",
-  "legal_status": "ratified",
-  "in_force": true,
-  "authority_rank": "official_gazette",
-  "translation_status": "original_bangla",
-  "text_layer": "consolidated_base"
- },
- "legal_500_bangladesh": {
-  "source_type": "secondary_legal_guide",
-  "source_act": null,
-  "effective_date": null,
-  "legal_status": null,
-  "in_force": false,
-  "authority_rank": "reputable_secondary",
-  "translation_status": "original_english",
-  "text_layer": null
- },
- "report_of_the_committee_on_freedom_of_association": {
-  "source_type": "international_oversight",
-  "source_act": null,
-  "effective_date": null,
-  "legal_status": null,
-  "in_force": false,
-  "authority_rank": "reputable_secondary",
-  "translation_status": "original_english",
-  "text_layer": null
- },
- "revision_of_the_minimum_wage_of_rmg_workers_in_2023": {
-  "source_type": "policy_advocacy",
-  "source_act": null,
-  "effective_date": "2024-03",
-  "legal_status": null,
-  "in_force": false,
-  "authority_rank": "advocacy_report",
-  "translation_status": "original_english",
-  "text_layer": null
  }
 }

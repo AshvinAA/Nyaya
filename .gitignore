@@ -1,2 +1,16 @@
 .env
 db/
+
+# pipeline run artifacts
+ingest_*.log
+ingest_stage7.log
+probe_*.log
+ingestion_output/
+retrieval_traces/
+__pycache__/
+*.pyc
+
+# environments / models
+venv/
+.venv/
+hf_cache/

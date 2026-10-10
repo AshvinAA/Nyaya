@@ -30,7 +30,9 @@ COLLECTION = "nyaya_children"       # collection of child chunks
 # ---------------------------------------------------------------------------
 DEFAULT_MAX_PAGES = 30              # per-document page cap so a demo run is quick
 EMBED_MODEL = "BAAI/bge-m3"         # multilingual dense+sparse model (Stage 7)
-EMBED_BATCH = 32                    # chunks per forward pass of the encoder
+EMBED_BATCH = 1                     # chunks per forward pass: >1 segfaults
+                                    # on CPU torch 2.14 with ~1800-token
+                                    # BGE-M3 inputs (works fine at batch 1)
 
 # ---------------------------------------------------------------------------
 # Stage 1 - Intake & content-type routing

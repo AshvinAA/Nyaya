@@ -90,6 +90,15 @@ def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
                  if c.get("retrievable", True)
                  and c.get("kind") != "front_matter"]
 
+    # NOTE: torch CPU multi-threaded forward on XLM-R (BGE-M3) segfaults on
+    # this build (faulthandler: intra-op parallel join inside nn.linear).
+    # Pinning to 1 thread fixes it -- MUST happen before the model is loaded
+    # (pinning after load still crashed). Probe confirmed: corpus encodes
+    # cleanly single-threaded (~1800-token parents).
+    import torch
+    if torch.get_num_threads() > 1:
+        torch.set_num_threads(1)
+
     backend = model_name
     try:
         model = SentenceTransformer(model_name)
@@ -102,10 +111,11 @@ def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
     dim = model.get_sentence_embedding_dimension()
     emb_texts = [build_embed_text(c) for c in indexable]
     print("  [index] embedding %d children with %s (dim=%d)..."
-          % (len(indexable), backend, dim))
+          % (len(indexable), backend, dim), flush=True)
     vecs = model.encode(emb_texts, batch_size=batch_size,
                         show_progress_bar=False,
                         normalize_embeddings=True, convert_to_numpy=True)
+    print("  [index] encoded %d children - writing index..." % len(vecs), flush=True)
 
     # ---- write the index (full rebuild: delete + create + add) -------------
     client = chromadb.PersistentClient(path=db_dir)

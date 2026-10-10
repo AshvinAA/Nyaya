@@ -1,0 +1,39 @@
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights: 100%|##########| 391/391 [00:00<00:00, 12514.77it/s]
+loaded
+Windows fatal exception: access violation
+
+Thread 0x00001ee8 (most recent call first):
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 324 in wait
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 622 in wait
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\tqdm\_monitor.py", line 69 in run
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1038 in _bootstrap_inner
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 995 in _bootstrap
+
+Thread 0x0000455c (most recent call first):
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 324 in wait
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 622 in wait
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\tqdm\_monitor.py", line 69 in run
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1038 in _bootstrap_inner
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 995 in _bootstrap
+
+Current thread 0x000042c4 (most recent call first):
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\functional.py", line 2621 in embedding
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\sparse.py", line 189 in forward
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1794 in _call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1783 in _wrapped_call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\models\xlm_roberta\modeling_xlm_roberta.py", line 112 in forward
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1794 in _call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1783 in _wrapped_call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\models\xlm_roberta\modeling_xlm_roberta.py", line 621 in forward
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\utils\output_capturing.py", line 287 in wrapper
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\utils\generic.py", line 1081 in wrapper
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\sentence_transformers\base\modules\transformer.py", line 1650 in forward
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1794 in _call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1783 in _wrapped_call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\sentence_transformers\base\model.py", line 569 in forward
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1794 in _call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1783 in _wrapped_call_impl
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\sentence_transformers\sentence_transformer\model.py", line 941 in encode
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\sentence_transformers\util\decorators.py", line 46 in wrapper
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\_contextlib.py", line 124 in decorate_context
+  File "<string>", line 8 in <module>

@@ -97,7 +97,11 @@ def process_pdf(path, max_pages):
                     chunk, reason = table_chunk_with_retry(
                         page, t, page.page_number, slug, i, evidence)
                     if chunk:                               # structured JSON chunk
-                        rec["tables"].append(chunk)
+                        rec["tables"].append({**chunk, "doc": slug,
+                                              "path": os.path.basename(path),
+                                              "page": page.page_number,
+                                              "est_tokens": estimate_tokens(
+                                                  chunk.get("summary") or "")})
                         made += 1
                     elif reason:                   # failed validation -> manual
                         # queue, never indexed (inline Stage 3 table gate)
@@ -132,7 +136,13 @@ def process_pdf(path, max_pages):
                                 "p%03d_t%02d" % (page.page_number, i),
                                 page.page_number, slug, reason))
                             rejected += 1
-                rec["tables"].extend(page_tables)
+                rec["tables"].extend({**t, "doc": slug,
+                                      "path": os.path.basename(path),
+                                      "page": t["table_json"].get("page")
+                                              if isinstance(t.get("table_json"), dict) else None,
+                                      "est_tokens": estimate_tokens(t["summary"])
+                                                     if t.get("summary") else t.get("est_tokens", 0)}
+                                     for t in page_tables)
                 # strip table regions from the prose text whenever a grid was
                 # real OR rejected (rejected cells are garbage, not prose)
                 text = (text_outside_tables(page, tbls) if (kept or rejected)

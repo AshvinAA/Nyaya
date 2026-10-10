@@ -82,6 +82,10 @@ def _flat_metadata(c):
 
 def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
                     model_name=EMBED_MODEL, batch_size=EMBED_BATCH):
+    # Chroma caps writes per call (derived from segment limits; error text
+    # "Batch size of N is greater than max batch size" when exceeded) ->
+    # chunk the upsert. 2000 is safely under the cap.
+    UPSERT_CHUNK = 2000
     """Embed all retrievable children and (re)build the Chroma collection.
     Returns the manifest dict for index_manifest.json."""
     # only indexable chunks: passed validation, not demoted by dedup,
@@ -126,11 +130,13 @@ def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
     col = client.get_or_create_collection(
         name=collection_name, metadata={"hnsw:space": "cosine"})
     if indexable:
-        col.upsert(                                # ids -> vectors + documents
-            ids=[c["chunk_id"] for c in indexable],
-            embeddings=vecs.tolist(),
-            documents=[c["text"] for c in indexable],   # generation text (bare)
-            metadatas=[_flat_metadata(c) for c in indexable])
+        for lo in range(0, len(indexable), UPSERT_CHUNK):
+            hi = lo + UPSERT_CHUNK
+            col.upsert(                            # ids -> vectors + documents
+                ids=[c["chunk_id"] for c in indexable[lo:hi]],
+                embeddings=vecs[lo:hi].tolist(),
+                documents=[c["text"] for c in indexable[lo:hi]],  # bare gen text
+                metadatas=[_flat_metadata(c) for c in indexable[lo:hi]])
 
     manifest = {"n_children_in": len(children),
                 "n_indexed": len(indexable),

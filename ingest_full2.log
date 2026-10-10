@@ -122,3 +122,19 @@ route:   {'empty': 4, 'prose': 12, 'mixed': 30}
 E:\Ashvin_CS\Nyaya\ingestion\indexer.py:111: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   dim = model.get_sentence_embedding_dimension()
   [index] embedding 7512 children with BAAI/bge-m3 (dim=1024)...
+  [index] encoded 7512 children - writing index...
+Traceback (most recent call last):
+  File "E:\Ashvin_CS\Nyaya\ingestion\run_pipeline.py", line 233, in <module>
+    main()
+  File "E:\Ashvin_CS\Nyaya\ingestion\run_pipeline.py", line 196, in main
+    index_manifest = embed_and_index(
+                     ^^^^^^^^^^^^^^^^
+  File "E:\Ashvin_CS\Nyaya\ingestion\indexer.py", line 129, in embed_and_index
+    col.upsert(                                # ids -> vectors + documents
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\chromadb\api\models\Collection.py", line 530, in upsert
+    self._client._upsert(
+  File "C:\Users\ThinkPad\AppData\Local\Programs\Python\Python311\Lib\site-packages\chromadb\api\rust.py", line 541, in _upsert
+    return self.bindings.upsert(
+           ^^^^^^^^^^^^^^^^^^^^^
+chromadb.errors.InternalError: ValueError: Batch size of 7512 is greater than max batch size of 5461
+INGEST_EXIT=1

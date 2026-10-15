@@ -28,8 +28,6 @@
  operative text. This is the retrieval-side half of ingestion Stage 0's overlay
  rule.
 
- This is the retrieval-side half of the ingestion doc's Stage 0 overlay rule.
-
  Dense-only until the sparse upgrade lands (BGE-M3 learned lexical weights in
  Qdrant named vectors — NOT BM25). When sparse exists, Stage 2 produces a
  second list per variant and Stage 3 fuses across both — no downstream change.
@@ -45,85 +43,140 @@
 ============================================================================
 """
 
-# ---------------------------------------------------------------------------
-# Stage 2 contract
-# ---------------------------------------------------------------------------
-# hybrid_search(envelope, registry, trace) -> per_variant_lists, filter_applied
-#   envelope      : the Stage 1 envelope (variants + flags)
-#   registry      : the index read registry (dense_search, chunk_metadata, ...)
-#   trace        : the in-progress trace (so this stage records per-variant
-#                   ranked lists, the filter applied, dense_vectors_retained,
-#                   and any fallback)
-#   returns       : (per_variant_lists, filter_applied)
-#     per_variant_lists : list of ranked lists, one per variant
-#       [{chunk_id, score, rank, metadata}, ...]  (rank-positioned, not raw
-#       score — because Stage 3 fuses by rank, and dense/sparse scores aren't
-#       comparable)
-#     filter_applied : "default" | "historical"   (recorded in the trace)
+import logging
+import time
+from typing import Any, Dict, List, Optional
 
-# ---------------------------------------------------------------------------
-# Per-variant dense search (current path)
-# ---------------------------------------------------------------------------
-# For each variant in envelope["variants"]:
-#   - run dense_search against nyaya_children with the appropriate filter
-#     (DEFAULT_FILTER or HISTORICAL_FILTER from config, chosen by
-#     envelope["historical"])
-#   - collect the ranked list (chunk_id, score, rank, metadata)
-#   - RETAIN the dense vector per candidate if MMR may run later (Stage 5b
-#     uses the BGE-M3 dense vectors already computed here — do not recompute;
-#     so Stage 2 must carry dense vectors alongside the ranked list when
-#     config.SPARSE_AVAILABLE is False and MMR might apply)
-#
-# Dense scores are cosine similarities; they're comparable across dense lists
-# from the same model, but the pipeline fuses by rank anyway (Stage 3), so
-# return rank-positioned lists, not raw-score-sorted-for-fusion lists.
+from retrieval import config as cfg
+from retrieval.registry import dense_search
 
-# ---------------------------------------------------------------------------
-# Metadata pre-filter (the applicability control)
-# ---------------------------------------------------------------------------
-# The filter is applied INSIDE the search call (Chroma where-filter on the
-# stored metadata fields), not as a post-hoc check on the results. This is the
-# design principle: filter at the source.
-#
-# Default filter (envelope["historical"] is False):
-#   in_force = true  AND  legal_status != superseded
-#   - 2025 Ordinance (in_force=true, legal_status=pending_ratification) SURVIVES
-#     and competes normally — Stage 7 labels it, the filter does not hide it.
-#
-# Historical filter (envelope["historical"] is True):
-#   SWAP the filter entirely — drop in_force / legal_status constraints.
-#   - This is a SWAP, not a loosening. Partial relaxation ("allow superseded but
-#     still require in_force") is incoherent because a superseded provision is by
-#     definition not in force.
-#   - Stage 7 labeling takes over saying which text governed when.
-#
-# The filter's job is APPLICABILITY, not ratification status. Confusing the two
-# would silently hide the current operative text (the 2025 Ordinance), which is
-# exactly what the overlay rule exists to prevent.
+logger = logging.getLogger("retrieval.stage2")
 
-# ---------------------------------------------------------------------------
-# Sparse path (future — only when the upgrade lands)
-# ---------------------------------------------------------------------------
-# When config.SPARSE_AVAILABLE is True (Qdrant named sparse vectors exist),
-# hybrid_search also calls sparse_search for each variant and produces a second
-# ranked list per variant. Stage 3 then fuses across 2 modes x N variants =
-# 2N lists instead of N lists.
-#
-# NO downstream stage changes for this. Stage 3 fuses ranked lists generically;
-# Stages 4-7 consume ranked lists regardless of how many modes produced them.
-# The sparse upgrade is an ingestion Stage 7 change + this file's second list.
+# Per-list depth: how many candidates each variant x mode returns before fusion.
+# Starting point from the doc (config.SEARCH_PER_LIST_K = 10).
 
-# ---------------------------------------------------------------------------
-# What this file does NOT do
-# ---------------------------------------------------------------------------
-#   - It does not fuse lists — that's Stage 3 (RRF).
-#   - It does not dedup — that's Stage 4 (retrieval-time dedup).
-#   - It does not rerank — that's Stage 5 (cross-encoder vs original query).
-#   - It does not resolve parents — that's Stage 6.
-#   - It does not label overlays — that's Stage 7.
-#   - It does not interpret query intent — that's Stage 1's envelope; Stage 2
-#     only reads envelope["variants"] and envelope["historical"].
-#
-#   - It does NOT run BM25. The plan's sparse is BGE-M3 learned lexical weights
-#     in Qdrant named vectors, NOT BM25. A true BM25 side-channel is optional,
-#     not a requirement of the design. Do not build a BM25 index "to be safe."
+
+def hybrid_search(
+    envelope: Dict[str, Any],
+    registry: Any,
+    trace: Any,
+    model: Any = None,
+) -> Dict[str, Any]:
+    """Run Stage 2 hybrid search per variant and return the search record.
+
+    Parameters
+    ----------
+    envelope : dict
+        The Stage 1 envelope: {original, variants, multi_aspect, historical}.
+    registry : retrieval.registry (the module, or any object exposing dense_search)
+        The index read registry. This function calls registry.dense_search() for
+        each variant. When the sparse upgrade lands, registry also exposes
+        sparse_search() and this function adds a second list per variant.
+    trace : Trace
+        The in-progress trace. This function records the per-variant ranked lists,
+        the filter applied, dense_vectors_retained, and any fallback.
+    model : optional
+        Unused here (search is model-free), accepted for symmetry with the
+        orchestrator's staged calling convention.
+
+    Returns
+    -------
+    dict (recorded into trace["stages"]["2"] by the orchestrator):
+        {
+          "filter_applied": "default" | "historical",
+          "variants": [  # one ranked list per variant
+              [  # ranked list: [{chunk_id, score, rank, metadata, text}, ...]
+              ],
+              ...
+          ],
+          "dense_vectors_retained": bool,   # True when vectors were fetched for MMR
+          "fallback_triggered": bool,
+          "notes": str,
+        }
+    """
+    t0 = time.time()
+    historical = bool(envelope.get("historical", False))
+
+    # Choose the applicability filter. This is the retrieval-side half of the
+    # ingestion Stage 0 overlay rule.
+    if historical:
+        # SWAP the filter entirely — drop in_force / legal_status constraints.
+        # A superseded provision is by definition not in force, so partial
+        # relaxation is incoherent. Stage 7 labeling takes over for saying which
+        # text governed when.
+        filter_params: Optional[Dict[str, Any]] = None
+        filter_label = "historical"
+    else:
+        # Default filter: in_force=true AND legal_status != superseded.
+        # The 2025 Ordinance survives by design (in_force=true,
+        # legal_status=pending_ratification) and competes normally; Stage 7
+        # labels it. The filter's job is applicability, not ratification status.
+        filter_params = {
+            "in_force": True,
+            "legal_status_not": "superseded",
+        }
+        filter_label = "default"
+
+    # Decide whether to retain the dense vector per candidate. Stage 5b MMR
+    # reuses the vectors already computed here — it does not re-embed. We retain
+    # them when MMR might run (multi_aspect flagged) AND sparse is not available
+    # (dense vectors are BGE-M3's; if we later run sparse-only, we may not have
+    # dense vectors to retain).
+    multi_aspect = bool(envelope.get("multi_aspect", False))
+    retain_vectors = multi_aspect and not cfg.SPARSE_AVAILABLE
+
+    per_variant_lists: List[List[Dict[str, Any]]] = []
+    for variant in envelope.get("variants", []):
+        if not variant:
+            continue
+        try:
+            ranked = dense_search(
+                query_text=variant,
+                filter_params=filter_params,
+                k=cfg.SEARCH_PER_LIST_K,
+                retain_vectors=retain_vectors,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Stage 2 dense_search failed for variant %d: %s", len(per_variant_lists), exc
+            )
+            # A single variant failing is a partial degradation — drop that variant's
+            # list and continue with the others (don't hard-fail the whole search).
+            continue
+        per_variant_lists.append(ranked)
+
+    elapsed = time.time() - t0
+    record = {
+        "filter_applied": filter_label,
+        "variants": per_variant_lists,
+        "dense_vectors_retained": retain_vectors,
+        "fallback_triggered": False,
+        "notes": _notes(filter_label, len(per_variant_lists), retain_vectors),
+    }
+    logger.info(
+        "Stage 2: filter=%s variants=%d lists retained_vectors=%s elapsed=%.3fs",
+        filter_label,
+        len(per_variant_lists),
+        retain_vectors,
+        elapsed,
+    )
+    return record
+
+
+def _notes(
+    filter_label: str,
+    n_lists: int,
+    retain_vectors: bool,
+) -> str:
+    """A short human-readable note about what Stage 2 did, for the trace."""
+    parts = [f"filter={filter_label}"]
+    if n_lists == 0:
+        parts.append("no variants produced a result list")
+    else:
+        parts.append("variant_lists=" + str(n_lists))
+    parts.append("dense_vectors_retained=" + str(retain_vectors))
+    if cfg.SPARSE_AVAILABLE:
+        parts.append("sparse_available=True (not used in this record; sparse_search would add a second list per variant)")
+    else:
+        parts.append("sparse_available=False (dense-only; one list per variant)")
+    return "; ".join(parts)

@@ -43,84 +43,159 @@
 ============================================================================
 """
 
-# ---------------------------------------------------------------------------
-# Stage 3 contract
-# ---------------------------------------------------------------------------
-# rrf_fuse(per_variant_lists, trace) -> fused_pool
-#   per_variant_lists : list of ranked lists (one per variant; later one per
-#                       variant x mode)
-#   trace            : the in-progress trace (so this stage records the fused
-#                       pool, per-chunk fusion scores, constituent-list refs,
-#                       and any fallback)
-#   returns          : fused_pool = [{chunk_id, rrf_score, rank}, ...]
-#                       capped to config.FUSED_POOL_CAP (~30) by RRF score
-#
-# The fused pool is what Stage 4 (retrieval-time dedup) receives. It is capped
-# BEFORE Stage 4 — enough to survive dedup and reranking with a real final-k,
-# small enough to keep the cross-encoder (Stage 5) cheap.
+import logging
+import time
+from typing import Any, Dict, List, Tuple
 
-# ---------------------------------------------------------------------------
-# RRF scoring
-# ---------------------------------------------------------------------------
-# For each chunk that appears in ANY of the input lists:
-#   rrf_score = sum( 1 / (config.RRF_K + rank_in_list) )  across the lists it
-#               appears in
-#
-# rank_in_list is 1-based position in that list. A chunk that doesn't appear in
-# a list contributes 0 from that list (not a penalty — it just doesn't add).
-#
-# k = 60 (config.RRF_K): the standard constant. With k=60, the first position
-# contributes 1/61, the tenth contributes 1/70 — ranks are compressed enough
-# that top-position consensus matters more than tail position, but low ranks
-# still contribute a little (so a chunk that appears in many lists at modest
-# ranks can still beat a chunk that appears in one list at rank 1).
+from retrieval import config as cfg
 
-# ---------------------------------------------------------------------------
-# Same-ID fan-out is a feature, not a bug
-# ---------------------------------------------------------------------------
-# If the same chunk_id appears in multiple lists, RRF sums one contribution per
-# list it appears in. This is the intended behavior: a chunk that multiple
-# variants + modes agree on is more likely genuinely relevant than one that
-# appeared in only one list. The double-counting problem Stage 4 addresses is
-# DIFFERENT — distinct chunk_ids carrying the same fact (multi-query fan-out
-# burning scarce final-k slots). Don't try to "fix" same-ID fan-out here; it's
-# the consensus signal RRF exists to capture.
+logger = logging.getLogger("retrieval.stage3")
 
-# ---------------------------------------------------------------------------
-# Cap the fused pool
-# ---------------------------------------------------------------------------
-# After scoring, sort by rrf_score descending and take the top
-# config.FUSED_POOL_CAP (~30). This cap is what keeps Stage 5's cross-encoder
-# cheap (the reranker is the pipeline's CPU bottleneck). Don't grow the pool
-# entering the reranker without reconsidering latency.
 
-# ---------------------------------------------------------------------------
-# Dense-only caveat (pre-sparse baseline)
-# ---------------------------------------------------------------------------
-# Right now (dense-only Chroma, no sparse mode), there are 2-3 variant lists
-# instead of 4-6. RRF fuses fewer lists, so the consensus signal is thinner
-# than the design assumes. This is FINE — it's the pre-sparse baseline, and it
-# is explicitly what the eval harness measures recall@k against.
-#
-# The specific watch-point: the table/numeric lookup category. Dense embeddings
-# are weakest at exact-keyword / numeric matches (wage figures, section numbers),
-# which is exactly what sparse lexical weights are expected to catch. If the
-# table/numeric recall@k on the test set is bad against the hybrid target, THAT
-# is the actual trigger to build the sparse upgrade — not a vague "if it falls
-# short." Stage 3 needs no change to absorb sparse; only Stage 2's second list
-# and the eval's measured delta matter.
+def rrf_fuse(
+    per_variant_lists: List[List[Dict[str, Any]]],
+    trace: Any,
+) -> Dict[str, Any]:
+    """Fuse per-variant ranked lists into one capped RRF-ranked pool.
 
-# ---------------------------------------------------------------------------
-# What this file does NOT do
-# ---------------------------------------------------------------------------
-#   - It does not run search — that's Stage 2 (it receives ranked lists).
-#   - It does not dedup — that's Stage 4 (the fused pool enters Stage 4).
-#   - It does not rerank — that's Stage 5 (it receives the deduped pool).
-#   - It does not resolve parents — that's Stage 6.
-#   - It does not label overlays — that's Stage 7.
-#   - It does not interpret query intent — that's Stage 1's envelope.
-#
-#   - It does NOT fuse by raw score. Dense and sparse scores aren't comparable;
-#     RRF fuses by rank position. Even in dense-only, return rank-positioned
-#     results to Stage 3 — don't special-case "fuse by cosine because there's
-#     one mode."
+    Parameters
+    ----------
+    per_variant_lists : list of list of dict
+        One ranked list per variant (later one per variant x mode). Each inner
+        list is a list of dicts with at least chunk_id and rank (1-based within
+        that list). Example entry: {"chunk_id": "chk0003", "score": 0.81,
+        "rank": 1, "metadata": {...}}.
+    trace : Trace
+        The in-progress trace. This function records the fused pool, per-chunk
+        RRF scores, the constituent list counts, and any fallback.
+
+    Returns
+    -------
+    dict (recorded into trace["stages"]["3"] by the orchestrator):
+        {
+          "fused_pool": [  # top config.FUSED_POOL_CAP by RRF score, rank order
+              {"chunk_id": ..., "rrf_score": ..., "rank": ..., "appears_in": int},
+              ...
+          ],
+          "constituent_list_counts": [int, ...],   # number of candidates per input list
+          "fallback_triggered": bool,
+          "notes": str,
+        }
+    """
+    t0 = time.time()
+
+    if not per_variant_lists:
+        record = _empty_record()
+        trace.record_stage(3, record)
+        logger.warning("Stage 3: no variant lists to fuse")
+        return record
+
+    list_counts = [len(lst) for lst in per_variant_lists]
+
+    # Build RRF score per chunk across all lists it appears in.
+    # rrf_score[chunk_id] = sum( 1 / (k + rank_in_list) ) over lists containing it.
+    scores: Dict[str, float] = {}
+    appearances: Dict[str, int] = {}
+    for lst in per_variant_lists:
+        for entry in lst:
+            cid = entry.get("chunk_id")
+            if not cid:
+                continue
+            rank = entry.get("rank", 1)
+            if rank is None:
+                rank = 1
+            # RRF contribution from this list for this chunk.
+            contrib = 1.0 / (cfg.RRF_K + rank)
+            scores[cid] = scores.get(cid, 0.0) + contrib
+            appearances[cid] = appearances.get(cid, 0) + 1
+
+    # Sort by RRF score descending and cap to FUSED_POOL_CAP.
+    capped = int(cfg.FUSED_POOL_CAP)
+    ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:capped]
+
+    fused_pool: List[Dict[str, Any]] = []
+    for rank, (cid, rrf) in enumerate(ranked, start=1):
+        fused_pool.append(
+            {
+                "chunk_id": cid,
+                "rrf_score": round(rrf, 6),
+                "rank": rank,
+                "appears_in": appearances.get(cid, 0),
+            }
+        )
+
+    elapsed = time.time() - t0
+    record = {
+        "fused_pool": fused_pool,
+        "constituent_list_counts": list_counts,
+        "fallback_triggered": False,
+        "notes": _notes(len(per_variant_lists), len(fused_pool), elapsed),
+    }
+    logger.info(
+        "Stage 3: lists=%d unique_chunks=%d fused_pool=%d elapsed=%.3fs",
+        len(per_variant_lists),
+        len(scores),
+        len(fused_pool),
+        elapsed,
+    )
+    return record
+
+
+def _empty_record() -> Dict[str, Any]:
+    """A valid Stage 3 record for the degenerate case (no lists to fuse)."""
+    return {
+        "fused_pool": [],
+        "constituent_list_counts": [],
+        "fallback_triggered": True,
+        "notes": "no variant lists provided to fuse",
+    }
+
+
+def _notes(n_lists: int, pool_size: int, elapsed: float) -> str:
+    """A short human-readable note about what Stage 3 did, for the trace."""
+    return (
+        "lists="
+        + str(n_lists)
+        + " fused_pool="
+        + str(pool_size)
+        + " k="
+        + str(cfg.RRF_K)
+        + " elapsed=%.3fs"
+        + str(round(elapsed, 3))
+    )
+
+
+# ------------------------------------------------------------------
+# RRF formula, exposed as a pure function for the eval harness
+# ------------------------------------------------------------------
+
+def rrf_score_across(
+    chunk_id: str,
+    per_variant_lists: List[List[Dict[str, Any]]],
+    k: int = 60,
+) -> float:
+    """Compute the RRF score for a single chunk across all input lists.
+
+    Pure function (no side effects, no trace). Useful for the eval harness when
+    it wants to recompute or ablate RRF per chunk rather than read the fused pool.
+
+    Parameters
+    ----------
+    chunk_id : str
+        The chunk to score.
+    per_variant_lists : list of list of dict
+        The same input Stage 3 receives.
+    k : int
+        The RRF constant (default 60 = config.RRF_K).
+
+    Returns
+    -------
+    float — sum of 1/(k+rank) across all lists containing the chunk.
+    """
+    total = 0.0
+    for lst in per_variant_lists:
+        for entry in lst:
+            if entry.get("chunk_id") == chunk_id:
+                rank = entry.get("rank", 1) or 1
+                total += 1.0 / (k + rank)
+    return total

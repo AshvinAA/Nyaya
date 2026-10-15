@@ -1,121 +1,130 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Nyaya retrieval test query set",
-  "description": "Hand-verified Bangla/English test queries with gold labels.\n\nMUST be built BEFORE Stage 1 (multi-query expansion) is built — the\nmulti_aspect and historical flags have no meaning without gold labels to\ncheck them against. Every stage is measured against this set; the eval\nharness ablation table is meaningless without it.\n\nPrinciple: inflate the VERIFICATION, not the count. A small, fully\nhand-verified set (15-30 queries covering all 7 categories) is worth more\nthan a padded set of LLM-generated filler. Every query below must be checked\nagainst the actual docs/ corpus by a human before it enters the set.\n\nStorage: eval/test_queries.json, versioned in git, SEPARATE from run-artifact\ndirs (ingestion_output/, retrieval_traces/). This is code/config territory, not\ngenerated output.\n\nCategories (from RETRIEVAL_PIPELINE.md + the eval harness spec):\n  1. single_provision_lookup  — answer is one known clause; gold section_number\n  2. table_numeric_lookup      — wage figures, overtime rates, min wages;\n                                  number/entity preservation is the top eval metric\n  3. register_gap              — colloquial Bangla that doesn't share words with\n                                  formal legal English; the query multi-query expansion\n                                  exists to serve; core ablation row\n  4. multi_aspect vs single_aspect_control  — paired queries; one genuinely two\n                                  aspects (multi_aspect flag + MMR test), one the same\n                                  stripped to one aspect (control)\n  5. historical                — about law over time; historical flag + filter-swap test\n  6. dual_layer_overlay_conflict — base vs 2025 Ordinance cover same provision;\n                                  Stage 7 must surface both with labels\n  7. advocacy_vs_primary_law   — CPD proposed wage vs actual gazette wage; must\n                                  not present CPD's proposed figure as operative",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "required": ["query_id", "query_bangla", "category"],
-    "properties": {
-      "query_id": {
-        "type": "string",
-        "description": "Stable id matching the trace query_id (e.g. q0001). Traces and gold labels are joined by this."
-      },
-      "query_bangla": {
-        "type": "string",
-        "description": "The query in Bangla (the live path's input language). Typed/clean text — no ASR noise yet."
-      },
-      "query_english": {
-        "type": ["string", "null"],
-        "description": "English equivalent where the register gap matters (for the register-gap category and for eval readability). Null where Bangla-only is fine."
-      },
-      "category": {
-        "type": "string",
-        "enum": [
-          "single_provision_lookup",
-          "table_numeric_lookup",
-          "register_gap",
-          "multi_aspect",
-          "single_aspect_control",
-          "historical",
-          "dual_layer_overlay_conflict",
-          "advocacy_vs_primary_law"
-        ]
-      },
-      "gold_section_number": {
-        "type": ["string", "null"],
-        "description": "Gold section number where the answer is a specific provision (e.g. '23' or '23(3)'). Null where the answer is not a single provision (e.g. a table lookup or a multi-aspect query)."
-      },
-      "gold_answer_gist": {
-        "type": ["string", "null"],
-        "description": "Hand-written gist of the correct answer, for eval faithfulness / answer-correctness comparison. Not necessarily the full answer — enough to check whether the pipeline's answer is on the right track."
-      },
-      "gold_source_doc": {
-        "type": ["string", "null"],
-        "description": "Which doc/ file the gold answer comes from (e.g. 'bangladesh_labour_act_2006_english_upto_2018'). For table_numeric and advocacy_vs_primary_law especially — to check the right source wins."
-      },
-      "gold_figure": {
-        "type": ["string", "null"],
-        "description": "For table_numeric_lookup: the exact figure(s) the answer must preserve (wage amount, rate, date). Number/entity preservation is the single most important eval metric for this corpus — this field is the check."
-      },
-      "multi_aspect_expected": {
-        "type": "boolean",
-        "description": "Whether this query is EXPECTED to be flagged multi_aspect by Stage 1. Used to check Stage 1 flag correctness (the eval item: how often the flag fires and whether correctly)."
-      },
-      "historical_expected": {
-        "type": "boolean",
-        "description": "Whether this query is EXPECTED to be flagged historical by Stage 1. Used to check the filter-swap behavior (Stage 2) and that superseded text surfaces only for historical queries."
-      },
-      "dual_layer_expected": {
-        "type": "boolean",
-        "description": "Whether this query is EXPECTED to surface a base+overlay dual_layer pair (Stage 7). Used to check conflict-handling correctness directly from the trace."
-      },
-      "notes": {
-        "type": ["string", "null"],
-        "description": "Anything worth recording: which provision the query targets, why the category is what it is, known corpus quirks (e.g. a section that spans the 2018/2025 boundary), verification status."
-      },
-      "verified_by": {
-        "type": ["string", "null"],
-        "description": "Who verified this query against the corpus (human). The set is hand-verified — this field records that it was, and by whom."
-      },
-      "verified_date": {
-        "type": ["string", "null"],
-        "description": "When it was verified against the corpus."
-      }
-    }
+[
+  {
+    "query_id": "q0001",
+    "query_bangla": "কাটোরির বেতন কত?",
+    "query_english": "What is the minimum wage?",
+    "category": "table_numeric_lookup",
+    "gold_section_number": null,
+    "gold_answer_gist": "The operative minimum wage for RMG workers is set by the wage gazette, not by CPD's proposed figure. The answer must state the gazette figure and its effective date, and must not present CPD's proposed wage as operative.",
+    "gold_source_doc": "bangladeshgagettesep2015",
+    "gold_figure": "TBD — read the Sept-2015 wage gazette table (docs/BangladeshGagetteSep2015.pdf) to record the exact basic + total figure and effective date",
+    "multi_aspect_expected": false,
+    "historical_expected": false,
+    "dual_layer_expected": false,
+    "notes": "Highest-stakes numeric category. Gold figure must come from the actual gazette wage table, not CPD's proposed figure. Verify against docs/BangladeshGagetteSep2015.pdf. This is the watch-point for the dense-only recall baseline — exact numeric matches are where dense embeddings are weakest, so if recall here is bad against the hybrid target, that is the actual trigger to build the sparse upgrade.",
+    "verified_by": null,
+    "verified_date": null
   },
-  "examples": [
-    {
-      "query_id": "q0001",
-      "query_bangla": "কাটোরির বেতন কত?",
-      "query_english": "What is the minimum wage?",
-      "category": "table_numeric_lookup",
-      "gold_source_doc": "bangladeshgagettesep2015",
-      "gold_figure": "TBD — read the Sept-2015 wage gazette table",
-      "multi_aspect_expected": false,
-      "historical_expected": false,
-      "dual_layer_expected": false,
-      "notes": "Wage figure lookup — the highest-stakes numeric category. Gold figure must come from the actual gazette table, not CPD's proposed figure. Verify against docs/BangladeshGagetteSep2015.pdf.",
-      "verified_by": null,
-      "verified_date": null
-    },
-    {
-      "query_id": "q0002",
-      "query_bangla": "দালাল কী টাকা চাইলে বলবো?",
-      "query_english": "What do I say when the middleman asks for money to submit my application?",
-      "category": "register_gap",
-      "gold_section_number": "TBD — likely a recruitment/fee provision",
-      "gold_answer_gist": "TBD — the Act's provision on recruitment fees / placement charges, if any",
-      "multi_aspect_expected": false,
-      "historical_expected": false,
-      "dual_layer_expected": false,
-      "notes": "Core register-gap example: colloquial Bangla 'দালাল ... টাকা চাইলে' vs the Act's formal term 'recruitment fee' / 'placement charge'. This is the query multi-query expansion exists to serve — the eval ablation row is 'variants off -> recall delta'.",
-      "verified_by": null,
-      "verified_date": null
-    },
-    {
-      "query_id": "q0003",
-      "query_bangla": "নোটিশ কত দিনের পাবো যদি ছুটি দেওয়া হয়?",
-      "query_english": "How many days' notice do I get if I'm discharged?",
-      "category": "single_provision_lookup",
-      "gold_section_number": "TBD — termination/notice provision",
-      "gold_answer_gist": "TBD — the notice-period provision",
-      "multi_aspect_expected": false,
-      "historical_expected": false,
-      "dual_layer_expected": false,
-      "notes": "Single-provision lookup — answer is one known clause with a gold section_number. Verify the section number against the Act.",
-      "verified_by": null,
-      "verified_date": null
-    }
-  ]
-}
+  {
+    "query_id": "q0002",
+    "query_bangla": "দালাল কী টাকা চাইলে বলবো?",
+    "query_english": "What do I say when the middleman asks for money to submit my application?",
+    "category": "register_gap",
+    "gold_section_number": "TBD — likely a recruitment/fee provision in the Act; verify which section governs recruitment fees",
+    "gold_answer_gist": "The Act prohibits charging a worker for recruitment/placement. The answer must name the operative provision (section + gist) and must not accept the middleman's demand as lawful.",
+    "gold_source_doc": "bangladesh_labour_act_2006_english_upto_2018",
+    "gold_figure": null,
+    "multi_aspect_expected": false,
+    "historical_expected": false,
+    "dual_layer_expected": false,
+    "notes": "Core register-gap example: colloquial Bangla 'দালাল ... টাকা চাইলে' vs the Act's formal term (recruitment fee / placement charge / the prohibition on charging workers for recruitment). This is the query multi-query expansion exists to serve — the eval ablation row is 'variants off -> recall delta'. Verify the exact provision against the Act PDF.",
+    "verified_by": null,
+    "verified_date": null
+  },
+  {
+    "query_id": "q0003",
+    "query_bangla": "ছুটি দেওয়া হলে কত দিনের নোটিশ পাবো?",
+    "query_english": "How many days' notice do I get if I'm discharged?",
+    "category": "single_provision_lookup",
+    "gold_section_number": "TBD — termination/notice provision; verify the section number and the notice period the Act specifies",
+    "gold_answer_gist": "The Act specifies a notice period (or pay in lieu) for discharge. The answer must state the operative section and the notice period (or pay in lieu), and must not mix in CPD's advocacy figure or the 2025 overlay unless relevant.",
+    "gold_source_doc": "bangladesh_labour_act_2006_english_upto_2018",
+    "gold_figure": "TBD — record the exact notice period (days) from the Act",
+    "multi_aspect_expected": false,
+    "historical_expected": false,
+    "dual_layer_expected": false,
+    "notes": "Single-provision lookup — answer is one known clause with a gold section_number. Verify the section number and the notice period against the Act. This category exercises the parent-resolution path (child matched on a sub-section resolves to the full section parent).",
+    "verified_by": null,
+    "verified_date": null
+  },
+  {
+    "query_id": "q0004",
+    "query_bangla": "চুল্লা কত টাকায় কাজ করে, আর ওভারটাইম কত টাকা?",
+    "query_english": "How much is a worker paid, and how much is overtime?",
+    "category": "multi_aspect",
+    "gold_section_number": "TBD — likely two provisions: the wage/minimum wage provision and the overtime provision",
+    "gold_answer_gist": "Two genuinely different things: (1) the wage/minimum wage (gazette figure with effective date), and (2) the overtime rate (the Act's overtime provision). The answer must cover both without merging them into one number.",
+    "gold_source_doc": "bangladeshgagettesep2015",
+    "gold_figure": "TBD — record both the minimum wage figure and the overtime rate from the Act/gazette",
+    "multi_aspect_expected": true,
+    "historical_expected": false,
+    "dual_layer_expected": false,
+    "notes": "Genuinely multi-aspect: wage figure + overtime rate. This exercises the Stage 1 multi_aspect flag AND Stage 5b MMR (diversity across two aspects). The paired single_aspect_control (q0005) is this same question stripped to one aspect. Verify both figures against the Act + gazette.",
+    "verified_by": null,
+    "verified_date": null
+  },
+  {
+    "query_id": "q0005",
+    "query_bangla": "চুল্লা কত টাকায় কাজ করে?",
+    "query_english": "How much is a worker paid?",
+    "category": "single_aspect_control",
+    "gold_section_number": "TBD — the wage/minimum wage provision",
+    "gold_answer_gist": "Same target as q0004's first aspect only: the minimum wage figure. This is the control for q0004 — same question stripped to one aspect, so the multi_aspect flag should be false and MMR should not run.",
+    "gold_source_doc": "bangladeshgagettesep2015",
+    "gold_figure": "TBD — same minimum wage figure as q0004",
+    "multi_aspect_expected": false,
+    "historical_expected": false,
+    "dual_layer_expected": false,
+    "notes": "Paired control for q0004 (multi_aspect). Same corpus target, one aspect only. Used to measure MMR's precision cost on single-aspect queries had it run (the ablation row: MMR forced on / forced off).",
+    "verified_by": null,
+    "verified_date": null
+  },
+  {
+    "query_id": "q0006",
+    "query_bangla": "২০১৮ এর আগে আইনে কী বলা ছিল?",
+    "query_english": "What did the law say before 2018?",
+    "category": "historical",
+    "gold_section_number": "TBD — a provision that changed in the 2018 amendments",
+    "gold_answer_gist": "The question is explicitly about law over time. The historical filter is swapped (superseded text is allowed to surface) and Stage 7 labels which text governed when. The answer must state what the pre-2018 text said AND that it is no longer operative.",
+    "gold_source_doc": "bangladesh_labour_act_2006_english_upto_2018",
+    "gold_figure": null,
+    "multi_aspect_expected": false,
+    "historical_expected": true,
+    "dual_layer_expected": false,
+    "notes": "Historical query — exercises the Stage 1 historical flag and the Stage 2 filter swap. The default filter would hide superseded text; the historical flag swaps it out so the pre-2018 text can surface, with Stage 7 labeling which text governed when. Verify the specific provision that changed in 2018.",
+    "verified_by": null,
+    "verified_date": null
+  },
+  {
+    "query_id": "q0007",
+    "query_bangla": "২০২৫ সমস্যায় কী পরিবর্তন হয়েছে?",
+    "query_english": "What changed in the 2025 amendment?",
+    "category": "dual_layer_overlay_conflict",
+    "gold_section_number": "TBD — a section that the 2025 Ordinance changes (sections 1-4 have both layers in the index)",
+    "gold_answer_gist": "The 2025 Ordinance (amendment_overlay, in_force=true, legal_status=pending_ratification) changes a provision that also exists in the consolidated base. The answer must surface BOTH with labels — the overlay as [current text — ratification pending] and the base as [settled law since 2018] — and must NOT silently pick one version as uncontested fact.",
+    "gold_source_doc": "bangladeshgagette2025",
+    "gold_figure": null,
+    "multi_aspect_expected": false,
+    "historical_expected": false,
+    "dual_layer_expected": true,
+    "notes": "Dual-layer conflict query. Sections 1-4 have BOTH consolidated_base and amendment_overlay chunks in the real index (verified: section 1 base=[chk0003,chk0005,chk0006] overlay=[chk0101,chk0102]; section 2 base=[chk0018,chk0019,chk0020] overlay=[chk0103]; section 3 base=[chk0078,chk0079,chk0080] overlay=[chk0104,chk0105]; section 4 base=[chk0089,chk0090,chk0091] overlay=[chk0106,chk0107]). This exercises Stage 7's overlay labeling directly — the trace records the dual_layer pair, and the eval measures conflict-handling correctness from the trace. Verify the exact provision the 2025 Ordinance changes.",
+    "verified_by": null,
+    "verified_date": null
+  },
+  {
+    "query_id": "q0008",
+    "query_bangla": "সিটিপি রিপোর্টে বেতন কত বলেছে?",
+    "query_english": "What wage does the CPD report say?",
+    "category": "advocacy_vs_primary_law",
+    "gold_section_number": null,
+    "gold_answer_gist": "CPD's 2023 report proposed a wage figure that was NEVER ADOPTED as law. The answer must make clear that CPD's figure is a proposal, not the operative gazette wage, and must not present the proposed figure as the worker's actual legal wage.",
+    "gold_source_doc": "revision_of_the_minimum_wage_of_rmg_workers_in_2023",
+    "gold_figure": "TBD — record CPD's proposed figure, but the KEY point is that it is NOT operative; the operative figure comes from the gazette",
+    "multi_aspect_expected": false,
+    "historical_expected": false,
+    "dual_layer_expected": false,
+    "notes": "Advocacy-vs-primary-law discrimination. CPD's report is source_type=policy_advocacy, authority_rank=advocacy_report, in_force=false. The operative wage is the gazette figure (source_type=primary_law, authority_rank=official_gazette). This query tests that the retriever does not confuse the two — the authority_rank + source_type filtering must keep CPD's proposed figure from being presented as the operative wage. Verify CPD's proposed figure against the CPD report PDF.",
+    "verified_by": null,
+    "verified_date": null
+  }
+]

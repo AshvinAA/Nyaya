@@ -20,8 +20,10 @@
  ablation config can turn stages off / reduce them by flipping these knobs
  rather than rewriting stage logic.
 
- TODO: populate all values below from RETRIEVAL_PIPELINE.md once stages are
- built. Right now this is the empty shell with the field names documented.
+ Verified against the real index in this checkout:
+   - collection: nyaya_children (db/chroma_db), 170 chunks, cosine space.
+   - metadata fields are flat scalars in Chroma; we reuse ingestion's
+     FILTERABLE_FIELDS for the where-filter document.
 ============================================================================
 """
 
@@ -29,6 +31,10 @@
 # Folders
 # ---------------------------------------------------------------------------
 # RETRIEVAL_DIR = os.path.dirname(__file__)   # this package's own dir
+
+# Where per-query JSON traces are written (one file per query).
+# Already in .gitignore as retrieval_traces/.
+import os
 
 # Where per-query JSON traces are written (one file per query).
 # Already in .gitignore as retrieval_traces/.
@@ -44,10 +50,14 @@ TRACE_DIR = "retrieval_traces"
 # in the test set, not by preference. The production LLM (Groq Llama 3.3 70B /
 # Gemini Flash per the plans) is NOT integrated yet — no code exists that
 # talks to either, so this stays as the dev stand-in until evaluated.
-EXPAND_MODEL = "ollama/llama3.2"   # TODO: confirm interface (LangChain Ollama?
+EXPAND_MODEL = "ollama/llama3.2"   # LangChain Ollama chat model; the dev stand-in.
+   # Bangla->formal-legal-English rewrite is the riskiest LLM-dependent step.
 
 # Stage 5 reranker: BGE-Reranker-v2-M3 (cross-encoder). NOT yet in
 # requirements.txt — adding it is a separate decision (see TODO below).
+# The reranker scores (original_query, candidate_text) pairs directly; it is
+# the pipeline's CPU bottleneck on CPU, which is why the fused pool is capped
+# at ~30 before it (Stage 4 / config.FUSED_POOL_CAP).
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
 
 # Stage 6 / Stage 4 near-dup scorer: can reuse the cached MiniLM from
@@ -86,7 +96,7 @@ SEARCH_PER_LIST_K = 10
 # legal_status=pending_ratification — it competes normally, Stage 7 labels it.
 DEFAULT_FILTER = {
     "in_force": True,
-    "legal_status_not": "superseded",   # TODO: express as Chroma where-filter
+    "legal_status_not": "superseded",
 }
 
 # Historical relaxation: when Stage 1 flagged historical, SWAP the filter

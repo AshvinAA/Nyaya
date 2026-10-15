@@ -53,86 +53,234 @@
 ============================================================================
 """
 
-# ---------------------------------------------------------------------------
-# Stage 1 contract
-# ---------------------------------------------------------------------------
-# expand_query(original: str, trace: dict) -> envelope dict
-#   original  : the query as received (Bangla or English text)
-#   trace     : the in-progress trace object (so this stage records its
-#               variants, flags, model used, and any fallback into it)
-#   returns   : the envelope dict with keys original, variants, multi_aspect,
-#               historical (and, later, asr — not built now)
-#
-# The function is the ONLY query-understanding point in the pipeline. It does
-# NOT decide what to retrieve, what to filter, or what to rank — it only
-# interprets the query enough to produce variants + two flags. Everything else
-# is a downstream consumer of this envelope.
+import json
+import logging
+from typing import Any, Dict, List, Optional
 
-# ---------------------------------------------------------------------------
-# Variant generation (the register-bridging step)
-# ---------------------------------------------------------------------------
-# The LLM is asked to produce 2-3 formal-register paraphrases of the original
-# query — shifting colloquial Bangla ("দালাল কী টাকা চাইলে বলবো?") toward
-# the corpus's legal English register ("is the recruitment fee demanded by a
-# middleman lawful under the Labour Act?").
-#
-# This is the step that exists because the corpus demanded it: the Act says
-# "recruitment fee" / "placement charge", not "dalal wants money". Without
-# expansion, semantic search has to generalize across the register gap by luck;
-# with expansion, the variants explicitly carry the formal vocabulary into the
-# search. The eval harness measures this as the "variants off -> recall delta"
-# ablation row (the register-bridging value).
-#
-# Variant quality on Bangla is a measured item, not an assumption: the demo
-# llama3.2 is weak at Bangla, so the Bangla register-gap queries in the test
-# set are the spot-check set that decides whether the expansion model is good
-# enough or whether a stronger local model / two-step translate-then-expand
-# path is needed. Decided by measurement, not preference.
+from langchain_ollama import ChatOllama
 
-# ---------------------------------------------------------------------------
-# Flag derivation (multi_aspect, historical)
-# ---------------------------------------------------------------------------
-# These flags are derived by the SAME expansion step that produces the
-# variants — one structured output, one query-understanding point. They are
-# NOT inferred downstream by re-examining the query.
-#
-# multi_aspect (bool):
-#   true when generating variants surfaces that the question has genuinely
-#   distinct aspects. E.g. a query that is both a legal-question AND a
-#   job-search ("is this fee legal and who's hiring lockstitch operators in
-#   Gazipur?"). This flag is what conditionally enables Stage 5b (MMR).
-#   The flag's correctness is an eval item: the harness measures how often it
-#   fires and whether it fires correctly against the multi-aspect vs
-#   single-aspect control pairs in the test set.
-#
-# historical (bool):
-#   true when the question is explicitly about law over time ("what did the
-#   law say before 2018?", "what changed in the 2025 Ordinance?"). Stage 2
-#   consumes this flag to SWAP the filter (not loosen it). Nothing else in the
-#   pipeline guesses at history — if Stage 1 didn't flag it, the default
-#   applicability filter holds.
+from retrieval import config as cfg
 
-# ---------------------------------------------------------------------------
-# Fallback (defined, loud — never silent)
-# ---------------------------------------------------------------------------
-# If the LLM is unavailable or returns malformed JSON:
-#   - variants = [original]   (the original query as the sole variant)
-#   - multi_aspect = false
-#   - historical = false
-#   - trace records: expansion_fallback_triggered = true, reason, model attempted
-#
-# CRITICAL asymmetry: on a degraded run, the filter stays default-STRICT. We
-# never widen legality filters (in_force / legal_status) on a degraded run just
-# because expansion failed. Convenience features may degrade; legal-applicability
-# filters may not. This is the same fails-loud ethos as the ingestion gate.
+logger = logging.getLogger("retrieval.stage1")
 
-# ---------------------------------------------------------------------------
-# What this file does NOT do
-# ---------------------------------------------------------------------------
-#   - It does not run search (Stage 2).
-#   - It does not interpret the variants for retrieval — it only produces them.
-#   - It does not decide final context — that's Stages 2-7.
-#   - It does not handle ASR noise — that's deferred (reserved asr field exists
-#     for later; do not build against it now).
-#   - It does not generate an answer — that's the generation stage (built much
-#     later, after retrieval is validated).
+# How many variants the LLM is asked to produce (capped at config.MAX_VARIANTS).
+_N_VARIANTS = 3
+
+# The system prompt that asks the model to shift toward the corpus's formal
+# legal register. This is where the register-bridging instruction lives.
+_SYSTEM_PROMPT = (
+    "You are helping build a legal retrieval query for Bangladesh's Labour Act, "
+    "Labour Rules, and wage gazettes.\n\n"
+    "A worker has asked a question in colloquial Bangla (or English). Rewrite the "
+    "question into 2-3 formal, legal-register paraphrases that a retriever could "
+    "match against the official legal text. Use the formal terms the law actually "
+    "uses — for example, use 'recruitment fee' or 'placement charge' rather than "
+    "'dalal wants money', use 'notice of discharge' rather than 'they threw me out', "
+    "use 'overtime' rather than 'extra hours'.\n\n"
+    "Rules:\n"
+    "- Return a JSON object with keys: original, variants (list of 2-3 strings), "
+    "multi_aspect (true/false), historical (true/false).\n"
+    "- Do NOT answer the question. Only produce the paraphrases.\n"
+    "- multi_aspect is true when the question clearly has two or more genuinely "
+    "different things being asked (e.g. a legal question AND a job/hiring question).\n"
+    "- historical is true when the question is explicitly about how the law was in "
+    "the past or about a specific amendment/change over time.\n"
+    "- Keep each variant short (one or two sentences) and in the SAME language as the "
+    "original if it is Bangla; if the original is English, keep variants in English.\n"
+    "- Preserve any numbers, dates, or named entities exactly (factory names, sections, "
+    "amounts).\n"
+    "- If you cannot produce meaningful variants, return the original as the sole "
+    "variant and set both flags to false."
+)
+
+
+def expand_query(
+    original: str,
+    trace: Any,
+    model: Any = None,
+    n_variants: int = _N_VARIANTS,
+) -> Dict[str, Any]:
+    """Run Stage 1 multi-query expansion and return the envelope.
+
+    Parameters
+    ----------
+    original : str
+        The query as received (Bangla or English text).
+    trace : Trace (retrieval.trace.Trace)
+        The in-progress trace. This function records the variants, flags, model,
+        and any fallback into it via trace.add_variant() / trace.set_flags() /
+        trace.add_fallback().
+    model : langchain ChatOllama, optional
+        The LLM to use for expansion. If None, a ChatOllama is created from
+        config.EXPAND_MODEL (the dev stand-in, ollama/llama3.2). The model is a
+        tunable — swap it without touching this function's logic.
+    n_variants : int
+        How many variants to ask the LLM for (default 3, capped at
+        config.MAX_VARIANTS).
+
+    Returns
+    -------
+    dict with keys:
+        "original"     : the query as received (passed through)
+        "variants"     : list of variant strings (2-3, or 1 if fallback)
+        "multi_aspect" : bool  (flag; False in fallback)
+        "historical"   : bool  (flag; False in fallback)
+    """
+    capped = min(n_variants, cfg.MAX_VARIANTS)
+    model = model or _default_model()
+
+    # Ask the model for the structured envelope.
+    user_message = _user_prompt(original, capped)
+    try:
+        response = model.invoke([_system_to_msg(), _human_to_msg(user_message)])
+    except Exception as exc:
+        _fallback(original, trace, "llm_unavailable", str(exc))
+        return _fallback_envelope(original)
+
+    text = _first_content_text(response)
+    if text is None:
+        _fallback(original, trace, "no_model_output", "LLM returned no content")
+        return _fallback_envelope(original)
+
+    envelope = _parse_envelope(text, original, capped)
+    if envelope is None:
+        _fallback(original, trace, "malformed_json", "could not parse model JSON")
+        return _fallback_envelope(original)
+
+    # Record the successful expansion into the trace.
+    for variant in envelope["variants"]:
+        trace.add_variant(variant)
+    trace.set_flags(envelope["multi_aspect"], envelope["historical"])
+    logger.info(
+        "Stage 1 expansion OK: %d variants, multi_aspect=%s, historical=%s",
+        len(envelope["variants"]),
+        envelope["multi_aspect"],
+        envelope["historical"],
+    )
+    return envelope
+
+
+# ------------------------------------------------------------------
+# Small helpers — model creation, prompting, parsing, fallback
+# ------------------------------------------------------------------
+
+def _default_model() -> ChatOllama:
+    """Create the default expansion LLM from config.EXPAND_MODEL.
+
+    This is ollama/llama3.2, the dev stand-in already in requirements.txt and
+    already pulled. Bangla->formal-legal-English register shifting with this
+    model is the riskiest LLM-dependent step in the pipeline — its rewrite
+    quality on the Bangla test set is a measured eval item, not an assumption.
+    """
+    return ChatOllama(model=cfg.EXPAND_MODEL, temperature=0.1)
+
+
+def _system_to_msg() -> Dict[str, str]:
+    """System message carrying the register-bridging instructions."""
+    return {"role": "system", "content": _SYSTEM_PROMPT}
+
+
+def _human_to_msg(content: str) -> Dict[str, str]:
+    """User message carrying the query + the number of variants to produce."""
+    return {"role": "user", "content": content}
+
+
+def _user_prompt(original: str, n: int) -> str:
+    """The user-side prompt asking for n formal-register variants."""
+    lang = "Bangla" if _looks_bangla(original) else "English"
+    return (
+        f"The worker asked this question in {lang}:\n\n"
+        f"'{original}'\n\n"
+        f"Rewrite it into {n} formal legal-register paraphrases as JSON. "
+        f"See the system instructions for the exact JSON shape and the rules."
+    )
+
+
+def _looks_bangla(text: str) -> bool:
+    """Rough Bangla-detection: presence of any Bengali block character."""
+    for ch in text:
+        if "\u0980" <= ch <= "\u09FF":
+            return True
+    return False
+
+
+def _first_content_text(response: Any) -> Optional[str]:
+    """Pull the first piece of text content out of a LangChain chat response."""
+    if response is None:
+        return None
+    content = getattr(response, "content", None)
+    if content is not None:
+        return str(content)
+    # Some response objects carry message.content instead.
+    msg = getattr(response, "message", None)
+    if msg is not None:
+        c = getattr(msg, "content", None)
+        if c is not None:
+            return str(c)
+    return None
+
+
+def _parse_envelope(
+    text: str, original: str, capped: int
+) -> Optional[Dict[str, Any]]:
+    """Parse the model's JSON response into the envelope shape.
+
+    Returns the envelope dict, or None if the JSON is missing / malformed /
+    does not match the expected shape. The expected shape is:
+        { "original": ..., "variants": [...], "multi_aspect": bool,
+          "historical": bool }
+    We tolerate a few common failures gracefully (missing keys filled with
+    defaults, variants capped to `capped`, non-list variants coerced).
+    """
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+
+    variants = payload.get("variants", [])
+    if not isinstance(variants, list):
+        variants = [str(variants)] if variants else []
+    # Keep the first `capped` variants, each as a plain string.
+    clean_variants: List[str] = []
+    for v in variants[:capped]:
+        if v is None:
+            continue
+        clean_variants.append(str(v).strip())
+    if not clean_variants:
+        # Model returned a JSON object but no usable variants — treat as
+        # fallback (original as sole variant).
+        return None
+
+    return {
+        "original": original,
+        "variants": clean_variants,
+        "multi_aspect": bool(payload.get("multi_aspect", False)),
+        "historical": bool(payload.get("historical", False)),
+    }
+
+
+def _fallback(original: str, trace: Any, reason: str, detail: str) -> None:
+    """Record a Stage 1 fallback into the trace (loud, never silent).
+
+    The fallback envelope is NOT returned here — the caller returns it. This
+    function only records the event so the trace + eval know expansion degraded.
+    """
+    trace.add_fallback(1, reason, "original query as sole variant")
+    logger.warning("Stage 1 expansion fallback: %s — %s", reason, detail)
+
+
+def _fallback_envelope(original: str) -> Dict[str, Any]:
+    """The fallback envelope: original as the sole variant, both flags false.
+
+    The filter stays default-STRICT on a degraded run — we never widen the
+    legality filters (in_force / legal_status) just because expansion failed.
+    Convenience features (rewriting) may degrade; correctness filters may not.
+    """
+    return {
+        "original": original,
+        "variants": [original],
+        "multi_aspect": False,
+        "historical": False,
+    }

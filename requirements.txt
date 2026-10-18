@@ -24,6 +24,10 @@ ollama==0.6.2                     # Python client for a local Ollama server
 
 # --- Embeddings / sentence models ----------------------------------------------
 sentence-transformers==6.0.1      # HuggingFace sentence encoders (pulls torch)
+# NOTE: retrieval Stage 5 uses BAAI/bge-reranker-v2-m3 (a CrossEncoder from this
+# same library). It is NOT a pip package — it's a HuggingFace hub model that
+# sentence-transformers downloads on first load (see retrieval/config.py:
+# RERANKER_MODEL + the fallback note in retrieval/stage5_rerank.py).
 
 # --- PDF ingestion (ingestion/ package: page_router, table_extractor) ----------
 pdfplumber==0.11.10               # text extraction + table detection/extraction

@@ -129,3 +129,193 @@
 #     reads envelope["multi_aspect"]).
 #   - It does NOT recompute embeddings — it uses Stage 2's retained dense
 #     vectors; if those aren't available, it skips, it doesn't re-embed.
+
+# ===========================================================================
+# IMPLEMENTATION (below the design contract; mirrors the contract exactly)
+# ===========================================================================
+
+import logging
+import time
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+
+from retrieval import config as cfg
+
+logger = logging.getLogger("retrieval.stage5b")
+
+
+def _cosine(a: np.ndarray, b: np.ndarray) -> float:
+    """Cosine of two (assumed L2-normalised) BGE-M3 dense vectors via dot."""
+    denom = float(np.linalg.norm(a) * np.linalg.norm(b))
+    if denom == 0.0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
+
+
+def optional_mmr(
+    final_topk: List[Dict[str, Any]],
+    dense_vectors_by_id: Dict[str, List[float]],
+    envelope: Dict[str, Any],
+    trace: Any,
+) -> Dict[str, Any]:
+    """Apply MMR to the Stage 5 final top-k — CONDITIONAL on multi_aspect.
+
+    Parameters
+    ----------
+    final_topk : list of dict
+        The Stage 5 final top-k [{chunk_id, rerank_score, rank}, ...].
+    dense_vectors_by_id : dict chunk_id -> BGE-M3 dense vector
+        The vectors Stage 2 already computed and retained (per-variant dense
+        search results carry "dense_vector" when Stage 2 decided to retain
+        them). MMR must NOT re-embed; it reuses these vectors for chunk-to-
+        chunk cosine similarity. If the needed vectors are absent, MMR skips —
+        it never re-embeds.
+    envelope : dict
+        The Stage 1 envelope. MMR runs ONLY when envelope["multi_aspect"] is
+        true. On a single-aspect legal question, MMR can reduce precision for
+        diversity the question didn't need — so the default path skips it.
+    trace : Trace
+        The in-progress trace. Records mmr_applied, the mmr_topk (or the skip
+        reason) into stages["5b"] — ALWAYS recorded, even when skipped, so the
+        trace schema stays uniform for the eval harness.
+
+    Returns
+    -------
+    dict (also recorded into trace["stages"]["5b"]):
+        {
+          "mmr_applied": bool,
+          "mmr_topk": [ {chunk_id, rerank_score, mmr_rank}, ... ] | None,
+                       # when applied: the diversified top-k in SELECTION order
+                       # (documented choice; within-set order is selection
+                       # order, not rerank order)
+          "reason_if_skipped": str | None,
+                       # set whenever mmr_applied is False — why MMR didn't run
+          "fallback_triggered": bool,
+          "notes": str,
+        }
+    """
+    t0 = time.time()
+    multi_aspect = bool(envelope.get("multi_aspect", False))
+
+    # -- Conditional trigger (multi_aspect only) ----------------------------
+    if not multi_aspect:
+        record = {
+            "mmr_applied": False,
+            "mmr_topk": None,
+            "reason_if_skipped": "multi_aspect flag not set by Stage 1 (single-aspect query)",
+            "fallback_triggered": False,
+            "notes": _notes(0, "multi_aspect=False"),
+        }
+        trace.record_stage("5b", record)
+        logger.info("Stage 5b: MMR skipped (multi_aspect=False)")
+        return record
+
+    # -- Vectors availability (skip rather than re-embed) --------------------
+    missing = [
+        item["chunk_id"]
+        for item in final_topk
+        if item.get("chunk_id") not in dense_vectors_by_id
+    ]
+    if missing:
+        # Diversity is OPTIONAL; correctness filters are not. A missing vector
+        # is a convenience degradation, logged loudly, never fatal.
+        reason = (
+            "dense vectors not retained for MMR (missing for %d of %d candidates)"
+            % (len(missing), len(final_topk))
+        )
+        record = {
+            "mmr_applied": False,
+            "mmr_topk": None,
+            "reason_if_skipped": reason,
+            "fallback_triggered": False,
+            "notes": _notes(0, reason),
+        }
+        trace.record_stage("5b", record)
+        trace.add_fallback("5b", "mmr_vectors_unavailable", "Stage 5 order stands")
+        logger.warning("Stage 5b: %s", reason)
+        return record
+
+    if not final_topk:
+        record = {
+            "mmr_applied": False,
+            "mmr_topk": None,
+            "reason_if_skipped": "Stage 5 final_topk is empty — nothing to diversify",
+            "fallback_triggered": False,
+            "notes": _notes(0, "empty final_topk"),
+        }
+        trace.record_stage("5b", record)
+        return record
+
+    # -- MMR (lambda ~ 0.6, against Stage 2's retained vectors) --------------
+    # Start with the top reranked chunk (selection[0] = highest relevance).
+    # Then iteratively add the candidate maximizing
+    #     lambda * relevance - (1 - lambda) * max_sim_to_selected
+    # with relevance = the Stage 5 rerank score and similarity = chunk-to-chunk
+    # cosine against the retained BGE-M3 dense vectors.
+    lam = float(cfg.MMR_LAMBDA)
+    rewards = [float(item.get("rerank_score", 0.0)) for item in final_topk]
+    # Normalise rerank scores into [0, 1] so the lambda tradeoff is scale-free
+    # (cross-encoder logits are unbounded; raw scores would dwarf the sim term).
+    lo, hi = min(rewards), max(rewards)
+    span = (hi - lo) or 1.0
+    relevance = [0.5 if hi == lo else (r - lo) / span for r in rewards]
+
+    vecs = {
+        item["chunk_id"]: np.asarray(dense_vectors_by_id[item["chunk_id"]], dtype=np.float32)
+        for item in final_topk
+    }
+
+    order = list(range(len(final_topk)))   # candidates by current rerank order
+    selected: List[int] = [order[0]]
+    remaining = list(order[1:])
+    while remaining:
+        best_idx, best_val = None, None
+        for idx in remaining:
+            cid = final_topk[idx]["chunk_id"]
+            max_sim = 0.0
+            for sel in selected:
+                sel_cid = final_topk[sel]["chunk_id"]
+                sim = _cosine(vecs[cid], vecs[sel_cid])
+                max_sim = max(max_sim, sim)
+            val = lam * relevance[idx] - (1.0 - lam) * max_sim
+            if best_val is None or val > best_val:
+                best_idx, best_val = idx, val
+        selected.append(best_idx)
+        remaining.remove(best_idx)
+
+    # Within-set ordering: SELECTION order (documented choice — the MMR text is
+    # about coverage, and the doc leaves within-set order open; selection order
+    # puts the strongest-relevance chunk first and diversity-rounded ones later).
+    mmr_topk = []
+    for mmr_rank, idx in enumerate(selected, start=1):
+        item = final_topk[idx]
+        mmr_topk.append(
+            {
+                "chunk_id": item["chunk_id"],
+                "rerank_score": item.get("rerank_score"),
+                "mmr_rank": mmr_rank,
+            }
+        )
+
+    elapsed = time.time() - t0
+    record = {
+        "mmr_applied": True,
+        "mmr_topk": mmr_topk,
+        "reason_if_skipped": None,
+        "fallback_triggered": False,
+        "notes": _notes(len(mmr_topk), "spec=" + str(cfg.MMR_LAMBDA)),
+    }
+    trace.record_stage("5b", record)
+    logger.info(
+        "Stage 5b: MMR applied (lambda=%s) in=%d selection_order recorded elapsed=%.3fs",
+        cfg.MMR_LAMBDA,
+        len(mmr_topk),
+        elapsed,
+    )
+    return record
+
+
+def _notes(count: int, why: str) -> str:
+    """A short human-readable note about what Stage 5b did, for the trace."""
+    return "mmr_output=%d (%s)" % (count, why)

@@ -60,6 +60,17 @@ EXPAND_MODEL = "ollama/llama3.2"   # LangChain Ollama chat model; the dev stand-
 # at ~30 before it (Stage 4 / config.FUSED_POOL_CAP).
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
 
+# Master knob for Stage 5: when False, the reranker is skipped entirely and
+# the RRF order (Stage 3/4 order) stands as the final top-k — the eval
+# ablation row "reranker off -> RRF order straight to final-k". The model is
+# a ~2.3 GB HuggingFace hub download, so on machines without the disk/network
+# budget for it this knob keeps the pipeline runnable (the fallback is recorded
+# loudly in the trace either way).
+# Env override for ablation runs without editing the file:
+#   RETRIEVAL_RERANKER_ENABLED=0   (or false / no)
+import os as _os
+RERANKER_ENABLED = _os.environ.get("RETRIEVAL_RERANKER_ENABLED", "1").strip().lower() not in ("0", "false", "no", "off")
+
 # Stage 6 / Stage 4 near-dup scorer: can reuse the cached MiniLM from
 # ingestion Stage 6 (already in requirements.txt) for the small fused pool,
 # OR embed the pool with BGE-M3. Do NOT use the cross-encoder here — that's

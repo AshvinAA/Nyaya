@@ -138,3 +138,233 @@
 #     and per-query. Don't conflate the two.
 #   - It does NOT collapse same-ID entries — RRF already merged those into one
 #     entry; Stage 4 only handles DISTINCT IDs.
+
+# ===========================================================================
+# IMPLEMENTATION (below the design contract; mirrors the contract exactly)
+# ===========================================================================
+
+import logging
+import time
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
+from ingestion import config as icfg
+from ingestion.deduplicator import AUTHORITY_ORDER
+from retrieval import config as cfg
+
+logger = logging.getLogger("retrieval.stage4")
+
+# Lazily-built MiniLM scorer, shared per process (same model ingestion Stage 6
+# uses — DEDUP_MODEL in ingestion/config.py). Fused pools are ~30 chunks, so
+# encoding the pool once per query is cheap.
+_scorer_model = None
+
+
+def _authority_rank(entry: Dict[str, Any]) -> int:
+    """Map a fused-pool entry to ingestion's authority rank (lower = better).
+
+    Uses the AUTHORITY_ORDER imported from ingestion.deduplicator — the SAME
+    ranking ingestion applied, applied here PER-QUERY. Unknown/missing ranks
+    sort last (9), matching ingestion's `_rank` fallback.
+    """
+    meta = entry.get("metadata") or {}
+    ar = meta.get("authority_rank")
+    return AUTHORITY_ORDER.get(ar, 9)
+
+
+def _embed_pool_texts(texts: List[str]) -> np.ndarray:
+    """Encode the fused pool's texts with the cached MiniLM dedup scorer.
+
+    Uses the same model as ingestion Stage 6 (ingestion.config.DEDUP_MODEL).
+    Returns an (n, d) float32 matrix of L2-normalised vectors for cosine
+    similarity via dot products.
+    """
+    global _scorer_model
+    if _scorer_model is None:
+        from sentence_transformers import SentenceTransformer
+        _scorer_model = SentenceTransformer(icfg.DEDUP_MODEL)
+    vecs = _scorer_model.encode(
+        texts,
+        batch_size=64,
+        show_progress_bar=False,
+        normalize_embeddings=True,
+        convert_to_numpy=True,
+    )
+    return np.asarray(vecs, dtype=np.float32)
+
+
+def retrieval_dedup(
+    fused_pool: List[Dict[str, Any]],
+    registry: Any,
+    trace: Any,
+) -> Dict[str, Any]:
+    """Collapse per-query near-duplicate distinct IDs by authority rank.
+
+    Parameters
+    ----------
+    fused_pool : list of dict
+        The Stage 3 fused pool — entries carry at least
+        {chunk_id, rrf_score, rank, appears_in}.
+    registry : retrieval.registry (the module)
+        Used to read each chunk's metadata (authority_rank / text_layer /
+        source_act, via registry.chunk_metadata) and bare generation text (via
+        registry.chunk_document) for similarity scoring.
+    trace : Trace
+        The in-progress trace. Records the collapsed pairs, guard hits, and the
+        deduped pool into stages["4"].
+
+    Returns
+    -------
+    dict (also recorded into trace["stages"]["4"]):
+        {
+          "deduped_pool": [  # surviving entries in RRF-rank order
+              {chunk_id, rrf_score, rank, appears_in, metadata, text}, ...],
+          "collapsed_pairs": [ {winner_id, loser_id, reason, similarity}, ...],
+          "guard_hits":      [ {pair: [id_a, id_b], similarity, why}, ...],
+          "fallback_triggered": bool,
+          "notes": str,
+        }
+    """
+    t0 = time.time()
+
+    if not fused_pool:
+        record = {
+            "deduped_pool": [],
+            "collapsed_pairs": [],
+            "guard_hits": [],
+            "fallback_triggered": True,
+            "notes": "no fused pool provided to dedup",
+        }
+        trace.record_stage(4, record)
+        trace.add_fallback(4, "empty_fused_pool", "nothing to dedup")
+        logger.warning("Stage 4: empty fused pool — nothing to dedup")
+        return record
+
+    # Read metadata + generation text for every distinct-ID candidate in one
+    # batch pass, then re-attach them to the pooled entries in place.
+    ids = [e.get("chunk_id") for e in fused_pool if e.get("chunk_id")]
+    metas_by_id = registry.chunk_metadata_batch(ids) if hasattr(registry, "chunk_metadata_batch") else {}
+    for e in fused_pool:
+        cid = e.get("chunk_id")
+        meta = metas_by_id.get(cid) if cid else None
+        if meta is None:
+            meta = registry.chunk_metadata(cid) if cid else None
+        e["metadata"] = meta or {}
+        e["text"] = registry.chunk_document(cid) if cid else ""
+
+    collapsed_pairs: List[Dict[str, Any]] = []
+    guard_hits: List[Dict[str, Any]] = []
+    dropped: set = set()
+
+    threshold = float(cfg.RETRIEVAL_NEAR_DUP_THRESHOLD)
+
+    if len(fused_pool) > 1:
+        texts = [e.get("text") or "" for e in fused_pool]
+        vecs = _embed_pool_texts(texts)
+        sims = vecs @ vecs.T   # cosine (vectors are L2-normalised)
+        n = len(fused_pool)
+        for i in range(n):
+            if i in dropped:
+                continue
+            for j in range(i + 1, n):
+                if j in dropped:
+                    continue
+                a, b = fused_pool[i], fused_pool[j]
+                sim = float(sims[i, j])
+                if sim < threshold:
+                    continue
+                layer_a = (a.get("metadata") or {}).get("text_layer")
+                layer_b = (b.get("metadata") or {}).get("text_layer")
+                act_a = (a.get("metadata") or {}).get("source_act")
+                act_b = (b.get("metadata") or {}).get("source_act")
+
+                # HARD GUARD: never collapse across text_layer OR source_act.
+                # A base provision and its 2025-Ordinance overlay are near-
+                # identical by construction; Stage 7 exists to surface both.
+                if layer_a != layer_b or act_a != act_b:
+                    guard_hits.append(
+                        {
+                            "pair": [a["chunk_id"], b["chunk_id"]],
+                            "similarity": round(sim, 6),
+                            "why": (
+                                "text_layer differs (%s vs %s); source_act differs (%s vs %s)"
+                                % (
+                                    layer_a,
+                                    layer_b,
+                                    act_a,
+                                    act_b,
+                                )
+                            ),
+                        }
+                    )
+                    continue
+
+                # Same layer + same act -> collapse to the higher authority;
+                # tie-break on the higher RRF score (earlier fused rank).
+                rank_a, rank_b = _authority_rank(a), _authority_rank(b)
+                if rank_a < rank_b:
+                    winner, loser = a, b
+                elif rank_b < rank_a:
+                    winner, loser = b, a
+                else:
+                    # Same authority tier: the higher RRF score wins
+                    # (earlier fused rank = more list consensus upstream).
+                    if a.get("rank", 10**9) <= b.get("rank", 10**9):
+                        winner, loser = a, b
+                    else:
+                        winner, loser = b, a
+                dropped.add(fused_pool.index(loser))
+                collapsed_pairs.append(
+                    {
+                        "winner_id": winner["chunk_id"],
+                        "loser_id": loser["chunk_id"],
+                        "reason": "near-dup; authority_rank %d beats %d"
+                        % (min(rank_a, rank_b), max(rank_a, rank_b)),
+                        "similarity": round(sim, 6),
+                    }
+                )
+
+    deduped_pool: List[Dict[str, Any]] = [
+        e for k, e in enumerate(fused_pool) if k not in dropped
+    ]
+
+    elapsed = time.time() - t0
+    record = {
+        "deduped_pool": deduped_pool,
+        "collapsed_pairs": collapsed_pairs,
+        "guard_hits": guard_hits,
+        "fallback_triggered": False,
+        "notes": _notes(len(fused_pool), len(deduped_pool), collapsed_pairs, guard_hits, elapsed),
+    }
+    trace.record_stage(4, record)
+    logger.info(
+        "Stage 4: pool_in=%d collapsed=%d guard_hits=%d pool_out=%d elapsed=%.3fs",
+        len(fused_pool),
+        len(collapsed_pairs),
+        len(guard_hits),
+        len(deduped_pool),
+        elapsed,
+    )
+    return record
+
+
+def _notes(
+    pool_in: int,
+    pool_out: int,
+    collapsed: List[Dict[str, Any]],
+    guards: List[Dict[str, Any]],
+    elapsed: float,
+) -> str:
+    """A short human-readable note about what Stage 4 did, for the trace."""
+    return (
+        "pool_in=%d pool_out=%d collapsed=%d guard_hits=%d threshold=%s elapsed=%.3fs"
+        % (
+            pool_in,
+            pool_out,
+            len(collapsed),
+            len(guards),
+            cfg.RETRIEVAL_NEAR_DUP_THRESHOLD,
+            elapsed,
+        )
+    )

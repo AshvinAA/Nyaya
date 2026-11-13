@@ -24,8 +24,8 @@
      wage"). This flag conditionally enables Stage 5b — MMR must NOT run by
      default on single-aspect queries, where it hurts precision.
    - historical: set when the question is explicitly about law over time
-     ("what did the law say before 2018?", "what changed in the 2025
-     Ordinance?"). Stage 2 consumes it; nothing else in the pipeline guesses
+     ("what did the law say before 2018?", "what changed in the 2026
+     amendment?"). Stage 2 consumes it; nothing else in the pipeline guesses
      at history.
    - A reserved `asr` field will eventually carry transcript-cleanup signals —
      DELIBERATELY ABSENT NOW (RETRIEVAL_PIPELINE.md Flagged follow-ups).

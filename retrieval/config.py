@@ -103,8 +103,10 @@ SEARCH_PER_LIST_K = 10
 # chunks that passed the ingestion gate (retrievable=true, no front matter,
 # no demoted duplicates). This filter is the ENTIRE applicability control:
 #   in_force = true  AND  legal_status != superseded
-# The 2025 Ordinance survives by design: in_force=true,
-# legal_status=pending_ratification — it competes normally, Stage 7 labels it.
+# An amendment overlay survives by design whatever its legal_status
+# (ratified, like the 2026 Amendment Act, or pending_ratification, like the
+# 2025 Ordinance it replaced): it is in_force=true, so it competes normally
+# and Stage 7 labels it.
 DEFAULT_FILTER = {
     "in_force": True,
     "legal_status_not": "superseded",
@@ -147,7 +149,7 @@ RETRIEVAL_NEAR_DUP_THRESHOLD = 0.92   # TODO: tune against test set
 # re-declare it here. The ranking is the same; the application is per-query.
 
 # Hard guard (inherited from ingestion): never collapse a pair across a
-# different text_layer or source_act. A base provision and its 2025-overlay
+# different text_layer or source_act. A base provision and its amendment overlay
 # are near-identical by construction, and Stage 7 exists to surface both with
 # labels. If this stage collapsed them, it would destroy the overlay rule.
 
@@ -204,8 +206,27 @@ PARENT_STORE_PATH = "ingestion_output/parent_store.json"   # TODO: confirm path
 # Stage 7 — Overlay vs. base resolution
 # ---------------------------------------------------------------------------
 # Explicit label strings attached to chunks for the generation prompt.
+# The label pair follows the OVERLAY's legal_status — never assume "pending".
+#   ratified overlay (the 2026 Amendment Act): the amendment is settled law and
+#     the base chunk is the text it changed.
+#   pending overlay (an unratified ordinance): the overlay is operative but not
+#     settled, and the base is the last settled text.
+LABEL_OVERLAY_RATIFIED = "[current text — enacted amendment]"
+LABEL_BASE_AMENDED = "[earlier text — amended by a later Act]"
 LABEL_OVERLAY_PENDING = "[current text — ratification pending]"
 LABEL_BASE_SETTLED = "[settled law since 2018]"
+LABEL_OVERLAY_OTHER = "[amendment text — status unverified]"
+LABEL_BASE_OTHER = "[base text — an amendment covers this provision]"
+
+
+def overlay_label_pair(overlay_legal_status):
+    """Return (base_label, overlay_label) for a dual-layer pair, chosen from
+    the overlay chunk's legal_status."""
+    if overlay_legal_status == "ratified":
+        return LABEL_BASE_AMENDED, LABEL_OVERLAY_RATIFIED
+    if overlay_legal_status == "pending_ratification":
+        return LABEL_BASE_SETTLED, LABEL_OVERLAY_PENDING
+    return LABEL_BASE_OTHER, LABEL_OVERLAY_OTHER
 
 # When both a consolidated_base provision and an amendment_overlay provision
 # cover the same topic:

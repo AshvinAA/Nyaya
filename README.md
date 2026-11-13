@@ -33,7 +33,9 @@ The two claims reinforce each other rather than compete — the corpus is genuin
 
 ## Architecture
 
-The corpus is real primary sources in `docs/`: the Bangladesh Labour Act 2006 (English, up to the 2018 amendments), the Labour Rules 2015 (unofficial English translation), the 2015 wage gazette and 2025 amendment gazette (Bangla originals), the Legal 500 Bangladesh employment guide, ILO Committee on Freedom of Association materials, and the CPD 2023 RMG wage-revision report.
+The corpus is real primary sources in `docs/`: the Bangladesh Labour Act 2006 (English, up to the 2018 amendments), the same Act's English text as of September 2015 (historical), the Bangladesh Labour (Amendment) Act 2026 (Bangla gazette), the Labour Rules 2015 (unofficial English translation), the December 2023 garments minimum-wage gazette (Bangla), the 2024 notice raising the RMG annual increment to 9%, the EPZ Labour Act 2019 (authentic English text), the Legal 500 Bangladesh employment guide, ILO Committee on Freedom of Association materials, and the CPD 2023 RMG wage-revision report.
+
+> **Corpus correction (2026-11-12).** Earlier versions of this README described a "2015 wage gazette" and a "2025 amendment ordinance" in the corpus; neither was there (three files had been misidentified). The 2025 Ordinance has been replaced by the 2026 Amendment Act, which is now the `amendment_overlay` with `legal_status: ratified`. Mentions of the "2025 Ordinance" and `pending_ratification` below describe the original design and should be read as "the amendment overlay". The 2026 Act and the 2023 wage gazette have no usable text layer and are not retrievable until OCR'd or transcribed.
 
 The full pipeline is designed across two architecture documents, and each stage is implemented only where this repo says so:
 

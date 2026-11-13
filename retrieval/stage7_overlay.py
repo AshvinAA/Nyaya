@@ -12,18 +12,23 @@
 
  If the resolved context set (from Stage 6) includes both:
    - a base-text provision (text_layer = consolidated_base), AND
-   - an overlay provision (text_layer = amendment_overlay, e.g. the 2025
-     Ordinance)
+   - an overlay provision (text_layer = amendment_overlay, e.g. the 2026
+     Amendment Act)
  covering the SAME topic / same section_number:
 
    - DO NOT discard either. The reranker may order them; this stage may NOT drop
      one.
-   - Tag both explicitly for the generation prompt:
-       - "[current text — ratification pending]"   for the overlay
-       - "[settled law since 2018]"                for the base
+   - Tag both explicitly for the generation prompt. The label pair follows
+     the overlay's legal_status (config.overlay_label_pair):
+       ratified overlay (the 2026 Amendment Act):
+         - "[current text — enacted amendment]"        for the overlay
+         - "[earlier text — amended by a later Act]"   for the base
+       pending overlay (an unratified ordinance):
+         - "[current text — ratification pending]"     for the overlay
+         - "[settled law since 2018]"                  for the base
    - This lets generation produce something like:
-       "under a 2025 amendment currently in effect but not yet ratified, X —
-        this replaces the previous rule that said Y"
+       "under the 2026 amendment, X — this replaces the previous rule that
+        said Y"
      rather than silently picking one version and stating it as uncontested fact.
 
    - Record the pair in the trace (dual_layer: true, with both chunk ids) so
@@ -70,8 +75,7 @@
 #       -> record it in the trace: dual_layer_pairs.append({
 #            base_chunk_id, overlay_chunk_id, base_label, overlay_label })
 #       -> label both for the generation prompt:
-#            base    -> config.LABEL_BASE_SETTLED
-#            overlay -> config.LABEL_OVERLAY_PENDING
+#            via config.overlay_label_pair(overlay legal_status)
 #       -> do NOT drop either from the final context set
 #
 # "Cover the same provision" is detected from the metadata the ingestion already
@@ -85,13 +89,14 @@
 # The labels are the human-readable statements of the Stage 0 layering rule,
 # attached to each chunk for the generation prompt:
 #
-#   config.LABEL_OVERLAY_PENDING = "[current text — ratification pending]"
-#   config.LABEL_BASE_SETTLED     = "[settled law since 2018]"
+#   config.overlay_label_pair(overlay_legal_status) -> (base_label, overlay_label)
+#     ratified -> LABEL_BASE_AMENDED  / LABEL_OVERLAY_RATIFIED
+#     pending  -> LABEL_BASE_SETTLED  / LABEL_OVERLAY_PENDING
 #
 # These labels are what lets generation produce a correctly-caveated answer
 # (overlay supersedes base where they overlap, but both are shown, and the
-# overlay's pending-ratification status is explicit) rather than silently picking
-# one version and stating it as uncontested fact.
+# overlay's legal status is explicit) rather than silently picking one version
+# and stating it as uncontested fact.
 #
 # Do NOT drop the base when the overlay exists, and do NOT drop the overlay when
 # the base exists. Both stay in the final context set, both carry their labels.
@@ -215,14 +220,22 @@ def resolve_overlay(
         base_cid = base_entry.get("child_id")
         overlay_cid = overlay_entry.get("child_id")
 
-        base_entry["label"] = (
-            (base_entry.get("label") + " " if base_entry.get("label") else "")
-            + cfg.LABEL_BASE_SETTLED
-        )
-        overlay_entry["label"] = (
-            (overlay_entry.get("label") + " " if overlay_entry.get("label") else "")
-            + cfg.LABEL_OVERLAY_PENDING
-        )
+        # The label pair follows the overlay's legal_status: an enacted
+        # amendment must never be presented as "ratification pending".
+        overlay_status = (overlay_entry.get("metadata") or {}).get("legal_status")
+        base_label, overlay_label = cfg.overlay_label_pair(overlay_status)
+
+        # A chunk can sit in more than one pair; append each label only once.
+        if base_label not in (base_entry.get("label") or ""):
+            base_entry["label"] = (
+                (base_entry.get("label") + " " if base_entry.get("label") else "")
+                + base_label
+            )
+        if overlay_label not in (overlay_entry.get("label") or ""):
+            overlay_entry["label"] = (
+                (overlay_entry.get("label") + " " if overlay_entry.get("label") else "")
+                + overlay_label
+            )
         labeled_ids.add(base_cid)
         labeled_ids.add(overlay_cid)
 
@@ -230,8 +243,8 @@ def resolve_overlay(
             {
                 "base_chunk_id": base_cid,
                 "overlay_chunk_id": overlay_cid,
-                "base_label": cfg.LABEL_BASE_SETTLED,
-                "overlay_label": cfg.LABEL_OVERLAY_PENDING,
+                "base_label": base_label,
+                "overlay_label": overlay_label,
                 "section_number": (base_entry.get("metadata") or {}).get("section_number"),
             }
         )
@@ -241,9 +254,9 @@ def resolve_overlay(
         logger.info(
             "Stage 7: dual_layer pair — base=%s [%s] overlay=%s [%s]",
             base_cid,
-            cfg.LABEL_BASE_SETTLED,
+            base_label,
             overlay_cid,
-            cfg.LABEL_OVERLAY_PENDING,
+            overlay_label,
         )
 
     # -- Pass 3: carry everything through, with whatever labels were applied --

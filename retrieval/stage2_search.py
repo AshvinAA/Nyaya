@@ -21,10 +21,11 @@
                   Stage 7's labeling takes over the job of saying which text
                   governed when.
 
- The 2025 Ordinance survives the default filter BY DESIGN: it is
- in_force=true with legal_status=pending_ratification, so it competes normally
- in default mode — and Stage 7 labels it. The filter's job is applicability,
- not ratification status; conflating them would silently hide the current
+ An amendment overlay survives the default filter BY DESIGN: it is
+ in_force=true whatever its legal_status (ratified, like the 2026 Amendment
+ Act, or pending_ratification, like the 2025 Ordinance it replaced), so it
+ competes normally in default mode — and Stage 7 labels it. The filter's job
+ is applicability, not ratification status; conflating them would silently hide the current
  operative text. This is the retrieval-side half of ingestion Stage 0's overlay
  rule.
 
@@ -108,8 +109,8 @@ def hybrid_search(
         filter_label = "historical"
     else:
         # Default filter: in_force=true AND legal_status != superseded.
-        # The 2025 Ordinance survives by design (in_force=true,
-        # legal_status=pending_ratification) and competes normally; Stage 7
+        # An amendment overlay survives by design (in_force=true, whether
+        # ratified or pending_ratification) and competes normally; Stage 7
         # labels it. The filter's job is applicability, not ratification status.
         filter_params = {
             "in_force": True,

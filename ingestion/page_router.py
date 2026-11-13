@@ -166,10 +166,18 @@ def classify_page(page):
     if n_words:
         legacy_share = sum(1 for w in words
                            if "\u2020" in w["text"] or "\u2021" in w["text"]) / n_words
-    garbage = n_words > 60 and (
+    # (e) unmapped glyphs: a font embedded without a Unicode map makes
+    #     pdfminer emit literal "(cid:123)" tokens instead of characters (the
+    #     Nikosh-set 2023 wage gazette and 2026 Amendment Act). That token
+    #     cannot occur in real text, so it needs no large-page floor - a short
+    #     page of it is just as unreadable as a long one.
+    cid_share = 0.0
+    if n_words:
+        cid_share = sum(1 for w in words if "(cid:" in w["text"]) / n_words
+    garbage = (n_words > 60 and (
         ghost_one_letter > 0.45 or top_share > 0.30 or total_chars / n_words > 40
         or legacy_share > 0.10
-    )
+    )) or (n_words >= 5 and cid_share > 0.10)
 
     # ---- decision ladder (first match wins) -------------------------------
     if garbage:
@@ -189,6 +197,7 @@ def classify_page(page):
                 "one_letter_word_share": round(ghost_one_letter, 3),
                 "top_token_share": round(top_share, 3),
                 "legacy_font_share": round(legacy_share, 3),
+                "unmapped_glyph_share": round(cid_share, 3),
                 "table_bboxes": boxes}
     return label, evidence
 

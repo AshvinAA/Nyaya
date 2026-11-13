@@ -22,7 +22,7 @@
 
    2. Hard guard, inherited from ingestion: NEVER collapse a pair across a
       different text_layer or source_act. A base-text provision and its
-      2025-Ordinance overlay are near-identical by construction — and Stage 7
+      amendment overlay are near-identical by construction — and Stage 7
       exists precisely to surface both with labels. If this stage collapsed
       them, it would destroy the very thing the overlay rule protects. When in
       doubt, leave both in and let the reranker and the small final-k do the
@@ -92,7 +92,7 @@
 # NEVER collapse a pair across a different text_layer or source_act.
 #
 # Rationale: a base-text provision (text_layer=consolidated_base) and its
-# 2025-Ordinance overlay (text_layer=amendment_overlay) are near-identical by
+# amendment overlay (text_layer=amendment_overlay) are near-identical by
 # construction — the overlay is a delta applied to the same provision. Stage 7
 # exists precisely to surface BOTH with explicit labels. If this stage collapsed
 # them, it would destroy the overlay rule and the system would silently pick one
@@ -280,7 +280,7 @@ def retrieval_dedup(
                 act_b = (b.get("metadata") or {}).get("source_act")
 
                 # HARD GUARD: never collapse across text_layer OR source_act.
-                # A base provision and its 2025-Ordinance overlay are near-
+                # A base provision and its amendment overlay are near-
                 # identical by construction; Stage 7 exists to surface both.
                 if layer_a != layer_b or act_a != act_b:
                     guard_hits.append(

@@ -15,10 +15,15 @@
    legal_status  = AUTHORITY: is this provision settled law?
                    (ratified / pending_ratification / superseded / unverified)
    in_force      = APPLICABILITY: is this the text that governs TODAY?
- The 2025 Ordinance is the concrete case: in_force=True (operative from
- promulgation) while legal_status=pending_ratification - the system must be
- able to say "this is the current text AND its ratification is pending",
- never collapse the two into one flag.
+ The two axes stay separate because an amendment can be operative before
+ it is settled: the 2025 Labour (Amendment) Ordinance was in_force=True
+ while legal_status=pending_ratification. It has since been replaced by
+ the Bangladesh Labour (Amendment) Act, 2026 (Act No. 43 of 2026, assented
+ and in force 10 April 2026), which is the amendment_overlay in this corpus
+ and is legal_status=ratified. The overlay rule still applies - the English
+ base text stops at the 2018 amendments, so overlay and base are surfaced
+ together with labels - but the label must follow legal_status, never
+ assume "pending".
 
  The registry is keyed by doc_slug (see common.doc_slug). The corpus is
  small and hand-audited: adding a document to docs/ means adding (or
@@ -45,7 +50,8 @@ from ingestion.common import normalize
 # authority_rank     official_gazette > official_translation >
 #                    unofficial_translation > reputable_secondary >
 #                    advocacy_report  (Stage 6 near-dup winner rule)
-# text_layer         consolidated_base | amendment_overlay | None
+# text_layer         consolidated_base | amendment_overlay | historical_base
+#                    | None
 DOC_META = {
     "bangladesh_labour_act_2006_english_upto_2018": {
         "source_type": "primary_law", "source_act": "Bangladesh Labour Act, 2006",
@@ -59,25 +65,68 @@ DOC_META = {
         "in_force": True, "authority_rank": "unofficial_translation",
         "translation_status": "unofficial", "text_layer": "consolidated_base"},
 
-    "bangladeshgagette2025": {                       # 2025 amendment ordinance
+    # Identities below were re-verified by reading the PDFs (2026-11-12).
+    # The filenames are misleading; the comments say what each file really is.
+
+    "bangladesh_labour_amendment_act_2026_bangla_gazette": {
+        # Act No. 43 of 2026, Bangladesh Gazette Extraordinary 10 Apr 2026,
+        # pp. 15785-15831 (dpp.gov.bd). s.1(2): in force at once. Replaced the
+        # 2025 Amendment Ordinance. Bangla original; the PDF has NO usable text
+        # layer (legacy/CID fonts) - needs OCR or transcription before its
+        # chunks can be retrieved.
         "source_type": "primary_law",
-        "source_act": "Bangladesh Labour (Amendment) Ordinance, 2025",
-        "effective_date": None, "legal_status": "pending_ratification",
+        "source_act": "Bangladesh Labour (Amendment) Act, 2026",
+        "effective_date": "2026-04-10", "legal_status": "ratified",
         "in_force": True, "authority_rank": "official_gazette",
         "translation_status": "original_bangla", "text_layer": "amendment_overlay"},
 
-    "bangladeshgagetteinbanglishjul2021": {          # identity unconfirmed until
-        "source_type": "primary_law", "source_act": None,  # manual transcription
-        "effective_date": None, "legal_status": "unverified",
-        "in_force": False, "authority_rank": "official_gazette",
+    "rmg_minimum_wage_gazette_dec2023_bangla": {
+        # Ministry of Labour notification No. 40.00.0000.016.32.021.13.30 dated
+        # 18 Dec 2023, Gazette Extraordinary 20 Dec 2023, pp. 28201-28211
+        # (Minimum Wage Board portal). The operative garments wage schedule:
+        # Grade 4 total Tk 12,500, effective 1 Dec 2023. Bangla original; same
+        # no-text-layer problem as the 2026 Act.
+        "source_type": "primary_law",
+        "source_act": "Minimum Wages Notification for the Garments Sector, 2023",
+        "effective_date": "2023-12-01", "legal_status": "ratified",
+        "in_force": True, "authority_rank": "official_gazette",
         "translation_status": "original_bangla", "text_layer": None},
 
-    "bangladeshgagettesep2015": {                    # Sept-2015 Bangla printing
-        "source_type": "primary_law",                # of the Act (its p2 title
-        "source_act": "Bangladesh Labour Act, 2006",  # block says so)
-        "effective_date": "2006-10-11", "legal_status": "ratified",
+    "bangladeshgagette2025": {
+        # NOT the 2025 Ordinance. A one-page English rendering of Ministry of
+        # Labour notice No. 40.00.0000.016.99.009.24-207: garment-sector annual
+        # increment raised to 9% (5% + 4%), the extra 4% effective 1 Dec 2024.
+        # The file is an unofficial English version, not the gazette itself.
+        "source_type": "primary_law",
+        "source_act": "Garments Sector Annual Increment Notification, 2024",
+        "effective_date": "2024-12-01", "legal_status": "ratified",
+        "in_force": True, "authority_rank": "unofficial_translation",
+        "translation_status": "unofficial", "text_layer": None},
+
+    "bangladeshgagetteinbanglishjul2021": {
+        # Authentic English Text of the Bangladesh EPZ Labour Act, 2019
+        # (Act No. II of 2019), S.R.O. No. 257-Law/2021, Gazette 27 Jul 2021.
+        # A SEPARATE statute that applies only to EPZ workers - its section
+        # numbers do not correspond to the Labour Act, 2006. text_layer=None
+        # keeps it out of base/overlay pairing with the 2006 Act.
+        "source_type": "primary_law",
+        "source_act": "Bangladesh EPZ Labour Act, 2019",
+        "effective_date": "2019", "legal_status": "ratified",
         "in_force": True, "authority_rank": "official_gazette",
-        "translation_status": "original_bangla", "text_layer": "consolidated_base"},
+        "translation_status": "official_english", "text_layer": None},
+
+    "bangladeshgagettesep2015": {
+        # Authentic English Text of the Labour Act, 2006 as it stood on
+        # 28 Sep 2015 (Gazette of that date) - i.e. BEFORE the 2018 amendments.
+        # Superseded as a whole by the "upto 2018" text, so it is hidden by the
+        # default filter and only surfaces for historical queries. Its own
+        # text_layer stops ingestion dedup from merging it with the current
+        # base (a superseded twin must never demote the in-force chunk).
+        "source_type": "primary_law",
+        "source_act": "Bangladesh Labour Act, 2006",
+        "effective_date": "2015-09-28", "legal_status": "superseded",
+        "in_force": False, "authority_rank": "official_gazette",
+        "translation_status": "official_english", "text_layer": "historical_base"},
 
     "legal_500_bangladesh": {
         "source_type": "secondary_legal_guide", "source_act": None,
@@ -125,14 +174,21 @@ def layer_note(meta):
     layer = meta.get("text_layer")
     status = meta.get("legal_status")
     if layer == "amendment_overlay":
-        return ("Amendment overlay: operative text, ratification pending - "
-                "supersedes the consolidated base where they overlap"
-                if status == "pending_ratification"
-                else "Amendment overlay layer (status: %s)" % status)
+        if status == "pending_ratification":
+            return ("Amendment overlay: operative text, ratification pending - "
+                    "supersedes the consolidated base where they overlap")
+        if status == "ratified":
+            return ("Amendment overlay: enacted amendment not yet merged into "
+                    "the consolidated base - supersedes the base where they "
+                    "overlap")
+        return "Amendment overlay layer (status: %s)" % status
     if layer == "consolidated_base":
         return ("Consolidated base text (Act + ratified amendments)"
                 if status == "ratified"
                 else "Consolidated base text layer (status: %s)" % status)
+    if layer == "historical_base":
+        return ("Historical text of the Act - superseded, shown only to say "
+                "what the law used to be")
     return "Not part of the consolidated law layers"
 
 

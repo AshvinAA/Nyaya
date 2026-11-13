@@ -4,6 +4,8 @@
 
 ---
 
+> **Corpus correction (2026-11-12).** The amendment overlay is now the **Bangladesh Labour (Amendment) Act, 2026** (`legal_status: ratified`), not the 2025 Ordinance (`pending_ratification`), which it replaced. Stage 7 therefore picks its label pair from the overlay's `legal_status`: `[current text — enacted amendment]` / `[earlier text — amended by a later Act]` for a ratified overlay, and the original `[current text — ratification pending]` / `[settled law since 2018]` only for a pending one. Read "the 2025 Ordinance" below as "the amendment overlay". Open issue: an amending Act's own section numbers differ from the sections it amends, so pairing by `section_number` needs an `amends_section` field on overlay chunks.
+
 ## Scope note — read this first
 
 **Bangla ASR / voice integration is explicitly out of scope for this stage.** We are deliberately deferring the full voice-to-RAG-to-voice pipeline until the core RAG method (ingestion → retrieval → generation → evaluation) is solid and measured on its own. Right now, "query" means **typed or transcribed text** — English or Bangla — not live audio.

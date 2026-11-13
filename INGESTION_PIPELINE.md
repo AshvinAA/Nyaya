@@ -4,6 +4,8 @@
 
 ---
 
+> **Corpus correction (2026-11-12).** This document was written when the amendment overlay was believed to be the 2025 Labour (Amendment) Ordinance, pending ratification. Two things have changed. First, the Ordinance was replaced by the **Bangladesh Labour (Amendment) Act, 2026** (Act No. 43 of 2026, in force 10 April 2026), so the overlay is now `legal_status: ratified`; the overlay rule still applies because the English base text stops at the 2018 amendments. Second, three files in `docs/` had been misidentified: `BangladeshGagette2025.pdf` is a one-page RMG increment notice, `BangladeshGagetteSep2015.pdf` is the English text of the Act as of September 2015 (now `superseded`, `text_layer: historical_base`), and `BangladeshGagetteInBanglishJul2021.pdf` is the EPZ Labour Act 2019. `ingestion/doc_metadata.py` is the source of truth; read "the 2025 Ordinance" below as "the amendment overlay". The 2026 Act and the December 2023 garments wage gazette are in `docs/` but have no usable text layer, so Stage 1 routes every page to `visual_routing_required` until they are OCR'd or transcribed.
+
 ## Pipeline Overview
 
 ```

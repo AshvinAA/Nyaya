@@ -28,6 +28,16 @@ def normalize(text):
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+_BN_DIGITS = str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")
+
+
+def ascii_digits(text):
+    """Bangla digits -> ASCII digits ('৩৪৫ক' -> '345ক'). Section markers are
+    stored with ASCII digits so a Bangla chunk's section 23 and an English
+    chunk's section 23 compare equal."""
+    return (text or "").translate(_BN_DIGITS)
+
+
 def estimate_tokens(text):
     """Rough token estimate (~1.3 tokens per word) - deliberately avoids a
     tiktoken dependency; chunk-size thresholds are tuned against THIS

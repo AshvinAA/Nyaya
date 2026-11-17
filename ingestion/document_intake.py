@@ -35,6 +35,7 @@ from ingestion.prose_chunker import hierarchy_chunk
 from ingestion.table_extractor import (table_chunk_with_retry,
                                       flag_table_rejected,
                                       flag_unextractable)
+from ingestion.transcripts import load_page_transcript
 from ingestion.validation_gate import ensure_node_ids
 
 
@@ -73,12 +74,35 @@ def process_pdf(path, max_pages):
         pages = pdf.pages[:max_pages] if max_pages > 0 else pdf.pages
         for page in pages:                         # ---- Stage 1: per page ----
             label, evidence = classify_page(page)  # route BEFORE any chunking
+            # A hand transcript replaces the PDF's text layer for this page
+            # (docs/transcriptions/<slug>/pNNN.txt - see transcripts.py). The
+            # router's own verdict is kept in the evidence for the audit trail.
+            transcript = load_page_transcript(path, slug, page.page_number)
+            if transcript is not None:
+                evidence = {**evidence, "pdf_label": label,
+                            "text_source": "manual_transcription"}
+                label = "transcribed"
             counts[label] = counts.get(label, 0) + 1
             rec["routing"].append({"page": page.page_number,
                                    "label": label, "evidence": evidence})
 
             if label == "empty":                   # cover page / blank page
                 continue                           # nothing to chunk at all
+
+            if label == "transcribed":             # ---- Stage 2a on the
+                blocks, stats, hier_state = hierarchy_chunk(   # transcript
+                    transcript, slug, hier_state)
+                for b in blocks:
+                    rec["prose"].append({**b, "doc": slug,
+                                         "path": os.path.basename(path),
+                                         "page": page.page_number,
+                                         "text_source": "manual_transcription",
+                                         "retrievable": b.get("retrievable", True),
+                                         "est_tokens": estimate_tokens(b["text"])})
+                rec["stats"].append({"page": page.page_number, "route": label,
+                                     "strategy": stats.get("strategy"),
+                                     "leaves": len(blocks), "tables": 0})
+                continue
 
             if label == "visual_routing_required": # Bangla-gazette case:
                 # extraction is garbage -> per the plan, this page needs
@@ -180,6 +204,14 @@ def process_pdf(path, max_pages):
     rec["node_ids_filled"] = (ensure_node_ids(rec["prose"])
                               + ensure_node_ids(rec["tables"]))
     rec["route_counts"] = counts                   # routing histogram
+    if counts.get("transcribed"):
+        # transcripts drop the masthead, so no front_matter block filled the
+        # document-level record - take the registry row, and say where the
+        # text came from
+        if not rec["doc_metadata"]:
+            rec["doc_metadata"] = doc_metadata(slug)
+        rec["doc_metadata"]["text_source"] = "manual_transcription"
+        rec["doc_metadata"]["transcribed_pages"] = counts["transcribed"]
     return rec
 
 

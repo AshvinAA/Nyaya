@@ -79,9 +79,12 @@
 #       -> do NOT drop either from the final context set
 #
 # "Cover the same provision" is detected from the metadata the ingestion already
-# attached (section_number, section_path, topic_tags). The ingestion stage
-# already tagged each chunk with its text_layer and section_number; Stage 7
-# doesn't re-derive them — it reads them from the resolved context entries.
+# attached. For a base+overlay pair that means: the overlay chunk's
+# amends_section names the base chunk's section_number. An amending Act
+# numbers its OWN sections (the 2026 Act's s.3 amends s.1 of the 2006 Act),
+# so the overlay's section_number is never compared (registry.same_provision).
+# Stage 7 doesn't re-derive any of this — it reads it from the resolved
+# context entries.
 
 # ---------------------------------------------------------------------------
 # Labeling (both surfaced, never silently picked)
@@ -246,6 +249,9 @@ def resolve_overlay(
                 "base_label": base_label,
                 "overlay_label": overlay_label,
                 "section_number": (base_entry.get("metadata") or {}).get("section_number"),
+                # the overlay's own section number is NOT the provision it
+                # amends - this is the field the pair was matched on
+                "amends_section": (overlay_entry.get("metadata") or {}).get("amends_section"),
             }
         )
         labels_applied[base_cid] = base_entry["label"]

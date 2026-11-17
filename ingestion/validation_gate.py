@@ -169,7 +169,8 @@ def validate_document(rec, strict=VALIDATION_STRICT):
     """
     doc = rec["doc"]
     prose, tables = rec["prose"], rec["tables"]
-    n_pages = len([r for r in rec["routing"] if r["label"] in ("prose", "mixed")])
+    n_pages = len([r for r in rec["routing"]
+                   if r["label"] in ("prose", "mixed", "transcribed")])
     failures, review = [], []
 
     # 4. non-empty node IDs (blanks were already filled at intake; anything

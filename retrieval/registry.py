@@ -470,11 +470,28 @@ def text_layer_of(metadata: Dict[str, Any]) -> Optional[str]:
     return metadata.get("text_layer") or None
 
 
+def amends_sections_of(metadata: Dict[str, Any]) -> List[str]:
+    """Return the base-Act provisions an overlay chunk amends, as a list.
+
+    Ingestion stores them flat for Chroma ("17", "307A;307B", "*",
+    "schedule_1"; see ingestion/amendments.py). Empty list when the chunk
+    amends nothing (or is not an overlay chunk).
+    """
+    raw = metadata.get("amends_section") or ""
+    return [s.strip() for s in str(raw).split(";") if s.strip()]
+
+
 def same_provision(meta_a: Dict[str, Any], meta_b: Dict[str, Any]) -> bool:
     """Return True when two chunks' metadata indicate they cover the same provision.
 
     The detection is deliberately conservative and uses only metadata ingestion
     already attached (not re-parsed text):
+      0. Overlay side present → its amends_section must name the base chunk's
+         section_number. An amending Act numbers its OWN sections (its s.3
+         amends s.1 of the 2006 Act), so the overlay's section_number and
+         section_path are never compared. An overlay chunk that amends
+         nothing, or only a schedule, or the whole Act by word substitution
+         ("*"), pairs with no single base section.
       1. Same section_number  (the primary signal — e.g. both are section 23)
       2. Same section_path     (fallback, when section_number is missing but the
                                 path still identifes the provision)
@@ -486,6 +503,13 @@ def same_provision(meta_a: Dict[str, Any], meta_b: Dict[str, Any]) -> bool:
     Returns False when either chunk has no section identifier (can't establish they
     cover the same provision), or when they clearly cover different provisions.
     """
+    overlay_a = text_layer_of(meta_a) == "amendment_overlay"
+    overlay_b = text_layer_of(meta_b) == "amendment_overlay"
+    if overlay_a != overlay_b:
+        overlay, base = (meta_a, meta_b) if overlay_a else (meta_b, meta_a)
+        base_sn = section_number_of(base)
+        return bool(base_sn) and base_sn in amends_sections_of(overlay)
+
     sn_a = section_number_of(meta_a)
     sn_b = section_number_of(meta_b)
     if sn_a and sn_b:

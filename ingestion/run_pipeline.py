@@ -115,6 +115,14 @@ def main():
     ap.add_argument("--embed-model", default=config.EMBED_MODEL,
                     help="embedding model for Stage 7 (default: %s)"
                          % config.EMBED_MODEL)
+    ap.add_argument("--embed-batch", type=int, default=config.EMBED_BATCH,
+                    help="chunks per forward pass in Stage 7 (default %d: >1 "
+                         "segfaults on the dev laptop's CPU torch; use 32+ on "
+                         "a GPU)" % config.EMBED_BATCH)
+    ap.add_argument("--strict-embed", action="store_true",
+                    help="fail instead of falling back to MiniLM when the "
+                         "embedding model cannot load (an index built with "
+                         "the fallback cannot be queried with BGE-M3)")
     ap.add_argument("--db-dir", default=config.DB_DIR,
                     help="Chroma persistence dir (default: %s)" % config.DB_DIR)
     args = ap.parse_args()
@@ -195,7 +203,8 @@ def main():
         else:
             index_manifest = embed_and_index(
                 index_children, db_dir=args.db_dir,
-                model_name=args.embed_model)
+                model_name=args.embed_model, batch_size=args.embed_batch,
+                strict_model=args.strict_embed)
             print("  indexed %(n_indexed)d children -> %(db_dir)s "
                   "(collection %(collection)s, count %(collection_count)d)"
                   % index_manifest)

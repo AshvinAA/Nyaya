@@ -72,8 +72,9 @@ DOC_META = {
         # Act No. 43 of 2026, Bangladesh Gazette Extraordinary 10 Apr 2026,
         # pp. 15785-15831 (dpp.gov.bd). s.1(2): in force at once. Replaced the
         # 2025 Amendment Ordinance. Bangla original; the PDF has NO usable text
-        # layer (legacy/CID fonts) - needs OCR or transcription before its
-        # chunks can be retrieved.
+        # layer (CID fonts), so its text comes from the hand transcript in
+        # docs/transcriptions/<slug>/ (see ingestion/transcripts.py). Overlay
+        # chunks carry amends_section (ingestion/amendments.py).
         "source_type": "primary_law",
         "source_act": "Bangladesh Labour (Amendment) Act, 2026",
         "effective_date": "2026-04-10", "legal_status": "ratified",
@@ -85,7 +86,7 @@ DOC_META = {
         # 18 Dec 2023, Gazette Extraordinary 20 Dec 2023, pp. 28201-28211
         # (Minimum Wage Board portal). The operative garments wage schedule:
         # Grade 4 total Tk 12,500, effective 1 Dec 2023. Bangla original; same
-        # no-text-layer problem as the 2026 Act.
+        # no-text-layer problem as the 2026 Act - read from the hand transcript.
         "source_type": "primary_law",
         "source_act": "Minimum Wages Notification for the Garments Sector, 2023",
         "effective_date": "2023-12-01", "legal_status": "ratified",

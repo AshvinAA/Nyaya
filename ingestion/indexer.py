@@ -52,7 +52,8 @@ from ingestion.metadata_tagger import build_embed_prefix
 FILTERABLE_FIELDS = ["doc", "kind", "node", "source_act", "source_type",
                      "legal_status", "in_force", "authority_rank",
                      "translation_status", "text_layer", "effective_date",
-                     "section_number", "section_path", "parent_id"]
+                     "section_number", "section_path", "parent_id",
+                     "amends_section", "text_source"]
 
 
 def build_embed_text(c):

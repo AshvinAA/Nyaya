@@ -38,7 +38,7 @@ import re
 
 from ingestion.config import MIN_LEAF_TOKENS, FRONT_MATTER_MAX_LINES, \
     TOKEN_CAP, OVERLAP_RATIO
-from ingestion.common import normalize, estimate_tokens
+from ingestion.common import normalize, estimate_tokens, ascii_digits
 from ingestion.page_router import (is_front_matter_line,
                                       extract_front_matter_fields,
                                       STRONG_FM_RE)
@@ -49,6 +49,14 @@ from ingestion.page_router import (is_front_matter_line,
 SECTION_RE = re.compile(r"^[0-9]{1,3}+\.")        # "23."  chapter-sections
 SUBSEC_RE  = re.compile(r"^\(([0-9]{1,2})\)")     # "(3)"  sub-sections
 CLAUSE_RE  = re.compile(r"^\(([a-z]{1,2})\)")     # "(b)"  lettered clauses
+
+# Bangla-original gazettes (hand transcripts, see transcripts.py) number the
+# same hierarchy with Bangla digits and letters:  "৩। ..."  "(২ক)"  "(ক)"
+SECTION_BN_RE = re.compile(r"^([০-৯]{1,3})।\s*")              # "৩।" section
+SUBSEC_BN_RE  = re.compile(r"^\(([০-৯]{1,2}[ক-হ]?)\)")       # "(২)" / "(২ক)"
+CLAUSE_BN_RE  = re.compile(r"^\(([অ-৥]{1,4})\)")   # "(ক)" / "(অ)"
+# "১। সংক্ষিপ্ত শিরোনাম ও প্রবর্তন।—(১) এই আইন ..." -> title | body
+HEADING_BN_RE = re.compile(r"^(.{1,250}?)।\s*[—–-]+\s*(.*)$")
 
 
 def split_long_text(text, max_tokens=TOKEN_CAP, overlap_ratio=OVERLAP_RATIO):
@@ -74,15 +82,49 @@ def split_long_text(text, max_tokens=TOKEN_CAP, overlap_ratio=OVERLAP_RATIO):
 # ---------------------------------------------------------------------------
 # Block assembly
 # ---------------------------------------------------------------------------
+def group_lines(lines, max_tokens=TOKEN_CAP, overlap_ratio=OVERLAP_RATIO):
+    """Too-long rule for a structured leaf: cut it at its own LINE boundaries
+    (paragraphs, table rows) into token-capped groups with a small overlap,
+    falling back to sentence splitting for a single oversized line."""
+    pieces, cur, cur_tokens = [], [], 0
+    for line in lines:
+        cost = estimate_tokens(line)
+        if cost > max_tokens:                        # one huge paragraph
+            if cur:
+                pieces.append(" ".join(cur))
+                cur, cur_tokens = [], 0
+            pieces.extend(split_long_text(line, max_tokens, overlap_ratio))
+            continue
+        if cur and cur_tokens + cost > max_tokens:   # would overflow the cap
+            pieces.append(" ".join(cur))
+            keep = int(len(cur) * overlap_ratio)     # carry ~15% of the lines
+            cur = cur[-keep:] if keep else []
+            cur_tokens = estimate_tokens(" ".join(cur)) if cur else 0
+        cur.append(line)
+        cur_tokens += cost
+    if cur:
+        pieces.append(" ".join(cur))
+    return pieces
+
+
 def flush_pending(state, pending, blocks):
     """Close the current block: bundle accumulated lines into one structured
-    leaf unit stamped with the hierarchy position tracked in `state`."""
+    leaf unit stamped with the hierarchy position tracked in `state`. A leaf
+    over TOKEN_CAP is split at line boundaries (the too-long rule); every
+    piece keeps the same hierarchy stamp."""
     if pending:
-        blocks.append({"kind": "leaf",                  # a real content block
-                       "node": state["node"], "text": normalize(" ".join(pending)),
-                       "chapter": state["chapter"],
-                       "section_marker": state["section_marker"],
-                       "section_title": state["section_title"]})
+        text = normalize(" ".join(pending))
+        pieces = ([text] if estimate_tokens(text) <= TOKEN_CAP
+                  else [normalize(p) for p in group_lines(pending)])
+        for i, piece in enumerate(pieces, start=1):
+            block = {"kind": "leaf",                    # a real content block
+                     "node": state["node"], "text": piece,
+                     "chapter": state["chapter"],
+                     "section_marker": state["section_marker"],
+                     "section_title": state["section_title"]}
+            if len(pieces) > 1:
+                block["split_part"] = "%d/%d" % (i, len(pieces))
+            blocks.append(block)
         pending.clear()        # careful: caller passes the live list
 
 
@@ -92,26 +134,72 @@ def merge_short_leaves_forward(blocks, min_tokens=MIN_LEAF_TOKENS):
     never be emitted standalone - it merges FORWARD, becoming a prefix on
     the next surviving node ("PRELIMINARY" ends up opening the Rule 1
     chunk). Symmetric to the too-long token-split fallback.
+    A carried run that belongs to a numbered section (its heading, or a
+    numbered unit of it) never crosses into a DIFFERENT section: a whole
+    section that is short ("39. Section 184 is omitted.") is emitted as its
+    own leaf instead of being glued onto section 40.
     Returns (blocks, n_merged)."""
-    merged, carry, n_merged = [], "", 0
+    merged, carry, n_merged = [], [], 0
+
+    def anchored(blk):
+        # a section's own heading line was seen on this page. (A leaf's
+        # section_marker alone proves nothing: running headers and chapter
+        # titles at the top of a page inherit the PREVIOUS page's marker.)
+        return blk["kind"] == "section_header"
+
+    def carry_text():
+        return normalize(" ".join(c["text"] for c in carry))
+
+    def standalone_carry(next_marker):
+        anchor = next((c for c in carry if anchored(c)), None)
+        return (anchor is not None
+                and anchor.get("section_marker") != next_marker
+                and estimate_tokens(carry_text()) >= min_tokens)
+
+    def emit_carry_standalone():
+        anchor = next(c for c in carry if anchored(c))
+        merged.append({**anchor, "kind": "leaf", "text": carry_text()})
+        carry.clear()
+
     for b in blocks:
-        if b["kind"] in ("leaf", "section_header") \
-                and estimate_tokens(b["text"]) < min_tokens:
-            carry = (carry + " " + b["text"]).strip()  # hold as prefix for
+        short = estimate_tokens(b["text"]) < min_tokens
+        # a short NUMBERED unit ("(2) It shall come into force at once.")
+        # is content of its own section, not a heading for the next one:
+        # it merges BACKWARD into the previous leaf of the same section
+        if (short and not carry and b["kind"] == "leaf"
+                and "(" in (b.get("node") or "") and merged
+                and merged[-1]["kind"] == "leaf"
+                and merged[-1].get("section_marker") == b.get("section_marker")):
+            merged[-1]["text"] = normalize(merged[-1]["text"] + " " + b["text"])
+            n_merged += 1
+            continue
+        # a carried section must not leak into the next section - when it is
+        # a provision in its own right. (A numbered schedule list - "1. Lead
+        # poisoning;" - also parses as headings; those stay a forward prefix.)
+        if standalone_carry(b.get("section_marker")):
+            emit_carry_standalone()
+        # a section heading is never content on its own, whatever its length
+        # (Bangla headings like "২০০৬ সনের ৪২ নং আইনের ধারা ১৭ এর সংশোধন"
+        # run past MIN_LEAF_TOKENS) - it always prefixes the next node
+        if b["kind"] == "section_header" or (b["kind"] == "leaf" and short):
+            carry.append(b)                            # hold as prefix for
             n_merged += 1                              # the next real node
             continue
         if carry:                                  # first real node after the
-            b["text"] = normalize(carry + " " + b["text"])   # short run gets
-            carry = ""                             # the heading as prefix
+            b["text"] = normalize(carry_text() + " " + b["text"])  # short run
+            carry.clear()                          # gets the heading as prefix
         merged.append(b)
-    if carry and merged:                           # trailing bare heading with
-        merged[-1]["text"] = normalize(            # no next node: merge
-            merged[-1]["text"] + " " + carry)      # backward as last resort
-        n_merged += 1
-    elif carry:                                    # the whole page was bare
-        merged.append({"kind": "leaf", "node": "", "text": carry,
-                       "chapter": "", "section_marker": "",
-                       "section_title": ""})       # headings - keep them
+    if carry:
+        if standalone_carry(merged[-1].get("section_marker") if merged else None):
+            emit_carry_standalone()                # a short section at the end
+        elif merged:                               # trailing bare heading with
+            merged[-1]["text"] = normalize(        # no next node: merge
+                merged[-1]["text"] + " " + carry_text())   # backward as last
+            n_merged += 1                          # resort
+        else:                                      # the whole page was bare
+            merged.append({"kind": "leaf", "node": "", "text": carry_text(),
+                           "chapter": "", "section_marker": "",
+                           "section_title": ""})   # headings - keep them
     return merged, n_merged
 
 
@@ -175,8 +263,83 @@ def hierarchy_chunk(text, doc_label, state=None):
     # already carry section context from the previous page of this document.
     struct_hits = 0                              # lines that actually shaped
                                                  # the hierarchy (>=3 = structured)
+    quote_lines = 0                              # '> ' lines (quoted text)
+    table_rows = 0                               # '|' data rows emitted
+    table_header = None                          # column-header row of the
+    header_used = False                          # current '|' table run
+
+    def end_table_run():
+        # a header row with no data rows under it is still content
+        nonlocal table_header, header_used
+        if table_header is not None and not header_used:
+            pending.append(table_header)
+        table_header, header_used = None, False
+
     for raw in lines[cut:]:                      # walk once, top to bottom
         line = raw.strip()                       # trimmed copy for matching
+        # --- transcript convention: '> ' = text QUOTED by the document ------
+        # (e.g. the wording an amending Act inserts). Its own numbering -
+        # "(ক)", "৬১ক।" - belongs to the quoted law, not to this document,
+        # so it is body text of the provision that quotes it.
+        if line.startswith(">"):
+            end_table_run()
+            pending.append(line[1:].strip())
+            quote_lines += 1
+            continue
+        # --- table row "| a | b |": one leaf per row, header prefixed ------
+        if line.startswith("|"):
+            flush_pending(state, pending, blocks)
+            state["node"] = state["section_marker"]   # a row is not inside the
+                                                      # clause that preceded it
+            if table_header is None:             # first row of a run is the
+                table_header = line              # column header
+            else:
+                pending.extend([table_header, line])
+                header_used = True
+                flush_pending(state, pending, blocks)
+                table_rows += 1
+            struct_hits += 1
+            continue
+        end_table_run()
+        # --- pattern A-bn: Bangla section "৩। শিরোনাম।—(১) ..." -------------
+        m = SECTION_BN_RE.match(line)
+        if m:
+            flush_pending(state, pending, blocks)
+            marker = str(int(ascii_digits(m.group(1))))      # "০২" -> "2"
+            rest = line[m.end():]
+            h = HEADING_BN_RE.match(rest)
+            title, body = (h.group(1).strip(), h.group(2).strip()) if h else ("", rest)
+            state["section_marker"] = marker
+            state["section_title"] = normalize(title)
+            state["node"] = marker
+            if title:
+                blocks.append({"node": marker, "text": normalize(title),
+                               "kind": "section_header", "chapter": state["chapter"],
+                               "section_marker": marker,
+                               "section_title": normalize(title)})
+            sm = SUBSEC_BN_RE.match(body)        # body opens with "(১)"?
+            if sm:
+                state["node"] = "%s(%s)" % (marker, ascii_digits(sm.group(1)))
+            if body:
+                pending.append(body)
+            struct_hits += 1
+            continue
+        # --- pattern B-bn / C-bn: "(২)" sub-section, "(ক)" clause ----------
+        m = SUBSEC_BN_RE.match(line)
+        if m:
+            flush_pending(state, pending, blocks)
+            state["node"] = "%s(%s)" % (state["section_marker"], ascii_digits(m.group(1)))
+            struct_hits += 1
+            pending.append(line)
+            continue
+        m = CLAUSE_BN_RE.match(line)
+        if m:
+            flush_pending(state, pending, blocks)
+            base = state["node"].split("(")[0] if "(" in state["node"] else state["node"]
+            state["node"] = "%s(%s)" % (base, m.group(1))
+            struct_hits += 1
+            pending.append(line)
+            continue
         # --- pattern A: numbered section heading like "23. Title here" ------
         if SECTION_RE.match(line):
             flush_pending(state, pending, blocks)  # close what came before
@@ -231,13 +394,18 @@ def hierarchy_chunk(text, doc_label, state=None):
         # caught as a heading; acceptable for the demo - the Stage 3 gate
         # flags continuity breaks downstream.
 
+    end_table_run()
     flush_pending(state, pending, blocks)          # close the final open block
 
     # --- min-token merge rule: bare headings never stand alone -------------
     blocks, tiny_merged = merge_short_leaves_forward(blocks)
 
     # --- decide: did structure actually work for this document? ------------
-    structured = struct_hits >= 3
+    # A page that is all quoted text (e.g. a schedule an amending Act
+    # substitutes) is still structured: it continues the open section. So is
+    # a page whose table rows were already cut one leaf per row.
+    structured = (struct_hits >= 3 or table_rows > 0
+                  or bool(quote_lines and state["section_marker"]))
     if structured:
         return fm_blocks + blocks, {
             "strategy": "hierarchical",

@@ -15,6 +15,9 @@
    section_path       full hierarchical path (Chapter -> Section ->
                       Sub-section -> Clause), filterable
    section_number     precise citation; overlap-coverage detection in QA
+   amends_section     overlay chunks only: the base-Act provision(s) the
+                      amending section changes ('1', '307A;307B', '*',
+                      'schedule_1') - see amendments.py
    topic_tags         THIN, manually-curated topic vocabulary (termination,
                       maternity, ...) - workers ask by colloquial topic, not
                       by the Act's structural path. Keyword-matched from a
@@ -47,6 +50,7 @@
 
 import re
 
+from ingestion.amendments import amends_section_field
 from ingestion.common import next_id
 from ingestion.doc_metadata import doc_metadata, layer_note
 
@@ -136,6 +140,10 @@ def build_embed_prefix(c):
             parts.append(seg)
     if c.get("section_title") and c.get("kind") == "leaf":
         parts.append(c["section_title"])           # heading anchors the clause
+    if c.get("amends_section"):                    # lets an English query about
+        parts.append("amends Bangladesh Labour Act, 2006 section %s"   # s.17
+                     % c["amends_section"].replace(";", ", "))         # reach the
+                                                   # Bangla amending text
     return " · ".join(dict.fromkeys(p for p in parts if p))   # dedupe, ordered
 
 
@@ -161,6 +169,11 @@ def tag_children(children, doc_meta_all):
         c["text_layer"] = meta.get("text_layer")
         m = re.match(r"(\d{1,3})", c.get("section_marker") or "")
         c["section_number"] = m.group(1) if m else None
+        # an amending Act's own section numbers differ from the provisions
+        # it amends (its s.3 amends s.1 of the 2006 Act) - Stage 7 pairs on
+        # this field, never on the overlay's section_number
+        c["amends_section"] = (amends_section_field(c.get("section_title"))
+                               if c["text_layer"] == "amendment_overlay" else None)
         c["section_path"] = build_section_path(c)
         c["topic_tags"] = topic_tags(c.get("text", ""))
         c["layer_note"] = layer_note(meta) if c.get("text_layer") else None

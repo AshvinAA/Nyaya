@@ -29,7 +29,14 @@
  without adding information. These are separate steps and must stay
  separate - so this stage REFUSES to merge chunks from different law
  layers or different instruments (base text vs overlay, Act vs Rules),
- even when their texts look similar.
+ even when their texts look similar. Near-dup also never pairs two chunks
+ of the SAME document: a statute repeats its own wording on purpose
+ (s.26(b) and s.27(b) both read "14 days, in case of other workers"), and
+ each copy is a separate provision with its own citation.
+
+ Bangla-script chunks are scored with the character n-gram TF-IDF scorer,
+ not MiniLM: MiniLM is English-only and maps all Bangla text to nearly the
+ same vector, which would demote almost every transcribed chunk.
 
  Scaling note (from the plan): pairwise similarity is O(n^2) across
  chunks. At this corpus's size (thousands of chunks, not millions) that's
@@ -95,6 +102,14 @@ def _tfidf_matrix(texts):
     return (m.toarray().astype(np.float32) / norms[:, None]), "tfidf-char3-5"
 
 
+def _is_bangla(text, share=0.3):
+    """True when Bangla script dominates the text's letters."""
+    letters = [ch for ch in text if ch.isalpha()]
+    if not letters:
+        return False
+    return sum(1 for ch in letters if "ঀ" <= ch <= "৿") / len(letters) >= share
+
+
 def _pair_allowed(a, b):
     """Version-history protection: near-dup must never merge different law
     layers or different instruments - that is version filtering's job, and
@@ -103,6 +118,16 @@ def _pair_allowed(a, b):
         return False                               # base vs overlay, etc.
     if (a.get("source_act") or "") != (b.get("source_act") or ""):
         return False                               # Act vs Rules vs CPD ...
+    if (a.get("amends_section") or "") != (b.get("amends_section") or ""):
+        return False                               # same wording, different
+                                                   # provision amended (the
+                                                   # 2026 Act's ss.58/59/62)
+    if a.get("doc") == b.get("doc"):
+        return False                               # one document never repeats
+                                                   # itself: near-identical
+                                                   # chunks inside it are
+                                                   # DIFFERENT provisions (s.26(b)
+                                                   # vs s.27(b), s.294 vs s.295)
     return True
 
 
@@ -143,47 +168,69 @@ def dedup(children):
     cand = [c for c in live if c.get("retrievable", True)
             and (c.get("est_tokens") or 0) >= NEARDUP_MIN_TOKENS]
     pairs, n_near = [], 0
-    backend = None
-    if len(cand) >= 2:
-        texts = [c["text"] for c in cand]
-        try:
-            mat, backend = _embed_matrix(texts)
-        except Exception as exc:                   # no model / no network
-            print("  [dedup] embedding scorer unavailable (%s) - "
-                  "falling back to TF-IDF cosine" % exc)
+    backends = []
+    # MiniLM is English-only: Bangla text (hand transcripts of the Bangla
+    # gazettes) tokenizes to near-identical vectors and every chunk would
+    # look like a duplicate of every other. Bangla-script chunks are scored
+    # with the character n-gram scorer instead, which works on any script.
+    # (Cross-script pairs never qualify anyway: _pair_allowed requires the
+    # same source_act.)
+    bangla = [c for c in cand if _is_bangla(c["text"])]
+    latin = [c for c in cand if not _is_bangla(c["text"])]
+    for group, use_embedding in ((latin, True), (bangla, False)):
+        if len(group) < 2:
+            continue
+        texts = [c["text"] for c in group]
+        if use_embedding:
+            try:
+                mat, backend = _embed_matrix(texts)
+            except Exception as exc:               # no model / no network
+                print("  [dedup] embedding scorer unavailable (%s) - "
+                      "falling back to TF-IDF cosine" % exc)
+                mat, backend = _tfidf_matrix(texts)
+        else:
             mat, backend = _tfidf_matrix(texts)
-        block = 512                               # rows per similarity block
-        for lo in range(0, len(cand), block):     # O(n^2) but numpy-fast
-            hi = min(lo + block, len(cand))
-            sims = mat[lo:hi] @ mat.T             # (block, n) cosine matrix
-            for r in range(hi - lo):
-                i = lo + r
-                for j in range(i + 1, len(cand)):
-                    sim = float(sims[r, j])
-                    if sim < NEARDUP_SIM_THRESHOLD:
-                        continue                  # below threshold: not a pair
-                    a, b = cand[i], cand[j]
-                    if not (a.get("retrievable", True)
-                            and b.get("retrievable", True)):
-                        continue                  # already demoted this pass
-                    if not _pair_allowed(a, b):
-                        continue                  # version history - keep both
-                    winner, loser = (a, b) if (_rank(a), -len(a["text"])) <= \
-                        (_rank(b), -len(b["text"])) else (b, a)
-                    _demote(loser, winner, "near_duplicate", sim)
-                    n_near += 1
-                    pairs.append({"winner": winner["chunk_id"],
-                                  "loser": loser["chunk_id"],
-                                  "similarity": round(sim, 3),
-                                  "winner_doc": winner["doc"],
-                                  "loser_doc": loser["doc"]})
+        backends.append("%s (%d chunks)" % (backend, len(group)))
+        n_near += _near_dup_pass(group, mat, pairs)
 
     report = {"n_children": len(children),
               "n_scored": len(cand),
-              "backend": backend,
+              "backend": "; ".join(backends) or None,
               "threshold": NEARDUP_SIM_THRESHOLD,
               "n_exact_dups": n_exact,
               "n_near_dups": n_near,
               "n_demoted": n_exact + n_near,
               "pairs": pairs[:200]}                # cap the audit trail size
     return report, children
+
+
+def _near_dup_pass(cand, mat, pairs):
+    """Pairwise cosine over one scored group; demotes the lower-authority
+    side of every allowed pair at/above the threshold. Returns the count."""
+    n_near = 0
+    block = 512                                   # rows per similarity block
+    for lo in range(0, len(cand), block):         # O(n^2) but numpy-fast
+        hi = min(lo + block, len(cand))
+        sims = mat[lo:hi] @ mat.T                 # (block, n) cosine matrix
+        for r in range(hi - lo):
+            i = lo + r
+            for j in range(i + 1, len(cand)):
+                sim = float(sims[r, j])
+                if sim < NEARDUP_SIM_THRESHOLD:
+                    continue                      # below threshold: not a pair
+                a, b = cand[i], cand[j]
+                if not (a.get("retrievable", True)
+                        and b.get("retrievable", True)):
+                    continue                      # already demoted this pass
+                if not _pair_allowed(a, b):
+                    continue                      # version history - keep both
+                winner, loser = (a, b) if (_rank(a), -len(a["text"])) <= \
+                    (_rank(b), -len(b["text"])) else (b, a)
+                _demote(loser, winner, "near_duplicate", sim)
+                n_near += 1
+                pairs.append({"winner": winner["chunk_id"],
+                              "loser": loser["chunk_id"],
+                              "similarity": round(sim, 3),
+                              "winner_doc": winner["doc"],
+                              "loser_doc": loser["doc"]})
+    return n_near

@@ -82,7 +82,8 @@ def _flat_metadata(c):
 
 
 def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
-                    model_name=EMBED_MODEL, batch_size=EMBED_BATCH):
+                    model_name=EMBED_MODEL, batch_size=EMBED_BATCH,
+                    strict_model=False):
     # Chroma caps writes per call (derived from segment limits; error text
     # "Batch size of N is greater than max batch size" when exceeded) ->
     # chunk the upsert. 2000 is safely under the cap.
@@ -100,14 +101,18 @@ def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
     # Pinning to 1 thread fixes it -- MUST happen before the model is loaded
     # (pinning after load still crashed). Probe confirmed: corpus encodes
     # cleanly single-threaded (~1800-token parents).
+    # (Only the CPU path needs it: on a GPU the forward pass runs on CUDA,
+    # and sentence-transformers picks the GPU automatically.)
     import torch
-    if torch.get_num_threads() > 1:
+    if not torch.cuda.is_available() and torch.get_num_threads() > 1:
         torch.set_num_threads(1)
 
     backend = model_name
     try:
         model = SentenceTransformer(model_name)
     except Exception as exc:                       # BGE-M3 unavailable:
+        if strict_model:                           # the fallback's vectors are
+            raise                                  # useless to a BGE-M3 query
         backend = "sentence-transformers/all-MiniLM-L6-v2"   # cached fallback
         print("  [index] %s unavailable (%s) - falling back to %s"
               % (model_name, exc, backend))
@@ -115,8 +120,8 @@ def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
 
     dim = model.get_sentence_embedding_dimension()
     emb_texts = [build_embed_text(c) for c in indexable]
-    print("  [index] embedding %d children with %s (dim=%d)..."
-          % (len(indexable), backend, dim), flush=True)
+    print("  [index] embedding %d children with %s (dim=%d, device=%s, batch=%d)..."
+          % (len(indexable), backend, dim, model.device, batch_size), flush=True)
     vecs = model.encode(emb_texts, batch_size=batch_size,
                         show_progress_bar=False,
                         normalize_embeddings=True, convert_to_numpy=True)
@@ -145,6 +150,8 @@ def embed_and_index(children, db_dir=DB_DIR, collection_name=COLLECTION,
                 "model": backend,
                 "requested_model": model_name,
                 "dim": dim,
+                "device": str(model.device),
+                "batch_size": batch_size,
                 "db_dir": db_dir,
                 "collection": collection_name,
                 "collection_count": col.count(),

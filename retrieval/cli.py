@@ -71,8 +71,9 @@ def _print_summary(trace: Dict[str, Any]) -> None:
     # -- Stage 4 ------------------------------------------------------------
     s4 = stages.get("4", {})
     deduped = s4.get("deduped_pool", [])
-    print("Stage 4  | deduped_pool=%d collapsed=%d guard_hits=%d"
-          % (len(deduped), len(s4.get("collapsed_pairs", [])), len(s4.get("guard_hits", []))))
+    print("Stage 4  | deduped_pool=%d collapsed=%d guard_hits=%d scorer=%s"
+          % (len(deduped), len(s4.get("collapsed_pairs", [])),
+             len(s4.get("guard_hits", [])), s4.get("scorer_backends") or "none"))
     for pair in s4.get("collapsed_pairs", []):
         print("         |   collapse: %s beaten by %s (sim=%s)"
               % (pair["loser_id"], pair["winner_id"], pair["similarity"]))
@@ -85,14 +86,14 @@ def _print_summary(trace: Dict[str, Any]) -> None:
     topk = s5.get("final_topk", [])
     print("Stage 5  | reranker=%s fallback=%s" % (s5.get("reranker"), s5.get("fallback_triggered")))
     for item in topk:
-        print("         |   rank %d: %s (rerank=%.3f)" % (item["rank"], item["chunk_id"], item["rerank_score"]))
+        print("         |   rank %d: %s (rerank=%.6f)" % (item["rank"], item["chunk_id"], item["rerank_score"]))
 
     # -- Stage 5b -----------------------------------------------------------
     s5b = stages.get("5b", {})
     if s5b.get("mmr_applied"):
         print("Stage 5b | MMR applied:")
         for item in s5b.get("mmr_topk", []):
-            print("         |   mmr_rank %d: %s (rerank=%.3f)"
+            print("         |   mmr_rank %d: %s (rerank=%.6f)"
                   % (item["mmr_rank"], item["chunk_id"], item["rerank_score"] or 0.0))
     else:
         print("Stage 5b | MMR skipped — %s" % s5b.get("reason_if_skipped"))

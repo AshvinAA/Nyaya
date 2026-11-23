@@ -69,6 +69,15 @@
 #   - compute similarity (the fused pool is ~30 chunks, so pairwise is cheap —
 #     reuse the cached MiniLM scorer from ingestion Stage 6, or embed the small
 #     pool with BGE-M3; do NOT use the cross-encoder here — that's Stage 5)
+#   - SCRIPT ROUTING (same rule as ingestion Stage 6, for the same reason):
+#     MiniLM is English-only. Bangla text embeds to near-identical vectors, so
+#     every Bangla chunk looks like a duplicate of every other and the pool
+#     collapses to one survivor. Bangla-script chunks are therefore scored with
+#     the character n-gram scorer; Latin-script chunks keep the embedding
+#     scorer. Cross-script pairs score 0.0 and never collapse: neither scorer
+#     is cross-lingual, so a Bangla/English pair is not a near-dup by either
+#     metric. Finding the same provision across languages is version
+#     filtering's job (same source_act, different text_layer), not this stage's.
 #   - if similarity >= config.RETRIEVAL_NEAR_DUP_THRESHOLD (a SEPARATE tunable
 #     from ingestion's 0.92 — different population, different purpose):
 #       - if the pair shares the same text_layer AND same source_act:
@@ -150,7 +159,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from ingestion import config as icfg
-from ingestion.deduplicator import AUTHORITY_ORDER
+from ingestion.deduplicator import AUTHORITY_ORDER, _is_bangla, _tfidf_matrix
 from retrieval import config as cfg
 
 logger = logging.getLogger("retrieval.stage4")
@@ -194,6 +203,79 @@ def _embed_pool_texts(texts: List[str]) -> np.ndarray:
     return np.asarray(vecs, dtype=np.float32)
 
 
+def _pool_similarity(texts: List[str]) -> Tuple[np.ndarray, Optional[str]]:
+    """Pairwise cosine similarity for the fused pool, routed by script.
+
+    Mirrors ingestion Stage 6's routing (ingestion.deduplicator), and for the
+    same reason: MiniLM is English-only, so Bangla text embeds to near-
+    identical vectors and every Bangla chunk reads as a duplicate of every
+    other one. Scoring the Bangla gazette transcripts that way collapses a
+    whole wage table to a single surviving row.
+
+    Bangla-script entries are scored with the character n-gram scorer (works on
+    any script); Latin-script entries keep the embedding scorer. Each group is
+    scored WITHIN itself — the n-gram vectorizer is fit per group, so one
+    script's vocabulary never dilutes the other's.
+
+    Cross-script pairs stay at 0.0 and so can never reach the threshold. That
+    is deliberate, not an oversight: neither scorer is cross-lingual, so any
+    number it produced for a Bangla/English pair would be noise. Surfacing the
+    same provision across languages is version filtering's job (same
+    source_act, different text_layer) — Stage 4 only collapses true near-dups.
+
+    Returns (sims, backend_label) where sims is (n, n) float32. Entries in a
+    group of fewer than two members are left at 0.0 (nothing to compare).
+    """
+    n = len(texts)
+    sims = np.zeros((n, n), dtype=np.float32)
+
+    bangla_idx = [i for i, t in enumerate(texts) if _is_bangla(t or "")]
+    bangla_set = set(bangla_idx)
+    latin_idx = [i for i in range(n) if i not in bangla_set]
+
+    backends: List[str] = []
+    for idx, use_embedding in ((latin_idx, True), (bangla_idx, False)):
+        if len(idx) < 2:
+            continue                      # nothing to compare within the group
+        group_texts = [texts[i] for i in idx]
+        try:
+            if use_embedding:
+                try:
+                    mat = _embed_pool_texts(group_texts)
+                    backend = "embedding:%s" % icfg.DEDUP_MODEL
+                except Exception as exc:
+                    # Loud fallback, same as ingestion: no model / no network.
+                    logger.warning(
+                        "Stage 4: embedding scorer unavailable (%s: %s) — "
+                        "falling back to TF-IDF cosine",
+                        type(exc).__name__,
+                        exc,
+                    )
+                    mat, backend = _tfidf_matrix(group_texts)
+            else:
+                mat, backend = _tfidf_matrix(group_texts)
+        except Exception as exc:
+            # Both scorers are down for this group (e.g. a degenerate group the
+            # n-gram vectorizer cannot fit). Leave the group's similarities at
+            # 0.0: nothing collapses, every candidate reaches Stage 5. Dedup is
+            # a convenience — a wasted context slot — so it degrades. It is not
+            # a correctness filter, and retrieval must not hard-fail for it.
+            logger.warning(
+                "Stage 4: no scorer available for a %d-chunk group (%s: %s) — "
+                "skipping collapse for it (nothing dropped)",
+                len(idx),
+                type(exc).__name__,
+                exc,
+            )
+            backends.append("unavailable (%d chunks)" % len(idx))
+            continue
+        backends.append("%s (%d chunks)" % (backend, len(idx)))
+        sub = np.asarray(mat, dtype=np.float32)
+        sims[np.ix_(idx, idx)] = sub @ sub.T
+
+    return sims, ("; ".join(backends) or None)
+
+
 def retrieval_dedup(
     fused_pool: List[Dict[str, Any]],
     registry: Any,
@@ -222,6 +304,7 @@ def retrieval_dedup(
               {chunk_id, rrf_score, rank, appears_in, metadata, text}, ...],
           "collapsed_pairs": [ {winner_id, loser_id, reason, similarity}, ...],
           "guard_hits":      [ {pair: [id_a, id_b], similarity, why}, ...],
+          "scorer_backends": str | None,   # which scorer ran per script group
           "fallback_triggered": bool,
           "notes": str,
         }
@@ -259,10 +342,12 @@ def retrieval_dedup(
 
     threshold = float(cfg.RETRIEVAL_NEAR_DUP_THRESHOLD)
 
+    scorer_backends: Optional[str] = None
     if len(fused_pool) > 1:
         texts = [e.get("text") or "" for e in fused_pool]
-        vecs = _embed_pool_texts(texts)
-        sims = vecs @ vecs.T   # cosine (vectors are L2-normalised)
+        # Script-routed: Bangla -> char n-grams, Latin -> embeddings, cross-
+        # script -> 0.0. See _pool_similarity.
+        sims, scorer_backends = _pool_similarity(texts)
         n = len(fused_pool)
         for i in range(n):
             if i in dropped:
@@ -334,8 +419,10 @@ def retrieval_dedup(
         "deduped_pool": deduped_pool,
         "collapsed_pairs": collapsed_pairs,
         "guard_hits": guard_hits,
+        "scorer_backends": scorer_backends,
         "fallback_triggered": False,
-        "notes": _notes(len(fused_pool), len(deduped_pool), collapsed_pairs, guard_hits, elapsed),
+        "notes": _notes(len(fused_pool), len(deduped_pool), collapsed_pairs,
+                        guard_hits, scorer_backends, elapsed),
     }
     trace.record_stage(4, record)
     logger.info(
@@ -354,17 +441,20 @@ def _notes(
     pool_out: int,
     collapsed: List[Dict[str, Any]],
     guards: List[Dict[str, Any]],
+    backends: Optional[str],
     elapsed: float,
 ) -> str:
     """A short human-readable note about what Stage 4 did, for the trace."""
     return (
-        "pool_in=%d pool_out=%d collapsed=%d guard_hits=%d threshold=%s elapsed=%.3fs"
+        "pool_in=%d pool_out=%d collapsed=%d guard_hits=%d threshold=%s "
+        "scorer=%s elapsed=%.3fs"
         % (
             pool_in,
             pool_out,
             len(collapsed),
             len(guards),
             cfg.RETRIEVAL_NEAR_DUP_THRESHOLD,
+            backends or "none",
             elapsed,
         )
     )

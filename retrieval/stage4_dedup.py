@@ -234,7 +234,8 @@ def _pool_similarity(texts: List[str]) -> Tuple[np.ndarray, Optional[str]]:
     latin_idx = [i for i in range(n) if i not in bangla_set]
 
     backends: List[str] = []
-    for idx, use_embedding in ((latin_idx, True), (bangla_idx, False)):
+    for group_name, idx, use_embedding in (("latin", latin_idx, True),
+                                           ("bangla", bangla_idx, False)):
         if len(idx) < 2:
             continue                      # nothing to compare within the group
         group_texts = [texts[i] for i in idx]
@@ -267,9 +268,10 @@ def _pool_similarity(texts: List[str]) -> Tuple[np.ndarray, Optional[str]]:
                 type(exc).__name__,
                 exc,
             )
-            backends.append("unavailable (%d chunks)" % len(idx))
+            backends.append("%s:unavailable (%d chunks)"
+                            % (group_name, len(idx)))
             continue
-        backends.append("%s (%d chunks)" % (backend, len(idx)))
+        backends.append("%s:%s (%d chunks)" % (group_name, backend, len(idx)))
         sub = np.asarray(mat, dtype=np.float32)
         sims[np.ix_(idx, idx)] = sub @ sub.T
 

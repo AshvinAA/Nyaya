@@ -1,6 +1,6 @@
 {
-  "id": "USERNAME/nyaya-build-index",
-  "title": "Nyaya build index",
+  "id": "ashvinafroz/nyaya",
+  "title": "nyaya",
   "code_file": "nyaya_build_index.ipynb",
   "language": "python",
   "kernel_type": "notebook",
@@ -11,5 +11,6 @@
   "dataset_sources": [],
   "competition_sources": [],
   "kernel_sources": [],
-  "model_sources": []
+  "model_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
 }

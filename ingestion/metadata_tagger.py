@@ -167,7 +167,9 @@ def tag_children(children, doc_meta_all):
         c["authority_rank"] = meta.get("authority_rank")
         c["translation_status"] = meta.get("translation_status")
         c["text_layer"] = meta.get("text_layer")
-        m = re.match(r"(\d{1,3})", c.get("section_marker") or "")
+        # keep inserted-section letters ("196A"): the overlay's amends_section
+        # names them, and pairing compares the full id (registry.same_provision)
+        m = re.match(r"(\d{1,3}[A-Z]?)", c.get("section_marker") or "")
         c["section_number"] = m.group(1) if m else None
         # an amending Act's own section numbers differ from the provisions
         # it amends (its s.3 amends s.1 of the 2006 Act) - Stage 7 pairs on

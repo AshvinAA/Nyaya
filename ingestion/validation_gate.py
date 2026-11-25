@@ -158,6 +158,32 @@ def check_pollution(prose, n_pages):
 
 
 # ---------------------------------------------------------------------------
+# Check 6: legacy Bijoy-font mojibake (chunk level)
+# ---------------------------------------------------------------------------
+# Gazettes exported from Bijoy/SutonnyMJ fonts carry dagger marks (U+2020/U+2021)
+# where Bangla vowel signs belong. The page router's share-of-words test misses
+# these when a page is mostly English, so the garbled chunks reached the index
+# (EPZ Act 2019 and the 2015 gazette, 265 chunks in the 2026-11-25 build). Across
+# the whole corpus, no other document contains a dagger, so a chunk-level test
+# has no false positives here. Quarantine per chunk: the document still passes.
+LEGACY_FONT_MARK = re.compile(r"[†‡]")
+
+
+def check_legacy_font(chunks):
+    """Mark every chunk whose text contains a legacy-font dagger as
+    retrievable=False (reason kept on the chunk). Returns the list quarantined."""
+    quarantined = []
+    for c in chunks:
+        if not c.get("retrievable", True):
+            continue
+        if LEGACY_FONT_MARK.search(c.get("text") or ""):
+            c["retrievable"] = False
+            c["pollution"] = "legacy_font_mojibake"
+            quarantined.append(c)
+    return quarantined
+
+
+# ---------------------------------------------------------------------------
 # The gate itself
 # ---------------------------------------------------------------------------
 def validate_document(rec, strict=VALIDATION_STRICT):
@@ -209,6 +235,14 @@ def validate_document(rec, strict=VALIDATION_STRICT):
                              "text": c.get("text", "")[:80],
                              "reason": "page furniture (Stage 3 pollution check)"})
 
+    # 6. legacy-font mojibake: quarantine the garbled chunks, keep the document
+    legacy = check_legacy_font(prose + tables)
+    for c in legacy:
+        rec["flags"].append({"kind": "legacy_font_quarantined", "node": c["node"],
+                             "doc": doc, "page": c.get("page"),
+                             "text": c.get("text", "")[:80],
+                             "reason": "Bijoy-font dagger mojibake (Stage 3 legacy-font check)"})
+
     # table rejections were quarantined inline at extraction; aggregate them
     table_rejections = [f for f in rec["flags"]
                         if f.get("kind") == "table_validation_failed"]
@@ -227,6 +261,7 @@ def validate_document(rec, strict=VALIDATION_STRICT):
             "sections_seen": n_sections, "leaves": n_leaves,
             "parentless_leaves": n_parentless,
             "furniture_stripped": len(stripped),
+            "legacy_font_quarantined": len(legacy),
             "table_rejections": len(table_rejections),
             "checks_total": checks_total, "checks_failed": checks_failed,
             "pass_rate": round(1 - checks_failed / max(1, checks_total), 3)}

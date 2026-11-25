@@ -46,7 +46,9 @@ from ingestion.page_router import (is_front_matter_line,
 # ---------------------------------------------------------------------------
 # Legal-numbering patterns, e.g.:  "23. (1) ..."  "23(1)"  "(2) ..."  "3. ..."
 # ---------------------------------------------------------------------------
-SECTION_RE = re.compile(r"^[0-9]{1,3}+\.")        # "23."  chapter-sections
+# "23."  chapter-sections; "196A." inserted sections (the base Act's heading form,
+# e.g. "196A. Anti-trade union discrimination.-", p.83 of the 2006 PDF) too.
+SECTION_RE = re.compile(r"^[0-9]{1,3}[A-Z]?\.")
 SUBSEC_RE  = re.compile(r"^\(([0-9]{1,2})\)")     # "(3)"  sub-sections
 CLAUSE_RE  = re.compile(r"^\(([a-z]{1,2})\)")     # "(b)"  lettered clauses
 

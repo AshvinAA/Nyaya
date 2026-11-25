@@ -57,6 +57,7 @@ import json
 import logging
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Optional
@@ -66,6 +67,7 @@ from retrieval import config as cfg
 logger = logging.getLogger("retrieval.stage1")
 
 _GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+_GEMINI_ATTEMPTS = 3   # total tries for transient 429/503 responses
 
 
 class _Reply:
@@ -114,12 +116,19 @@ class GeminiChat:
             headers={"Content-Type": "application/json", "x-goog-api-key": key},
             method="POST",
         )
-        try:
-            with urllib.request.urlopen(req, timeout=self.timeout_s) as resp:
-                payload = json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")[:300]
-            raise RuntimeError("Gemini HTTP %d: %s" % (exc.code, detail)) from exc
+        payload = None
+        for attempt in range(_GEMINI_ATTEMPTS):
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout_s) as resp:
+                    payload = json.loads(resp.read().decode("utf-8"))
+                break
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", errors="replace")[:300]
+                # 429 (quota) and 503 (high demand) are transient: back off and retry.
+                if exc.code in (429, 503) and attempt + 1 < _GEMINI_ATTEMPTS:
+                    time.sleep(2 ** (attempt + 1))
+                    continue
+                raise RuntimeError("Gemini HTTP %d: %s" % (exc.code, detail)) from exc
 
         try:
             parts = payload["candidates"][0]["content"]["parts"]

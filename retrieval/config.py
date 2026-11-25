@@ -50,8 +50,23 @@ TRACE_DIR = "retrieval_traces"
 # in the test set, not by preference. The production LLM (Groq Llama 3.3 70B /
 # Gemini Flash per the plans) is NOT integrated yet — no code exists that
 # talks to either, so this stays as the dev stand-in until evaluated.
-EXPAND_MODEL = "ollama/llama3.2"   # LangChain Ollama chat model; the dev stand-in.
-   # Bangla->formal-legal-English rewrite is the riskiest LLM-dependent step.
+# Stage 1 provider. "gemini" = hosted Google Gemini API (free key from Google AI
+# Studio, read from GEMINI_API_KEY; works on Kaggle and the laptop, no Ollama
+# needed). "ollama" = local Ollama server (EXPAND_OLLAMA_MODEL). Override with
+# RETRIEVAL_EXPAND_PROVIDER=ollama|gemini.
+EXPAND_PROVIDER = os.environ.get("RETRIEVAL_EXPAND_PROVIDER", "gemini").strip().lower()
+
+# Gemini model id. TODO: confirm against Google's current model list before relying
+# on it; free-tier model availability changes.
+EXPAND_GEMINI_MODEL = os.environ.get("RETRIEVAL_EXPAND_GEMINI_MODEL", "gemini-2.5-flash")
+EXPAND_GEMINI_TIMEOUT_S = 60
+
+# Local Ollama stand-in (used only when EXPAND_PROVIDER == "ollama").
+EXPAND_OLLAMA_MODEL = "llama3.2"
+# Bangla->formal-legal-English rewrite is the riskiest LLM-dependent step.
+# Whichever provider is used, its quality on the Bangla gold queries is a measured
+# eval item, not an assumption.
+EXPAND_MODEL = EXPAND_GEMINI_MODEL if EXPAND_PROVIDER == "gemini" else EXPAND_OLLAMA_MODEL
 
 # Stage 5 reranker: BGE-Reranker-v2-M3 (cross-encoder). NOT yet in
 # requirements.txt — adding it is a separate decision (see TODO below).

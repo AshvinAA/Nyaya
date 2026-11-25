@@ -55,13 +55,92 @@
 
 import json
 import logging
+import os
+import re
+import urllib.error
+import urllib.request
 from typing import Any, Dict, List, Optional
-
-from langchain_ollama import ChatOllama
 
 from retrieval import config as cfg
 
 logger = logging.getLogger("retrieval.stage1")
+
+_GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+
+class _Reply:
+    """Minimal stand-in for a LangChain chat response: only .content is used."""
+
+    def __init__(self, content: str) -> None:
+        self.content = content
+
+
+class GeminiChat:
+    """Hosted Gemini chat model with the same .invoke(messages) shape as ChatOllama.
+
+    Uses the REST API via the standard library (no extra dependency). The API key
+    is read from the GEMINI_API_KEY environment variable (a .env file is loaded if
+    python-dotenv is present). A missing key or any HTTP/network error is raised
+    as an exception; expand_query() catches it and records a Stage 1 fallback, so
+    retrieval degrades loudly instead of crashing.
+    """
+
+    def __init__(self, model: str, timeout_s: int = 60) -> None:
+        self.model = model
+        self.timeout_s = timeout_s
+
+    def invoke(self, messages: List[Dict[str, str]]) -> _Reply:
+        key = _gemini_api_key()
+        system_parts = [m["content"] for m in messages if m.get("role") == "system"]
+        contents = [
+            {"role": "user", "parts": [{"text": m["content"]}]}
+            for m in messages
+            if m.get("role") == "user"
+        ]
+        body: Dict[str, Any] = {
+            "contents": contents,
+            "generationConfig": {
+                "temperature": 0.1,
+                # Ask for JSON directly; _parse_envelope still tolerates fences.
+                "responseMimeType": "application/json",
+            },
+        }
+        if system_parts:
+            body["systemInstruction"] = {"parts": [{"text": "\n\n".join(system_parts)}]}
+
+        req = urllib.request.Request(
+            _GEMINI_ENDPOINT.format(model=self.model),
+            data=json.dumps(body).encode("utf-8"),
+            headers={"Content-Type": "application/json", "x-goog-api-key": key},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout_s) as resp:
+                payload = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")[:300]
+            raise RuntimeError("Gemini HTTP %d: %s" % (exc.code, detail)) from exc
+
+        try:
+            parts = payload["candidates"][0]["content"]["parts"]
+            text = "".join(p.get("text", "") for p in parts)
+        except (KeyError, IndexError, TypeError) as exc:
+            raise RuntimeError("Gemini returned no text: %s" % str(payload)[:300]) from exc
+        return _Reply(text)
+
+
+def _gemini_api_key() -> str:
+    """Return GEMINI_API_KEY, loading .env first if python-dotenv is installed."""
+    if not os.environ.get("GEMINI_API_KEY"):
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()
+        except ImportError:
+            pass
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError("GEMINI_API_KEY is not set (env var or .env file)")
+    return key
 
 # How many variants the LLM is asked to produce (capped at config.MAX_VARIANTS).
 _N_VARIANTS = 3
@@ -164,15 +243,23 @@ def expand_query(
 # Small helpers — model creation, prompting, parsing, fallback
 # ------------------------------------------------------------------
 
-def _default_model() -> ChatOllama:
-    """Create the default expansion LLM from config.EXPAND_MODEL.
+def _default_model() -> Any:
+    """Create the default expansion LLM from config.EXPAND_PROVIDER.
 
-    This is ollama/llama3.2, the dev stand-in already in requirements.txt and
-    already pulled. Bangla->formal-legal-English register shifting with this
-    model is the riskiest LLM-dependent step in the pipeline — its rewrite
-    quality on the Bangla test set is a measured eval item, not an assumption.
+    "gemini" (default): hosted Gemini via GeminiChat; needs GEMINI_API_KEY.
+    "ollama": local Ollama server via LangChain (imported lazily, so the Gemini
+    path does not need langchain installed).
+
+    Bangla->formal-legal-English register shifting is the riskiest LLM-dependent
+    step in the pipeline — its rewrite quality on the Bangla test set is a measured
+    eval item, not an assumption.
     """
-    return ChatOllama(model=cfg.EXPAND_MODEL, temperature=0.1)
+    if cfg.EXPAND_PROVIDER == "gemini":
+        return GeminiChat(cfg.EXPAND_GEMINI_MODEL, timeout_s=cfg.EXPAND_GEMINI_TIMEOUT_S)
+    if cfg.EXPAND_PROVIDER == "ollama":
+        from langchain_ollama import ChatOllama
+        return ChatOllama(model=cfg.EXPAND_OLLAMA_MODEL, temperature=0.1)
+    raise ValueError("unknown EXPAND_PROVIDER %r (use 'gemini' or 'ollama')" % cfg.EXPAND_PROVIDER)
 
 
 def _system_to_msg() -> Dict[str, str]:
@@ -232,8 +319,10 @@ def _parse_envelope(
     We tolerate a few common failures gracefully (missing keys filled with
     defaults, variants capped to `capped`, non-list variants coerced).
     """
+    # Hosted models often wrap JSON in a ```json fence; strip it before parsing.
+    cleaned = re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", text.strip())
     try:
-        payload = json.loads(text)
+        payload = json.loads(cleaned)
     except json.JSONDecodeError:
         return None
     if not isinstance(payload, dict):

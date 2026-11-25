@@ -56,10 +56,11 @@ TRACE_DIR = "retrieval_traces"
 # RETRIEVAL_EXPAND_PROVIDER=ollama|gemini.
 EXPAND_PROVIDER = os.environ.get("RETRIEVAL_EXPAND_PROVIDER", "gemini").strip().lower()
 
-# Gemini model id. gemini-2.5-flash was retired for new users (HTTP 404, 2026-11-26);
-# gemini-3.8-flash is the current id Google's error pointed to. Free-tier model
-# availability changes, so override with RETRIEVAL_EXPAND_GEMINI_MODEL if needed.
-EXPAND_GEMINI_MODEL = os.environ.get("RETRIEVAL_EXPAND_GEMINI_MODEL", "gemini-3.8-flash")
+# Gemini model id. Checked 2026-11-26: gemini-2.5-flash is retired (404); gemini-3.8-flash
+# and gemini-flash-latest returned 503 (overloaded); gemini-3.6-flash and gemini-3.5-flash
+# answered (~30 s per short call). Free-tier availability changes, so override with
+# RETRIEVAL_EXPAND_GEMINI_MODEL if needed.
+EXPAND_GEMINI_MODEL = os.environ.get("RETRIEVAL_EXPAND_GEMINI_MODEL", "gemini-3.6-flash")
 EXPAND_GEMINI_TIMEOUT_S = 120
 
 # Local Ollama stand-in (used only when EXPAND_PROVIDER == "ollama").

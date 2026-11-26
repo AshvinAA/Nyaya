@@ -184,6 +184,30 @@ def check_legacy_font(chunks):
 
 
 # ---------------------------------------------------------------------------
+# Check 7: unresolved font glyphs "(cid:N)" (chunk level)
+# ---------------------------------------------------------------------------
+# pdfplumber writes "(cid:N)" when a font has no Unicode map for a glyph. The
+# digits in those spots are lost (the 2015 gazette's fine limits, adolescent
+# hours and holidays), so the chunk would state wrong figures. Quarantine it;
+# the page needs a manual transcript (docs/transcriptions/) to be retrievable.
+CID_MARK = re.compile(r"\(cid:\d+\)")
+
+
+def check_unresolved_font(chunks):
+    """Mark every chunk containing an unresolved glyph as retrievable=False.
+    Returns the list quarantined."""
+    quarantined = []
+    for c in chunks:
+        if not c.get("retrievable", True):
+            continue
+        if CID_MARK.search(c.get("text") or ""):
+            c["retrievable"] = False
+            c["pollution"] = "unresolved_font_glyph"
+            quarantined.append(c)
+    return quarantined
+
+
+# ---------------------------------------------------------------------------
 # The gate itself
 # ---------------------------------------------------------------------------
 def validate_document(rec, strict=VALIDATION_STRICT):
@@ -243,6 +267,14 @@ def validate_document(rec, strict=VALIDATION_STRICT):
                              "text": c.get("text", "")[:80],
                              "reason": "Bijoy-font dagger mojibake (Stage 3 legacy-font check)"})
 
+    # 7. unresolved font glyphs: quarantine the chunks whose digits were lost
+    unresolved = check_unresolved_font(prose + tables)
+    for c in unresolved:
+        rec["flags"].append({"kind": "unresolved_font_quarantined", "node": c["node"],
+                             "doc": doc, "page": c.get("page"),
+                             "text": c.get("text", "")[:80],
+                             "reason": "unresolved (cid:N) glyph; needs a manual transcript"})
+
     # table rejections were quarantined inline at extraction; aggregate them
     table_rejections = [f for f in rec["flags"]
                         if f.get("kind") == "table_validation_failed"]
@@ -262,6 +294,7 @@ def validate_document(rec, strict=VALIDATION_STRICT):
             "parentless_leaves": n_parentless,
             "furniture_stripped": len(stripped),
             "legacy_font_quarantined": len(legacy),
+            "unresolved_font_quarantined": len(unresolved),
             "table_rejections": len(table_rejections),
             "checks_total": checks_total, "checks_failed": checks_failed,
             "pass_rate": round(1 - checks_failed / max(1, checks_total), 3)}

@@ -56,9 +56,24 @@ def doc_slug(path):
     return re.sub(r"[^a-z0-9]+", "_", base).strip("_")          # non-alnum -> "_"
 
 
+# Symbol-font glyphs that pdfplumber returns as private-use code points. Checked
+# against the rendered pages: U+F8E7 (2015 gazette) and U+F0BE (2021 gazette) are
+# the em dash that follows a section heading; U+F075 (ILO report) is a bullet in
+# the running header "GB.354/INS/8", which is page furniture.
+_SYMBOL_GLYPHS = {"": "—", "": "—", "": ""}
+_PUA_RE = re.compile(r"[-]")       # any other private-use glyph
+
+
+def clean_glyphs(text):
+    """Map known Symbol-font glyphs to their printed character and drop any
+    other private-use glyph, so the PDF's font artefacts never reach the index."""
+    text = "".join(_SYMBOL_GLYPHS.get(ch, ch) for ch in (text or ""))
+    return _PUA_RE.sub("", text)
+
+
 def clean_cell(value):
     # pdfplumber table cells carry embedded newlines; flatten and trim them
-    return normalize(str(value)) if value is not None else ""
+    return normalize(clean_glyphs(str(value))) if value is not None else ""
 
 
 # ---------------------------------------------------------------------------

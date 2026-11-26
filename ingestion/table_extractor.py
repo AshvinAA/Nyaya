@@ -32,7 +32,7 @@
 
 import re
 
-from ingestion.common import normalize, clean_cell
+from ingestion.common import normalize, clean_cell, clean_glyphs
 from ingestion.doc_metadata import doc_metadata, summarize_table
 
 # ---------------------------------------------------------------------------
@@ -81,6 +81,7 @@ def table_chunk(rows, page, doc_label, tbl_index, evidence, caption=""):
     Returns (chunk, None) when the grid passes validation, or (None, reason)
     when it must be quarantined to the manual queue instead."""
     rows_c = [[clean_cell(c) for c in row] for row in rows]     # clean every cell
+    caption = clean_glyphs(caption)                             # caption and titles too
     width = max(len(r) for r in rows_c) if rows_c else 0        # widest row
     rows_c = [r + [""] * (width - len(r)) for r in rows_c]      # pad short rows
     rows_c = [r for r in rows_c if any(c for c in r)]           # drop blank rows

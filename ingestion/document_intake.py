@@ -28,7 +28,7 @@ import os
 
 import pdfplumber
 
-from ingestion.common import doc_slug, normalize, estimate_tokens
+from ingestion.common import doc_slug, normalize, estimate_tokens, clean_glyphs
 from ingestion.doc_metadata import doc_metadata
 from ingestion.page_router import classify_page, classify_text_document
 from ingestion.prose_chunker import hierarchy_chunk
@@ -179,6 +179,7 @@ def process_pdf(path, max_pages):
                 # and still needs real column detection (x0 clustering) to
                 # fix reading order - that belongs in Stage 3 QA, not here.
 
+            text = clean_glyphs(text)              # Symbol-font glyphs -> printed characters
             blocks, stats, hier_state = hierarchy_chunk(   # Stage 2a chunking
                 text, slug, hier_state)                    # ...state carried on
             for b in blocks:                       # attach doc/page metadata

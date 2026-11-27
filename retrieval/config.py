@@ -235,6 +235,13 @@ LABEL_BASE_SETTLED = "[settled law since 2018]"
 LABEL_OVERLAY_OTHER = "[amendment text — status unverified]"
 LABEL_BASE_OTHER = "[base text — an amendment covers this provision]"
 
+# Stage 7 pair completion. When an overlay chunk (an amending Act) reaches the
+# final set but the base section it amends did not, pull that base section in
+# so the pair can be labelled. Both sides must be shown, so this only adds.
+BASE_ACT_DOC = "bangladesh_labour_act_2006_english_upto_2018"   # the Act overlays amend
+PAIR_COMPLETION_ENABLED = _os.environ.get("RETRIEVAL_PAIR_COMPLETION", "1").strip().lower() not in ("0", "false", "no", "off")
+PAIR_COMPLETION_MAX = 3          # cap on extra base sections added per query
+
 
 def overlay_label_pair(overlay_legal_status):
     """Return (base_label, overlay_label) for a dual-layer pair, chosen from

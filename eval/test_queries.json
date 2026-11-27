@@ -1,7 +1,7 @@
 [
   {
     "query_id": "q0001",
-    "query_bangla": "কাটোরির বেতন কত?",
+    "query_bangla": "ন্যূনতম মজুরী কত?",
     "query_english": "What is the minimum wage?",
     "category": "table_numeric_lookup",
     "gold_section_number": null,
@@ -33,7 +33,7 @@
   },
   {
     "query_id": "q0003",
-    "query_bangla": "ছুটি দেওয়া হলে কত দিনের নোটিশ পাবো?",
+    "query_bangla": "চাকরি থেকে অব্যাহতি দেওয়া হলে কত দিনের নোটিশ পাবো?",
     "query_english": "How many days' notice do I get if I'm discharged?",
     "category": "single_provision_lookup",
     "gold_section_number": "26",
@@ -49,7 +49,7 @@
   },
   {
     "query_id": "q0004",
-    "query_bangla": "চুল্লা কত টাকায় কাজ করে, আর ওভারটাইম কত টাকা?",
+    "query_bangla": "একজন শ্রমিকের মজুরী কত, আর ওভারটাইম কত টাকা?",
     "query_english": "How much is a worker paid, and how much is overtime?",
     "category": "multi_aspect",
     "gold_section_number": "108 + wage gazette table",
@@ -65,7 +65,7 @@
   },
   {
     "query_id": "q0005",
-    "query_bangla": "চুল্লা কত টাকায় কাজ করে?",
+    "query_bangla": "একজন শ্রমিকের মজুরী কত?",
     "query_english": "How much is a worker paid?",
     "category": "single_aspect_control",
     "gold_section_number": null,

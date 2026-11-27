@@ -51,6 +51,7 @@ from chromadb.utils import embedding_functions
 from sentence_transformers import SentenceTransformer
 
 from ingestion import config as ic
+from retrieval import config as rcfg
 from ingestion.common import normalize
 
 # ---------------------------------------------------------------------------
@@ -536,6 +537,30 @@ def same_provision(meta_a: Dict[str, Any], meta_b: Dict[str, Any]) -> bool:
 # ---------------------------------------------------------------------------
 # Batch helpers (used by the eval harness / trace joins)
 # ---------------------------------------------------------------------------
+
+def base_children_for_section(
+    query_text: str,
+    section_number: str,
+    n: int = 1,
+) -> List[Tuple[str, Dict[str, Any]]]:
+    """Top-n base-Act children of one section, ranked by dense similarity to the query.
+
+    Used by Stage 7 pair completion: the where-filter restricts the search to the
+    consolidated base text of the Act that overlays amend, so no other Act's
+    section with the same number can be pulled in.
+    """
+    col = chroma_collection()
+    where = {"$and": [
+        {"doc": rcfg.BASE_ACT_DOC},
+        {"text_layer": "consolidated_base"},
+        {"section_number": str(section_number)},
+    ]}
+    query_emb = bge_m3_embedding_function()([query_text])
+    res = col.query(query_embeddings=query_emb, n_results=n, where=where, include=["metadatas"])
+    ids = (res.get("ids") or [[]])[0]
+    metas = (res.get("metadatas") or [[]])[0]
+    return [(cid, _unflatten_metadata(m or {})) for cid, m in zip(ids, metas)]
+
 
 def chunk_metadata_batch(chunk_ids: List[str]) -> Dict[str, Optional[Dict[str, Any]]]:
     """Return {chunk_id: metadata_or_None} for a batch of chunk_ids.

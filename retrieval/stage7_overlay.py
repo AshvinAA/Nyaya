@@ -150,18 +150,81 @@
 # ===========================================================================
 
 import logging
+import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from retrieval import config as cfg
-from retrieval.registry import same_provision, text_layer_of
+from retrieval.registry import amends_sections_of, same_provision, section_number_of, text_layer_of
 
 logger = logging.getLogger("retrieval.stage7")
+
+
+def complete_base_pairs(
+    children: List[Dict[str, Any]],
+    metadata_by_id: Dict[str, Dict[str, Any]],
+    query_text: str,
+    registry: Any,
+) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, Any]], Dict[str, Any]]:
+    """Pull in the base section for each overlay child that search left unpaired.
+
+    Runs before Stage 6. For every amendment_overlay child in the top-k, each base
+    section it amends (its amends_section list) that is not already present as a
+    consolidated_base child gets its best-matching base child added. Stage 7 then
+    pairs and labels both sides. Nothing is removed, so the layering rule holds.
+
+    Returns (children, metadata for the added chunks, record for the trace).
+    """
+    record: Dict[str, Any] = {
+        "enabled": cfg.PAIR_COMPLETION_ENABLED,
+        "overlays_seen": 0,
+        "added": [],
+        "skipped": [],
+    }
+    if not cfg.PAIR_COMPLETION_ENABLED:
+        return children, {}, record
+
+    present = set()
+    for ch in children:
+        meta = metadata_by_id.get(ch.get("chunk_id"), {}) or {}
+        sn = section_number_of(meta)
+        if text_layer_of(meta) == "consolidated_base" and sn:
+            present.add(sn)
+
+    wanted: List[Tuple[str, str]] = []
+    for ch in children:
+        cid = ch.get("chunk_id")
+        meta = metadata_by_id.get(cid, {}) or {}
+        if text_layer_of(meta) != "amendment_overlay":
+            continue
+        record["overlays_seen"] += 1
+        for sec in amends_sections_of(meta):
+            if not re.fullmatch(r"\d+[A-Z]?", sec):
+                record["skipped"].append({"section": sec, "via": cid, "reason": "not a base section number"})
+                continue
+            if sec in present or any(sec == w for w, _ in wanted):
+                continue
+            wanted.append((sec, cid))
+
+    added_meta: Dict[str, Dict[str, Any]] = {}
+    for sec, via in wanted[: cfg.PAIR_COMPLETION_MAX]:
+        hits = registry.base_children_for_section(query_text, sec, n=1)
+        if not hits:
+            record["skipped"].append({"section": sec, "via": via, "reason": "no base chunk for section"})
+            continue
+        cid, meta = hits[0]
+        children.append({"chunk_id": cid, "rerank_score": 0.0, "rank": None, "completed_for": via})
+        added_meta[cid] = meta
+        record["added"].append({"chunk_id": cid, "section_number": sec, "completed_for": via})
+    for sec, via in wanted[cfg.PAIR_COMPLETION_MAX:]:
+        record["skipped"].append({"section": sec, "via": via, "reason": "over PAIR_COMPLETION_MAX"})
+    return children, added_meta, record
 
 
 def resolve_overlay(
     resolved_context: List[Dict[str, Any]],
     trace: Any,
+    base_completion: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Detect base+overlay pairs, label both, never drop one.
 
@@ -308,6 +371,7 @@ def resolve_overlay(
         "labels_applied": labels_applied,
         "fallback_triggered": False,
         "notes": _notes(len(resolved_context), dual_layer_pairs, elapsed),
+        "base_completion": base_completion,
     }
     trace.record_stage(7, record)
     logger.info(

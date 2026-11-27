@@ -82,7 +82,7 @@ from retrieval.stage4_dedup import retrieval_dedup
 from retrieval.stage5_rerank import rerank
 from retrieval.stage5b_mmr import optional_mmr
 from retrieval.stage6_resolve import resolve_parents
-from retrieval.stage7_overlay import resolve_overlay
+from retrieval.stage7_overlay import complete_base_pairs, resolve_overlay
 
 logger = logging.getLogger("retrieval.orchestrator")
 
@@ -265,6 +265,11 @@ def retrieve(
         # from metadata. Both live in Stage 4's pooled metadata — attach them
         # here (top-k entries carry only ids + scores).
         metadata_by_id = _collect_metadata_by_id(stage4_record)
+        # Pair completion (Stage 7 pre-step): add the base section for any overlay
+        # child whose amended section search did not return, so Stage 7 can pair it.
+        stage6_children, completion_meta, completion_record = complete_base_pairs(
+            stage6_children, metadata_by_id, query, registry)
+        metadata_by_id.update(completion_meta)
         for child in stage6_children:
             meta = metadata_by_id.get(child.get("chunk_id"), {})
             child["parent_id"] = meta.get("parent_id")
@@ -286,7 +291,8 @@ def retrieve(
         # Stage 7 — overlay vs base, dual labeling (last stage)
         # ------------------------------------------------------------------
         t0 = time.time()
-        stage7_record = resolve_overlay(stage6_record.get("resolved_context", []), t)
+        stage7_record = resolve_overlay(stage6_record.get("resolved_context", []), t,
+                                        base_completion=completion_record)
         ran.append("7")
         timings["7"] = round(time.time() - t0, 3)
 
